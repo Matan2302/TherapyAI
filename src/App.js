@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
 import RecordingPage from "./components/RecordingPage";
+import PatientDashboard from "./components/PatientDashboard";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
           <Link to="/register" className="nav-link">Register</Link>
           <Link to="/login" className="nav-link">Login</Link>
           <Link to="/recording" className="nav-link">Recording</Link>
+          <Link to="/dashboard" className="nav-link">Dashboard</Link>
         </nav>
 
         {/* Page Content */}
@@ -23,6 +25,7 @@ const App = () => {
             <Route path="/register" element={<RegistrationPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/recording" element={<RecordingPage />} />
+            <Route path="/dashboard" element={<PatientDashboard />} />
           </Routes>
         </div>
       </div>
