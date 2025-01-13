@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./RegistrationPage.css"; // Import the CSS file for styling
 
 const RegistrationPage = () => {
   const [username, setUsername] = useState("");
@@ -10,28 +11,30 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div>
+    <div className="registration-page">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          Username:
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
           <input
             type="text"
+            id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
-        </label>
-        <br />
-        <label>
-          Password:
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
           <input
             type="password"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-        </label>
-        <br />
-        <button type="submit">Register</button>
+        </div>
+        <button type="submit" className="btn">Register</button>
       </form>
     </div>
   );
