@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 100px); /* התאמת גובה לגרף */
+  height: calc(60vh - 80px); /* התאמת גובה לגרף */
   text-align: center;
 }
 
@@ -32,7 +32,7 @@ h3 {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .patient-dashboard {
     height: auto;
     padding: 1rem;

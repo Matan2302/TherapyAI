@@ -11,6 +11,12 @@ h1, h2, h3 {
   margin: 0;
 }
 
+.hero-content p {
+  font-size: 1.2rem;
+  color: #0056b3; /* צבע כחול יפה */
+  margin-top: 1rem;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -45,7 +51,7 @@ h1, h2, h3 {
 /* Hero Section (Home Page) */
 .home-page {
   padding-top: 120px; /* התאמה לגובה ה-Navbar */
-  height: calc(100vh - 120px); /* מבטיח שהגובה יכסה את כל המסך מתחת לניווט */
+  height: calc(60vh - 60px); /* מבטיח שהגובה יכסה את כל המסך מתחת לניווט */
   display: flex;
   flex-direction: column;
   align-items: center;

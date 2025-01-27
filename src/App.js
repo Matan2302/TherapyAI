@@ -46,10 +46,15 @@ const App = () => {
 // Home Page Component
 const HomePage = () => (
   <div className="home-page">
-    <h1>Welcome to TherapyAI</h1>
-    <p>Manage your sessions with ease and help patients efficiently.</p>
+    <div className="hero-content">
+      <h1>Welcome to TherapyAI</h1>
+      <p>Manage your sessions with ease and help patients efficiently.</p>
+    </div>
   </div>
 );
+
+
+
 
 export default App;
 
