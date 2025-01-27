@@ -1,0 +1,11 @@
+/* styles.css */
+.patient-dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* גובה מלא של הדף */
+  }
+  
+  .mood-tracking {
+    text-align: center;
+  }

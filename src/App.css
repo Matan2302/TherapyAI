@@ -214,3 +214,20 @@ p {
   color: #333;
 }
 
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0 10px;
+  font-size: 0.9rem;
+  z-index: 1000;
+}
+
+.navbar {
+  margin-top: 2rem; /* Adjust navbar to prevent overlap with header */
+}
+
+

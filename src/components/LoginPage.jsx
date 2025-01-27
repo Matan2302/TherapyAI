@@ -1,13 +1,23 @@
-import React, { useState } from "react";
-import "./LoginPage.css"; // Import the CSS file for styling
+import React, { useState, useContext } from "react";
+import { TherapistContext } from "../TherapistContext"; // Import the context
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // Access the context to set the therapist's name
+  const { setTherapistName } = useContext(TherapistContext);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Logging in with:", username, password);
+
+    if (password === "111") { // Validate password
+      setTherapistName(username); // Save the therapist's name globally
+      console.log("Logged in as:", username);
+    } else {
+      alert("Incorrect password");
+    }
   };
 
   return (

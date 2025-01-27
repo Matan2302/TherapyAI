@@ -10,17 +10,18 @@ const TherapistForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:8000/therapists/", {
-        FullName: fullName,
-        Specialization: specialization,
-        ContactInfo: contactInfo,
+      const response = await axios.post("http://127.0.0.1:8000/insert_therapist/", {
+        full_name: fullName,        // ✅ Match FastAPI field names
+        specialization: specialization,
+        contact_info: contactInfo,
       });
+
       alert(response.data.message);
       setFullName("");
       setSpecialization("");
       setContactInfo("");
     } catch (error) {
-      alert("Failed to add therapist: " + error.response?.data?.detail);
+      alert("Failed to add therapist: " + (error.response?.data?.detail || "Unknown error"));
     }
   };
 
