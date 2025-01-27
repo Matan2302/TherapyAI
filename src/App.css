@@ -1,25 +1,28 @@
-/* Reset & Base Styles */
+/* General Styles */
 body {
   margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #f0f4f8, #d9e8ff);
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
   color: #333;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
+h1, h2, h3 {
+  color: #007bff;
   margin: 0;
 }
 
-p {
-  margin: 0;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-/* Navbar */
+/* Navbar Styles */
 .navbar {
-  position: relative;
+  position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 1000;
   background: linear-gradient(90deg, #007bff, #0056b3);
   color: #fff;
   padding: 1rem 2rem;
@@ -29,205 +32,38 @@ p {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.navbar .nav-link {
+.nav-link {
   color: white;
   text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.navbar .nav-link:hover {
-  color: #ffdf5c;
-}
-
-/* Hero Section */
-.hero {
-  padding-top: 6rem;
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
-  background: linear-gradient(135deg, #007bff, #6c63ff);
-  color: #fff;
-}
-
-.hero h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-  animation: fadeIn 2s ease-in-out;
-}
-
-.hero p {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-  animation: fadeIn 2.5s ease-in-out;
-}
-
-.hero button {
-  padding: 1rem 2rem;
   font-size: 1.2rem;
-  background: #ffdf5c;
-  color: #333;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s, transform 0.2s;
 }
 
-.hero button:hover {
-  background: #ffd700;
-  transform: scale(1.05);
+.nav-link:hover {
+  text-decoration: underline;
 }
 
-/* Content Section */
-.section {
-  padding: 6rem 2rem 4rem;
-  text-align: center;
-}
-
-.section h2 {
-  font-size: 2.5rem;
-  color: #007bff;
-  margin-bottom: 1rem;
-}
-
-.section p {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 2rem;
-}
-
-.card-container {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.card {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-  max-width: 300px;
-}
-
-.card:hover {
-  transform: translateY(-10px);
-}
-
-.card h3 {
-  font-size: 1.5rem;
-  color: #007bff;
-}
-
-.card p {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* Footer */
-.footer {
-  background: #0056b3;
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
-  margin-top: 2rem;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-
-  .hero p {
-    font-size: 1.2rem;
-  }
-
-  .card-container {
-    flex-direction: column;
-  }
-
-  .navbar .nav-links {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-/* Home Page Centered Text */
+/* Hero Section (Home Page) */
 .home-page {
+  padding-top: 120px; /* התאמה לגובה ה-Navbar */
+  height: calc(100vh - 120px); /* מבטיח שהגובה יכסה את כל המסך מתחת לניווט */
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 80vh;
+  justify-content: center;
   text-align: center;
+  background: #ffffff; /* White background */  color: white;
 }
 
 .home-page h1 {
   font-size: 3rem;
-  color: #007bff;
   margin-bottom: 1rem;
 }
 
 .home-page p {
   font-size: 1.5rem;
-  color: #333;
-}
-/* Patient Dashboard Centered Text */
-.patient-dashboard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 20vh;
-  text-align: center;
 }
 
-.patient-dashboard h2 {
-  font-size: 2.5rem;
-  color: #007bff;
-  margin-bottom: 1rem;
+/* Content Styles */
+.content {
+  padding-top: 120px; /* התאמה למרווח הניווט */
 }
-
-.patient-dashboard p {
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.header {
-  position: fixed;
-  top: 0;
-  right: 0;
-  background-color: #007bff;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0 0 0 10px;
-  font-size: 0.9rem;
-  z-index: 1000;
-}
-
-.navbar {
-  margin-top: 2rem; /* Adjust navbar to prevent overlap with header */
-}
-
-

@@ -1,10 +1,8 @@
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from "recharts";
 import "./PatientDashboard.css";
 
-
 const PatientDashboard = () => {
-  // Example static data to demonstrate the graph
   const exampleData = [
     { time: "09:00", goodMoods: 3, badMoods: 7 },
     { time: "09:05", goodMoods: 5, badMoods: 5 },
@@ -17,7 +15,7 @@ const PatientDashboard = () => {
     { time: "09:40", goodMoods: 6, badMoods: 4 },
     { time: "09:45", goodMoods: 5, badMoods: 5 },
     { time: "09:50", goodMoods: 4, badMoods: 6 },
-    { time: "09:55", goodMoods: 2, badMoods: 8 }
+    { time: "09:55", goodMoods: 2, badMoods: 8 },
   ];
 
   return (
@@ -31,20 +29,8 @@ const PatientDashboard = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="goodMoods" 
-            stroke="#82ca9d" 
-            name="Good Moods" 
-            strokeWidth={2}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="badMoods" 
-            stroke="#ff6b6b" 
-            name="Bad Moods" 
-            strokeWidth={2}
-          />
+          <Line type="monotone" dataKey="goodMoods" stroke="#82ca9d" name="Good Moods" strokeWidth={2} />
+          <Line type="monotone" dataKey="badMoods" stroke="#ff6b6b" name="Bad Moods" strokeWidth={2} />
         </LineChart>
       </div>
     </div>
