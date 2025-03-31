@@ -1,22 +1,46 @@
 import React, { useState, useContext } from "react";
-import { TherapistContext } from "../TherapistContext"; // Import the context
+import { TherapistContext } from "../TherapistContext";
+import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // changed from "username"
   const [password, setPassword] = useState("");
-
-  // Access the context to set the therapist's name
+  const [error, setError] = useState("");
   const { setTherapistName } = useContext(TherapistContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password === "111") { // Validate password
-      setTherapistName(username); // Save the therapist's name globally
-      console.log("Logged in as:", username);
-    } else {
-      alert("Incorrect password");
+    try {
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Invalid email or password");
+      }
+
+      const data = await res.json();
+      const { therapist_id, access_token } = data;
+
+      // Save therapist ID or name in context/localStorage
+      setTherapistName(email); // or use therapist_id
+      localStorage.setItem("token", access_token);
+
+      // Redirect to dashboard or home
+      navigate("/dashboard");
+
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -25,15 +49,16 @@ const LoginPage = () => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="email">Email</label>
           <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
@@ -44,6 +69,9 @@ const LoginPage = () => {
             required
           />
         </div>
+
+        {error && <p className="error">{error}</p>}
+
         <button type="submit" className="btn">Login</button>
       </form>
     </div>
