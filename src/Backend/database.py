@@ -1,29 +1,15 @@
-# database.py
-
-import urllib
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from config import DB_SERVER, DB_USER, DB_PASSWORD, DB_DATABASE
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# 1. Build the raw ODBC connection string
-raw_conn_str = (
-    f"Driver={{ODBC Driver 18 for SQL Server}};"
-    f"Server={DB_SERVER};"
-    f"Database={DB_DATABASE};"
-    f"Uid={DB_USER};"
-    f"Pwd={DB_PASSWORD};"
-    f"Encrypt=yes;"
-    f"TrustServerCertificate=yes;"
-    f"Connection Timeout=30;"
+# סיסמה עם תווים מיוחדים מקודדת (URL encoded):
+encoded_password = "P%40ssword2024%21"
+
+# כתובת URL לחיבור
+SQLALCHEMY_DATABASE_URL = (
+    f"mssql+pyodbc://ptsd_admin:{encoded_password}@therapygroup05.database.windows.net:1433/TherapyGroup05"
+    "?driver=ODBC+Driver+18+for+SQL+Server&Encrypt=yes&TrustServerCertificate=yes"
 )
 
-# 2. Encode the string for SQLAlchemy
-params = urllib.parse.quote_plus(raw_conn_str)
-
-# 3. Create the SQLAlchemy engine
-engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}", echo=True)  # echo=True for debug
-
-# 4. Create session and base
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

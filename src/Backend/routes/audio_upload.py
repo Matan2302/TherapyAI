@@ -1,7 +1,8 @@
 from fastapi import APIRouter, File, UploadFile, Form
 import os
 import aiofiles
-from services.blob_service import upload_to_azure, save_session_to_db
+from services.blob_service import save_session_to_db
+from services.blob_service import upload_to_azure
 
 router = APIRouter()
 
