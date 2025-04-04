@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { TherapistContext } from "../TherapistContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState(""); // changed from "username"
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { setTherapistName } = useContext(TherapistContext);
@@ -14,7 +14,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://127.0.0.1:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,19 +26,17 @@ const LoginPage = () => {
       });
 
       if (!res.ok) {
-        throw new Error("Invalid email or password");
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Login failed");
       }
 
       const data = await res.json();
       const { therapist_id, access_token } = data;
 
-      // Save therapist ID or name in context/localStorage
-      setTherapistName(email); // or use therapist_id
+      setTherapistName(email); // או therapist_id
       localStorage.setItem("token", access_token);
 
-      // Redirect to dashboard or home
       navigate("/dashboard");
-
     } catch (err) {
       setError(err.message);
     }
@@ -74,6 +72,10 @@ const LoginPage = () => {
 
         <button type="submit" className="btn">Login</button>
       </form>
+
+      <p className="register-link">
+        Not registered yet? <Link to="/register">Click here to register</Link>
+      </p>
     </div>
   );
 };

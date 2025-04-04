@@ -1,27 +1,23 @@
-/* LoginPage.css */
+/* TherapistForm.css */
 
-.login-page {
-    max-width: 400px;
+.Patient-form {
+    max-width: 500px;
     margin: 3rem auto;
     padding: 2rem;
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
   
-  .register-link {
-    margin-top: 1rem;
-    text-align: center;
-  }
-  
-  .login-page h2 {
+  .Patient-form h2 {
     color: #007bff;
     margin-bottom: 1.5rem;
+    font-size: 2rem;
   }
   
   .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     text-align: left;
   }
   
@@ -29,6 +25,7 @@
     display: block;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: #333;
   }
   
   input {
@@ -40,7 +37,12 @@
     box-sizing: border-box;
   }
   
-  .btn {
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .btn-submit {
     width: 100%;
     padding: 0.75rem;
     font-size: 1.2rem;
@@ -49,19 +51,20 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
   }
   
-  .btn:hover {
+  .btn-submit:hover {
     background-color: #0056b3;
   }
   
   /* Responsive Design */
   @media (max-width: 768px) {
-    .login-page {
+    .therapist-form {
       padding: 1.5rem;
     }
   
-    .btn {
+    .btn-submit {
       font-size: 1rem;
     }
   }

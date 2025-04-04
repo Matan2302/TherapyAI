@@ -9,7 +9,7 @@ class Patient(Base):
     PatientID = Column(Integer, primary_key=True)
     FullName = Column(String(100))
     DOB = Column(DateTime)
-    ContactInfo = Column(String(255))
+    PatientEmail = Column(String(255))
     MedicalHistory = Column(Text)
     
     # Relationship with sessions

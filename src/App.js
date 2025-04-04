@@ -4,7 +4,7 @@ import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
 import RecordingPage from "./components/RecordingPage";
 import PatientDashboard from "./components/PatientDashboard";
-import TherapistForm from "./components/TherapistForm";
+import PatientForm from "./components/PatientForm";
 import { TherapistProvider } from "./TherapistContext"; // Import the provider
 import Header from "./components/Header"; // Import the Header component
 
@@ -23,7 +23,7 @@ const App = () => {
             <Link to="/login" className="nav-link">Login</Link>
             <Link to="/recording" className="nav-link">Recording</Link>
             <Link to="/dashboard" className="nav-link">Dashboard</Link>
-            <Link to="/therapist-form" className="nav-link">Add Therapist</Link>
+            <Link to="/PatientForm-form" className="nav-link">Add Patient</Link>
           </nav>
 
           {/* Page Content */}
@@ -34,7 +34,7 @@ const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/recording" element={<RecordingPage />} />
               <Route path="/dashboard" element={<PatientDashboard />} />
-              <Route path="/therapist-form" element={<TherapistForm />} />
+              <Route path="/PatientForm-form" element={<PatientForm />} />
             </Routes>
           </div>
         </div>

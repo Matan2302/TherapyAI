@@ -5,6 +5,7 @@ from azure.storage.blob import BlobServiceClient
 import pymssql
 from config import AZURE_BLOB_CONN_STRING, AZURE_BLOB_CONTAINER_NAME
 from config import BLOB_SERVER_NAME, BLOB_USER, BLOB_PASSWORD, BLOB_DATABASE
+from config import DB_SERVER,DB_PASSWORD,DB_DATABASE,DB_USER,BLOB_DATABASE
 
 blob_service_client = BlobServiceClient.from_connection_string(AZURE_BLOB_CONN_STRING)
 
@@ -16,10 +17,10 @@ def upload_to_azure(file_path: str, file_name: str) -> str:
 
 def save_session_to_db(patient_name, therapist_name, session_date, blob_url):
     db_config = {
-        "server": BLOB_SERVER_NAME,
-        "user": BLOB_USER,
-        "password": BLOB_PASSWORD,
-        "database": BLOB_DATABASE,
+        "server": DB_SERVER,
+        "user": DB_USER,
+        "password": DB_PASSWORD,
+        "database": DB_DATABASE,
     }
     conn = pymssql.connect(**db_config)
     cursor = conn.cursor()
