@@ -1,6 +1,8 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Date, Text
 from database import Base
 from sqlalchemy.orm import relationship
+#TODO: Good_Thema and Bad_Thema are Text, but you probably store something like JSON lists? If yes — consider using JSON type or parse when reading.
+#TODO: Either SessionDate or Timestamp is likely redundant. You can merge them or choose one as the official session date.
 
 # Session Model
 class Session(Base):
@@ -14,8 +16,8 @@ class Session(Base):
     BlobURL = Column(String(2083))
     Transcript = Column(Text)
     Timestamp = Column(DateTime)
-    Good_Thema = Column(Text)
-    Bad_Thema = Column(Text)
+    Good_Thema = Column("Good Thema", Text)
+    Bad_Thema = Column("Bad Thema", Text)
     
     # Relationships
     patient = relationship("Patient", back_populates="sessions")

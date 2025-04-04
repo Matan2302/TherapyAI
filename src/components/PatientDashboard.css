@@ -5,8 +5,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(60vh - 80px); /* התאמת גובה לגרף */
+  min-height: 100vh; /* התאמת גובה לגרף */
   text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+
 }
 
 .mood-tracking {
@@ -30,6 +34,111 @@ h3 {
   color: #555;
   font-size: 1.4rem;
 }
+
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+}
+label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+.medical-history-box-wide {
+  width: 100%;
+  max-width: 900px;
+  height: 150px;
+  overflow-y: auto;
+  resize: none;
+  padding: 12px;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.divider {
+  border-bottom: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.p-4 { padding: 1rem; }
+.btn-fetch {
+  background-color: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-fetch:hover {
+  background-color: #2563eb;
+}
+
+.info-row {
+  display: flex;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+  justify-content: center;
+  gap: 1.5rem; /* space between the boxes */
+  margin-bottom: 2rem;
+}
+
+.chart-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.chart-box {
+  flex: 1 1 450px;
+  max-width: 500px;
+  min-width: 320px;
+}
+.section-box {
+  flex: 1 1 300px; /* grow, shrink, min width */
+  max-width: 350px;
+  min-width: 280px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.spinner {
+  border: 6px solid #e5e7eb;
+  border-top: 6px solid #3b82f6; /* blue */
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* Responsive Design */
 @media (max-width: 700px) {
