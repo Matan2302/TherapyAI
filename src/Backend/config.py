@@ -27,4 +27,7 @@ BLOB_DATABASE = os.getenv("BLOB_DATABASE")
 FRONTEND_ORIGINS = os.getenv("FRONTEND_ORIGINS", "http://localhost:3000").split(",")
 
 #Secret key as the user wont needed to show user name and password in every page
-SECRET_KEY = "my_super_secret_therapist_app_key"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+#THis is the hash function 
+ALGORITHM = "HS256"

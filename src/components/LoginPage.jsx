@@ -8,6 +8,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { setTherapistName } = useContext(TherapistContext);
+  const [success, setSuccess] = useState("");
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -35,9 +37,15 @@ const LoginPage = () => {
       // Save therapist ID or name in context/localStorage
       setTherapistName(email); // or use therapist_id
       localStorage.setItem("token", access_token);
-
-      // Redirect to dashboard or home
-      navigate("/dashboard");
+      localStorage.setItem("therapist_id", therapist_id);
+      setSuccess("Login successful!");
+      console.log(localStorage.getItem("token"));
+      setError(""); // clear error if there was one
+      // Redirect to home
+      
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);// 2 seconds delay for success message
 
     } catch (err) {
       setError(err.message);
@@ -71,6 +79,9 @@ const LoginPage = () => {
         </div>
 
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
+        
+
 
         <button type="submit" className="btn">Login</button>
       </form>
