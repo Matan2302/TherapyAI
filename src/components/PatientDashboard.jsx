@@ -63,7 +63,7 @@ const PatientDashboard = () => {
   const token = localStorage.getItem("token");
   
     try {
-      const res = await fetch(`http://localhost:8000/patients/dashboard-data?patient_email=${email}`, {
+      const res = await fetch(`http://localhost:8000/patientsdb/dashboard-data?patient_email=${email}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

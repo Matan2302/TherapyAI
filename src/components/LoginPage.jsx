@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { TherapistContext } from "../TherapistContext";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState(""); // changed from "username"
@@ -11,6 +12,9 @@ const LoginPage = () => {
   const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
+  <p className="redirect-link">
+    Not registered yet? <Link to="/register">Sign up here</Link>
+  </p>
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +48,7 @@ const LoginPage = () => {
       // Redirect to home
       
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 2000);// 2 seconds delay for success message
 
     } catch (err) {
@@ -84,8 +88,15 @@ const LoginPage = () => {
 
 
         <button type="submit" className="btn">Login</button>
+        <p>
+          Not registered yet?{" "}
+          <a href="/register" style={{ color: "blue", textDecoration: "underline" }}>
+            Create an account
+          </a>
+        </p>
       </form>
     </div>
+    
   );
 };
 
