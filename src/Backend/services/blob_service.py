@@ -15,7 +15,7 @@ def upload_to_azure(file_path: str, file_name: str) -> str:
         blob_client.upload_blob(data, overwrite=True)
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_BLOB_CONTAINER_NAME}/{file_name}"
 
-def save_session_to_db(patient_name, therapist_name, session_date, blob_url):
+def save_session_to_db(patient_name, therapist_name, session_date, blob_url,notes):
     db_config = {
         "server": DB_SERVER,
         "user": DB_USER,
@@ -24,7 +24,7 @@ def save_session_to_db(patient_name, therapist_name, session_date, blob_url):
     }
     conn = pymssql.connect(**db_config)
     cursor = conn.cursor()
-    query = """INSERT INTO dbo.Sessions (PatientID, TherapistID, SessionDate, BlobURL, Timestamp) VALUES (%s, %s, %s, %s, %s)"""
-    cursor.execute(query, (1, 1, session_date, blob_url, datetime.now()))
+    query = """INSERT INTO dbo.Sessions (PatientID, TherapistID, SessionDate, BlobURL, Timestamp, SessionNotes ,Good_Thema, Bad_Thema) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    cursor.execute(query, (1, 1, session_date, blob_url, datetime.now(), notes, "[2,7,8]", "[7,3,0]"))  # TODO: Replace with actual PatientID and TherapistID
     conn.commit()
     conn.close()

@@ -14,7 +14,9 @@ async def upload_audio(
     file: UploadFile = File(...),
     patient_name: str = Form(...),
     therapist_name: str = Form(...),
-    session_date: str = Form(...)
+    session_date: str = Form(...),
+    notes: str = Form(...),
+
 ):
     # Save file locally
     file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -29,6 +31,6 @@ async def upload_audio(
     os.remove(file_path)
 
     # Save metadata to DB
-    save_session_to_db(patient_name, therapist_name, session_date, audio_url)
+    save_session_to_db(patient_name, therapist_name, session_date, audio_url,notes)
 
     return {"status": "uploaded", "url": audio_url}
