@@ -34,10 +34,10 @@ def get_patient_dashboard_data(
         raise HTTPException(status_code=404, detail="Patient not found please check the email or add patient to the system")
 
     last_session = (
-        db.query(SessionModel)
-        .filter(SessionModel.PatientID == patient.PatientID)
-        .order_by(SessionModel.SessionDate.desc())
-        .first()
+    db.query(SessionModel)
+    .filter(SessionModel.PatientID == patient.PatientID)
+    .order_by(SessionModel.Timestamp.desc())
+    .first()
     )
 
     total_sessions = (

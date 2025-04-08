@@ -91,11 +91,10 @@ const RecordingPage = () => {
     formData.append("patient_name", patientName);
     formData.append("therapist_name", therapistName);
     formData.append("session_date", sessionDate);
-    formData.append("session_notes", sessionNotes);
-
+    formData.append("notes", sessionNotes);
     try {
       setUploadStatus("Uploading...");
-      const response = await fetch("http://127.0.0.1:8000/audio/upload-audio", {
+      const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
         body: formData,
       });

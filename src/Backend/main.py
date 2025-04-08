@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes import audio_upload
 from routes import auth
 from routes import patient_routes
-
-
+from routes import patients
+import uvicorn
 # Import route files (we'll create these later)
 from routes import audio_upload
 from routes import auth
@@ -35,7 +35,6 @@ app.include_router(patients.router, prefix="/patientsdb", tags=["Patients"])
 app.include_router(patient_routes.router, prefix="/patients", tags=["Patients"])
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run("src.Backend.main:app", host="0.0.0.0", port=8000, reload=False)
 
 
