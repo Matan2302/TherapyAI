@@ -22,9 +22,11 @@ def save_session_to_db(patient_name, therapist_name, session_date, blob_url,note
         "password": DB_PASSWORD,
         "database": DB_DATABASE,
     }
+    print(f"Received: {patient_name}, {therapist_name}, {session_date}, {notes}, {blob_url}")
+
     conn = pymssql.connect(**db_config)
     cursor = conn.cursor()
-    query = """INSERT INTO dbo.Sessions (PatientID, TherapistID, SessionDate, BlobURL, Timestamp, SessionNotes ,Good_Thema, Bad_Thema) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    query = """INSERT INTO dbo.Sessions (PatientID, TherapistID, SessionDate, BlobURL, Timestamp, SessionNotes ,[Good Thema], [Bad Thema]) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
     cursor.execute(query, (1, 1, session_date, blob_url, datetime.now(), notes, "[2,7,8]", "[7,3,0]"))  # TODO: Replace with actual PatientID and TherapistID
     conn.commit()
     conn.close()
