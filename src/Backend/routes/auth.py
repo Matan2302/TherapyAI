@@ -4,7 +4,7 @@ from models.TherapistLogin import TherapistLogin
 from models.Therapist import Therapist
 from schemas.TherapistLogin import TherapistLoginRequest, TherapistLoginResponse
 from schemas.TherapistRegister import TherapistRegisterRequest
-from database import SessionLocal
+from src.Backend.database import SessionLocal
 import hashlib
 import jwt
 

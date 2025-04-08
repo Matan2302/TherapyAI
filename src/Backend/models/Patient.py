@@ -1,5 +1,5 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Date, Text
-from database import Base
+from src.Backend.database import Base
 from sqlalchemy.orm import relationship
 # TODO: Add patient email in the SQL DB
 # TODO: DOB should probably be Date instead of DateTime, unless you're storing birth time too.

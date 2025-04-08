@@ -1,16 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import audio_upload
-from routes import auth
-from routes import patient_routes
+from src.Backend.routes import audio_upload
+from src.Backend.routes import auth
+from src.Backend.routes import patient_routes
 
 
 # Import route files (we'll create these later)
-from routes import audio_upload
-from routes import auth
+from src.Backend.routes import audio_upload
+from src.Backend.routes import auth
 
-from routes import patients
-from routes import patient_routes
+from src.Backend.routes import patients
+from src.Backend.routes import patient_routes
 
 
 app = FastAPI()
