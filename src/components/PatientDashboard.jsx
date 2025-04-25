@@ -17,8 +17,8 @@ import "./PatientDashboard.css";
 
 
 
-const calculateAge = (dob) => {
-  const birthDate = new Date(dob);
+const calculateAge = (DateOfBirth) => {
+  const birthDate = new Date(DateOfBirth);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
@@ -199,7 +199,7 @@ const PatientDashboard = () => {
                 <label className="block font-medium">Age:</label>
                 <input
                   type="text"
-                  value={calculateAge(patientData?.dob)}
+                  value={calculateAge(patientData?.DateOfBirth)}
                   readOnly
                   className="input"
                 />
@@ -242,11 +242,11 @@ const PatientDashboard = () => {
               </div>
               <div className="mb-2 mt-4">
                 <label className="block font-medium">
-                  Last Session Therapist Contact Info:
+                  Last Session Therapist Patient Email:
                 </label>
                 <input
                   type="text"
-                  value={patientData?.lastTherapistContactInfo}
+                  value={patientData?.lastTherapistPatientEmail}
                   readOnly
                   className="input"
                 />

@@ -5,7 +5,7 @@ import "./RegistrationPage.css"; // אם יש לך עיצוב
 const RegistrationPage = () => {
   const [fullName, setFullName] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [contactInfo, setContactInfo] = useState("");
+  const [PatientEmail, setPatientEmail] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ const RegistrationPage = () => {
         body: JSON.stringify({
           full_name: fullName,
           specialization,
-          contact_info: contactInfo,
+          contact_info: PatientEmail,
           email,
           password,
         }),
@@ -74,12 +74,12 @@ const RegistrationPage = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="contactInfo">Contact Info</label>
+          <label htmlFor="PatientEmail">Patient Email</label>
           <input
             type="text"
-            id="contactInfo"
-            value={contactInfo}
-            onChange={(e) => setContactInfo(e.target.value)}
+            id="PatientEmail"
+            value={PatientEmail}
+            onChange={(e) => setPatientEmail(e.target.value)}
             required
           />
         </div>

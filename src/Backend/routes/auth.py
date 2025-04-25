@@ -79,7 +79,7 @@ def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
     new_therapist = Therapist(
         FullName=data.full_name,
         Specialization=data.specialization,
-        ContactInfo=data.contact_info
+        PatientEmail=data.contact_info
     )
     db.add(new_therapist)
     db.commit()

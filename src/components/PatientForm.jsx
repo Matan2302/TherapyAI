@@ -4,8 +4,8 @@ import "./PatientForm.css";
 
 const PatientForm = () => {
   const [fullName, setFullName] = useState("");
-  const [dob, setDob] = useState("");
-  const [contactInfo, setContactInfo] = useState("");
+  const [DateOfBirth, setDateOfBirth] = useState("");
+  const [PatientEmail, setPatientEmail] = useState("");
   const [medicalHistory, setMedicalHistory] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -16,16 +16,16 @@ const PatientForm = () => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/patients/add", {
         full_name: fullName,
-        dob: dob,
-        contact_info: contactInfo,
+        DateOfBirth: DateOfBirth,
+        contact_info: PatientEmail,
         medical_history: medicalHistory,
       });
 
       setSuccessMessage(response.data.message || "Patient added successfully.");
       setErrorMessage("");
       setFullName("");
-      setDob("");
-      setContactInfo("");
+      setDateOfBirth("");
+      setPatientEmail("");
       setMedicalHistory("");
     } catch (error) {
       setErrorMessage("Failed to add patient: " + (error.response?.data?.detail || "Unknown error"));
@@ -59,23 +59,23 @@ const PatientForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="dob">Date of Birth</label>
+            <label htmlFor="DateOfBirth">Date of Birth</label>
             <input
               type="date"
-              id="dob"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              id="DateOfBirth"
+              value={DateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="contact-info">Contact Info</label>
+            <label htmlFor="contact-info">Patient Email</label>
             <input
               type="text"
               id="contact-info"
-              value={contactInfo}
-              onChange={(e) => setContactInfo(e.target.value)}
+              value={PatientEmail}
+              onChange={(e) => setPatientEmail(e.target.value)}
               required
             />
           </div>
