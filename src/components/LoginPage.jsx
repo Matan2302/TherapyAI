@@ -42,6 +42,7 @@ const LoginPage = () => {
       setTherapistName(email); // or use therapist_id
       localStorage.setItem("token", access_token);
       localStorage.setItem("therapist_id", therapist_id);
+      
       setSuccess("Login successful!");
       console.log(localStorage.getItem("token"));
       setError(""); // clear error if there was one

@@ -8,12 +8,23 @@ import PatientForm from "./components/PatientForm";
 import { TherapistProvider } from "./TherapistContext";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
+import backgroundImage from "./assets/background_spanishHouseLogo.png"; // רקע
 
 const App = () => {
   return (
     <TherapistProvider>
       <Router>
-        <div className="app-container">
+        <div
+          className="app-container"
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+            minHeight: "100vh"
+          }}
+        >
           <Header />
 
           <div className="content">
@@ -52,12 +63,14 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/home"
-               element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-                } />
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
@@ -66,11 +79,12 @@ const App = () => {
   );
 };
 
+// ✅ דף הבית עם עיצוב glass-card
 const HomePage = () => (
   <div className="home-page">
-    <div className="hero-content">
-      <h1>Welcome to TherapyAI</h1>
-      <p>Manage your sessions with ease and help patients efficiently.</p>
+    <div className="glass-card center-card">
+      <h1 className="hero-title">Welcome to TherapyAI</h1>
+      <p className="hero-subtitle">Manage your sessions with ease and help patients efficiently.</p>
     </div>
   </div>
 );

@@ -9,6 +9,8 @@ const RegistrationPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -28,15 +30,18 @@ const RegistrationPage = () => {
           email,
           password,
         }),
+        
       });
 
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.detail || "Registration failed");
       }
-
       // הרשמה הצליחה – הפנייה להתחברות
-      navigate("/login");
+      setSuccess("Registration successful!");
+      setTimeout(() => navigate("/login"), 2000);
+      
+      
     } catch (err) {
       setError(err.message);
     }
@@ -102,6 +107,8 @@ const RegistrationPage = () => {
         </div>
 
         {error && <p className="error">{error}</p>}
+        {success && <p className="success-message">{success}</p>}
+
 
         <button type="submit" className="btn">
           Register

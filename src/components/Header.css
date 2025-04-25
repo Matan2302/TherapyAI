@@ -48,3 +48,15 @@
 .logout-btn:hover {
   background-color: #c82333;
 }
+.therapist-info {
+  margin-left: auto;
+  margin-right: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.15);
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}

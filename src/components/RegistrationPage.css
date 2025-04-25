@@ -59,5 +59,12 @@
     .btn {
       font-size: 1rem;
     }
+    
+    
+  }
+  .success-message {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
   }
   
