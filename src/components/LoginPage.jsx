@@ -36,12 +36,13 @@ const LoginPage = () => {
       }
 
       const data = await res.json();
-      const { therapist_id, access_token } = data;
+      const { therapist_id, access_token,full_name } = data;
 
       // Save therapist ID or name in context/localStorage
       setTherapistName(email); // or use therapist_id
       localStorage.setItem("token", access_token);
       localStorage.setItem("therapist_id", therapist_id);
+      localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
       
       setSuccess("Login successful!");
       console.log(localStorage.getItem("token"));

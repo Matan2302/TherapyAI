@@ -10,7 +10,7 @@ class Therapist(Base):
     TherapistID = Column(Integer, primary_key=True)
     FullName = Column(String(100))
     Specialization = Column(String(100))
-    PatientEmail = Column(String(255))
+    ContactInfo = Column(String(255))
     
     # Relationship with sessions
     sessions = relationship("Session", back_populates="therapist")
