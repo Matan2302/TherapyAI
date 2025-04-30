@@ -152,8 +152,8 @@ def save_session_to_db(
     cur.execute(
         sql,
         (
-            1,                       # PatientID placeholder
-            1,                       # TherapistID placeholder
+            patient_name,                       # PatientID placeholder
+            therapist_name,                       # TherapistID placeholder
             session_date,
             notes,
             blob_url,
