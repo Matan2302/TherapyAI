@@ -4,6 +4,8 @@ from routes import audio_upload
 from routes import auth
 from routes import patient_routes
 from routes import patients
+from routes import transcription
+
 import uvicorn
 # Import route files (we'll create these later)
 from routes import audio_upload
@@ -31,8 +33,10 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(audio_upload.router, prefix="/audio", tags=["Audio Upload"])
 
 app.include_router(patients.router, prefix="/patientsdb", tags=["Patients"])
-
 app.include_router(patient_routes.router, prefix="/patients", tags=["Patients"])
+
+app.include_router(transcription.router, prefix="/transcription", tags=["Transcription"])
+
 
 if __name__ == "__main__":
     uvicorn.run("src.Backend.main:app", host="0.0.0.0", port=8000, reload=False)
