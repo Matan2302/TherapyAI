@@ -21,7 +21,7 @@ from services.blob_service import (
 from services.azure_transcription import transcribe_dialog
 
 # ─── router setup ───────────────────────────────────────────────────────────
-router = APIRouter(prefix="/audio", tags=["Audio"])
+router = APIRouter( tags=["Audio"])
 
 UPLOAD_DIR = "recordings"         # local temp folder
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -57,11 +57,14 @@ async def upload_audio(
         # ------------------------------------------------------------------
         audio_url = upload_to_azure(local_path, file.filename)
 
+
         # ------------------------------------------------------------------
         # 3.  Build SAS URL and transcribe
         # ------------------------------------------------------------------
         sas_url = create_sas_url(file.filename, minutes=120)
+        print(sas_url)
         _, transcript_url = transcribe_dialog(sas_url, locale="he-IL")
+        print(transcript_url)
 
     except Exception as exc:
         raise HTTPException(
