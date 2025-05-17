@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from services.token_service import verify_token
-from database import SessionLocal
+from src.Backend.database import SessionLocal
 from models import Patient, Session as SessionModel, Therapist,TherapistLogin
 from schemas.patient_data import PatientDataResponse
 from fastapi import Query
