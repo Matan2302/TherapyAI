@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "./Header.css";
 
 const Header = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const isAuthenticated = !!localStorage.getItem("token");
   const therapistName = localStorage.getItem("therapist_name");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -27,7 +27,7 @@ const Header = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("therapist_id");
     localStorage.removeItem("therapist_name");
-    navigate("/login");
+    history.push("/login");
   };
 
   useEffect(() => {

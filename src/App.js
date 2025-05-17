@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
 import RecordingPage from "./components/RecordingPage";
@@ -28,50 +28,51 @@ const App = () => {
           <Header />
 
           <div className="content">
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegistrationPage />} />
+            <Switch>
+              <Route path="/login" component={LoginPage} />
+              <Route path="/register" component={RegistrationPage} />
               <Route
+                exact
                 path="/"
-                element={
+                render={() => (
                   <ProtectedRoute>
                     <LoginPage />
                   </ProtectedRoute>
-                }
+                )}
               />
               <Route
                 path="/recording"
-                element={
+                render={() => (
                   <ProtectedRoute>
                     <RecordingPage />
                   </ProtectedRoute>
-                }
+                )}
               />
               <Route
                 path="/dashboard"
-                element={
+                render={() => (
                   <ProtectedRoute>
                     <PatientDashboard />
                   </ProtectedRoute>
-                }
+                )}
               />
               <Route
                 path="/PatientForm-form"
-                element={
+                render={() => (
                   <ProtectedRoute>
                     <PatientForm />
                   </ProtectedRoute>
-                }
+                )}
               />
               <Route
                 path="/home"
-                element={
+                render={() => (
                   <ProtectedRoute>
                     <HomePage />
                   </ProtectedRoute>
-                }
+                )}
               />
-            </Routes>
+            </Switch>
           </div>
         </div>
       </Router>

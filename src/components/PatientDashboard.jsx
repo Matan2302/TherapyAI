@@ -12,7 +12,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./PatientDashboard.css";
 
 
@@ -30,7 +30,7 @@ const calculateAge = (DateOfBirth) => {
 
 const PatientDashboard = () => {
   console.log("📦 PatientDashboard component mounted");
-  const navigate = useNavigate();
+  const history = useHistory();
   //const [authError, setAuthError] = useState(false);
   const [inputEmail, setInputEmail] = useState("");
   const [showData, setShowData] = useState(false);

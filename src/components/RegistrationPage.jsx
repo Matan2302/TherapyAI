@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./RegistrationPage.css"; // אם יש לך עיצוב
 
 const RegistrationPage = () => {
@@ -11,8 +11,7 @@ const RegistrationPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +29,6 @@ const RegistrationPage = () => {
           email,
           password,
         }),
-        
       });
 
       if (!res.ok) {
@@ -39,9 +37,7 @@ const RegistrationPage = () => {
       }
       // הרשמה הצליחה – הפנייה להתחברות
       setSuccess("Registration successful!");
-      setTimeout(() => navigate("/login"), 2000);
-      
-      
+      setTimeout(() => history.push("/login"), 2000);
     } catch (err) {
       setError(err.message);
     }
@@ -108,7 +104,6 @@ const RegistrationPage = () => {
 
         {error && <p className="error">{error}</p>}
         {success && <p className="success-message">{success}</p>}
-
 
         <button type="submit" className="btn">
           Register

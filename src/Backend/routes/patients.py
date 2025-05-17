@@ -24,6 +24,7 @@ def get_patient_dashboard_data(
     db: Session = Depends(get_db),
     patient_email: str = Query(...)
 ):
+    therapist_email = ""  # Default value
     print(f"Patient email received: {patient_email}")
     # Step 1: verify token and extract payload
     
@@ -52,6 +53,7 @@ def get_patient_dashboard_data(
     therapist_contact = ""
     session_date = ""
     session_notes = ""
+    therapist_email = None  #as a default value,since we dont have it from the first place
 
     if last_session:
         try:

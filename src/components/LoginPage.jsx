@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { TherapistContext } from "../TherapistContext";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./LoginPage.css";
 import { Link } from "react-router-dom";
 
@@ -11,10 +11,7 @@ const LoginPage = () => {
   const { setTherapistName } = useContext(TherapistContext);
   const [success, setSuccess] = useState("");
 
-  const navigate = useNavigate();
-  <p className="redirect-link">
-    Not registered yet? <Link to="/register">Sign up here</Link>
-  </p>
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +47,7 @@ const LoginPage = () => {
       // Redirect to home
       
       setTimeout(() => {
-        navigate("/home");
+        history.push("/home");
       }, 2000);// 2 seconds delay for success message
 
     } catch (err) {
