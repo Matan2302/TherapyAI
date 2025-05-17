@@ -24,7 +24,7 @@ BLOB_DATABASE = os.getenv("BLOB_DATABASE")
 #AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION")
 
 # CORS - allow frontend to connect
-FRONTEND_ORIGINS = os.getenv("FRONTEND_ORIGINS", "http://localhost:80").split(",")
+FRONTEND_ORIGINS = os.getenv("FRONTEND_ORIGINS", "http://localhost:3000").split(",")
 
 #Secret key as the user wont needed to show user name and password in every page
 SECRET_KEY = os.getenv("SECRET_KEY")

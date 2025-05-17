@@ -8,4 +8,4 @@ from .TherapistPatient import TherapistPatient
 from .TherapistLogin import TherapistLogin  # assuming you have this model too
 from .TherapistPatient import TherapistPatient  # assuming you have this model too
 
-#TODO: model thesrc.Backend.database and add the relationships between the models
+#TODO: model the database and add the relationships between the models
