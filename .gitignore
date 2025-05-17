@@ -10,6 +10,7 @@ __pycache__/
 *.pyc
 # production
 /build
+ **/__pycache__/
 # misc
 .DS_Store
 .env.local
