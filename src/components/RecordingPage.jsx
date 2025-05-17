@@ -11,6 +11,7 @@ const RecordingPage = () => {
   const [backgroundColor, setBackgroundColor] = useState("blue"); // Default background color
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const [sessionNotes, setSessionNotes] = useState("");
 
   // Form State
   const [patientName, setPatientName] = useState("");
@@ -90,10 +91,10 @@ const RecordingPage = () => {
     formData.append("patient_name", patientName);
     formData.append("therapist_name", therapistName);
     formData.append("session_date", sessionDate);
-
+    formData.append("notes", sessionNotes);
     try {
       setUploadStatus("Uploading...");
-      const response = await fetch("http://127.0.0.1:8000/audio/upload-audio", {
+      const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
         body: formData,
       });
@@ -141,6 +142,15 @@ const RecordingPage = () => {
             readOnly
             placeholder="Therapist Name"
           />
+        </div>
+        <div className="form-group">
+        <label>Session Notes</label>
+        <textarea
+          value={sessionNotes}
+          onChange={(e) => setSessionNotes(e.target.value)}
+          placeholder="Write session notes here..."
+          rows={6}
+        />
         </div>
         <div className="consent-section">
           <span>Please obtain patient consent before starting!</span>

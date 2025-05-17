@@ -23,7 +23,7 @@ def add_patient(data: PatientCreateRequest, db: Session = Depends(get_db)):
 
     new_patient = Patient(
         FullName=data.full_name,
-        DOB=data.dob,
+        DateOfBirth=data.DateOfBirth,
         PatientEmail=data.contact_info,
         MedicalHistory=data.medical_history
     )

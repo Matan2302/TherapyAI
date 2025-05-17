@@ -16,8 +16,8 @@ class Session(Base):
     BlobURL = Column(String(2083))
     Transcript = Column(Text)
     Timestamp = Column(DateTime)
-    Good_Thema = Column("Good Thema", Text)
-    Bad_Thema = Column("Bad Thema", Text)
+    # Good_Thema = Column("Good Thema", Text)
+    # Bad_Thema = Column("Bad Thema", Text)
     
     # Relationships
     patient = relationship("Patient", back_populates="sessions")

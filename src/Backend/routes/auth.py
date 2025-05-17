@@ -49,11 +49,18 @@ def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
     "exp": datetime.utcnow() + timedelta(minutes=30)  # תוקף של 30 דקות
     }
     access_token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
+        # 🔥 כאן נשלוף את השם המלא
+    therapist_details = db.query(Therapist).filter(Therapist.TherapistID == therapist.id).first()
+
+    if not therapist_details:
+        raise HTTPException(status_code=404, detail="Therapist details not found")
+
     
 
     return TherapistLoginResponse(
         therapist_id=therapist.id,
         access_token=access_token,
+        full_name=therapist_details.FullName,
         token_type="bearer"
     )
 

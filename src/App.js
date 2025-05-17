@@ -1,40 +1,76 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
 import RecordingPage from "./components/RecordingPage";
 import PatientDashboard from "./components/PatientDashboard";
 import PatientForm from "./components/PatientForm";
-import { TherapistProvider } from "./TherapistContext"; // Import the provider
-import Header from "./components/Header"; // Import the Header component
+import { TherapistProvider } from "./TherapistContext";
+import Header from "./components/Header";
+import ProtectedRoute from "./components/ProtectedRoute";
+import backgroundImage from "./assets/background_spanishHouseLogo.png"; // רקע
 
 const App = () => {
   return (
     <TherapistProvider>
       <Router>
-        <div className="app-container">
-          {/* Header (Therapist's name) */}
+        <div
+          className="app-container"
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+            minHeight: "100vh"
+          }}
+        >
           <Header />
 
-          {/* Navigation Bar */}
-          <nav className="navbar">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/register" className="nav-link">Register</Link>
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/recording" className="nav-link">Recording</Link>
-            <Link to="/dashboard" className="nav-link">Dashboard</Link>
-            <Link to="/PatientForm-form" className="nav-link">Add Patient</Link>
-          </nav>
-
-          {/* Page Content */}
           <div className="content">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/register" element={<RegistrationPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/recording" element={<RecordingPage />} />
-              <Route path="/dashboard" element={<PatientDashboard />} />
-              <Route path="/PatientForm-form" element={<PatientForm />} />
+              <Route path="/register" element={<RegistrationPage />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <LoginPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recording"
+                element={
+                  <ProtectedRoute>
+                    <RecordingPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <PatientDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/PatientForm-form"
+                element={
+                  <ProtectedRoute>
+                    <PatientForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
@@ -43,18 +79,14 @@ const App = () => {
   );
 };
 
-// Home Page Component
+// ✅ דף הבית עם עיצוב glass-card
 const HomePage = () => (
   <div className="home-page">
-    <div className="hero-content">
-      <h1>Welcome to TherapyAI</h1>
-      <p>Manage your sessions with ease and help patients efficiently.</p>
+    <div className="glass-card center-card">
+      <h1 className="hero-title">Welcome to TherapyAI</h1>
+      <p className="hero-subtitle">Manage your sessions with ease and help patients efficiently.</p>
     </div>
   </div>
 );
 
-
-
-
 export default App;
-

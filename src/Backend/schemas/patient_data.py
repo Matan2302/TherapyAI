@@ -4,13 +4,13 @@ from typing import List
 class PatientDataResponse(BaseModel):
     email: str
     fullName: str
-    dob: str
+    DateOfBirth: str
     medicalHistory: str
     goodThema: List[int]
     badThema: List[int]
     lastTherapist: str
     lastTherapistEmail: str
-    lastTherapistContactInfo: str
+    lastTherapistPatientEmail: str
     lastSessionDate: str
     lastSessionNotes: str
     totalSessionsDone: int

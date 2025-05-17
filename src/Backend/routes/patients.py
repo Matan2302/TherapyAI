@@ -34,10 +34,10 @@ def get_patient_dashboard_data(
         raise HTTPException(status_code=404, detail="Patient not found please check the email or add patient to the system")
 
     last_session = (
-        db.query(SessionModel)
-        .filter(SessionModel.PatientID == patient.PatientID)
-        .order_by(SessionModel.SessionDate.desc())
-        .first()
+    db.query(SessionModel)
+    .filter(SessionModel.PatientID == patient.PatientID)
+    .order_by(SessionModel.Timestamp.desc())
+    .first()
     )
 
     total_sessions = (
@@ -67,7 +67,7 @@ def get_patient_dashboard_data(
         therapist = db.query(Therapist).filter(Therapist.TherapistID == last_session.TherapistID).first()
         if therapist:
             therapist_name = therapist.FullName
-            therapist_contact = therapist.ContactInfo
+            therapist_contact = therapist.PatientEmail
             therapist_login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist.TherapistID).first()
             therapist_email = therapist_login.email if therapist_login else "unknown"
 
@@ -75,13 +75,13 @@ def get_patient_dashboard_data(
     return {
         "email": patient.PatientEmail,
         "fullName": patient.FullName,
-        "dob": patient.DOB.strftime("%Y-%m-%d"),
+        "DateOfBirth": patient.DateOfBirth.strftime("%Y-%m-%d"),
         "medicalHistory": patient.MedicalHistory,
         "goodThema": good,
         "badThema": bad,
         "lastTherapist": therapist_name,
         "lastTherapistEmail": therapist_email,  # You can link with TherapistLogin later
-        "lastTherapistContactInfo": therapist_contact,
+        "lastTherapistPatientEmail": therapist_contact,
         "lastSessionDate": session_date,
         "lastSessionNotes": session_notes,
         "totalSessionsDone": total_sessions

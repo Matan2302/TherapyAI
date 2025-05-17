@@ -5,10 +5,12 @@ import "./RegistrationPage.css"; // אם יש לך עיצוב
 const RegistrationPage = () => {
   const [fullName, setFullName] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [contactInfo, setContactInfo] = useState("");
+  const [Contactinfo, setContactinfo] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -24,19 +26,22 @@ const RegistrationPage = () => {
         body: JSON.stringify({
           full_name: fullName,
           specialization,
-          contact_info: contactInfo,
+          contact_info: Contactinfo,
           email,
           password,
         }),
+        
       });
 
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.detail || "Registration failed");
       }
-
       // הרשמה הצליחה – הפנייה להתחברות
-      navigate("/login");
+      setSuccess("Registration successful!");
+      setTimeout(() => navigate("/login"), 2000);
+      
+      
     } catch (err) {
       setError(err.message);
     }
@@ -69,12 +74,12 @@ const RegistrationPage = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="contactInfo">Contact Info</label>
+          <label htmlFor="Contactinfo">Contact info</label>
           <input
             type="text"
-            id="contactInfo"
-            value={contactInfo}
-            onChange={(e) => setContactInfo(e.target.value)}
+            id="Contactinfo"
+            value={Contactinfo}
+            onChange={(e) => setContactinfo(e.target.value)}
             required
           />
         </div>
@@ -102,6 +107,8 @@ const RegistrationPage = () => {
         </div>
 
         {error && <p className="error">{error}</p>}
+        {success && <p className="success-message">{success}</p>}
+
 
         <button type="submit" className="btn">
           Register
