@@ -6,8 +6,7 @@
 .pnp.js
 # testing
 /coverage
-__pycache__/
-*.pyc
+
 # production
 /build
  **/__pycache__/
@@ -25,43 +24,3 @@ yarn-error.log*
 venv/
 .env
 __pycache__/
-
-# Environment variables
-.env
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Node
-node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
-Thumbs.db

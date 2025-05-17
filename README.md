@@ -1,52 +1,44 @@
-# TherapyAI - Multi-Container App
+# Getting Started with Create React App
 
-This project is structured as a modern web application with separate frontend and backend services, orchestrated using Docker Compose for easy development and deployment.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Project Structure
+## Available Scripts
 
-- **/src/Backend/**: Python backend (API server)
-- **Frontend (root directory)**: React frontend (bootstrapped with Create React App)
-- **/docker/**: Contains service-specific Dockerfiles
-- **docker-compose.yml**: Defines and runs multi-container Docker applications
+In the project directory, you can run:
 
-## Docker & Docker Compose
+### `npm start`
 
-### Running the App (Recommended)
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-To start both the backend and frontend using Docker Compose:
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-```sh
-docker-compose up --build
-```
+### `npm test`
 
-- The backend will be available at [http://localhost:8000](http://localhost:8000)
-- The frontend will be available at [http://localhost](http://localhost)
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Dockerfiles Explained
-- **Dockerfile** (root): Legacy/general backend image, not used by default in Compose (see below).
-- **docker/backend.Dockerfile**: Used by Compose to build the backend (Python API) container.
-- **docker/frontend.Dockerfile**: Used by Compose to build the frontend (React + Nginx) container.
+### `npm run build`
 
-## Development Scripts (Frontend Only)
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-You can still use the standard Create React App scripts for local frontend development:
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-- `npm start`: Run the React frontend in development mode
-- `npm test`: Launch the test runner
-- `npm run build`: Build the frontend for production
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Environment Variables
-- Backend: Configure in `.env` at the project root
-- Frontend: Set `REACT_APP_API_URL` in Compose or as an environment variable
+### `npm run eject`
 
-## Notes
-- Use `docker-compose` for full-stack development and deployment.
-- The backend and frontend are decoupled and can be developed independently.
-- For custom setups, refer to the Dockerfiles and `docker-compose.yml` for build details.
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
----
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-For more detailed commands or troubleshooting, see the comments in each Dockerfile and the Compose file.
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).

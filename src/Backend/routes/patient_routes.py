@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from src.Backend.database import SessionLocal
+from database import SessionLocal
 from models import Patient  # מוודאים שיש מודל Patient בקובץ models.py
 from schemas.patient import PatientCreateRequest
 

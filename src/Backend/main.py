@@ -1,24 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
-from src.Backend.routes import audio_upload
-from src.Backend.routes import auth
-from src.Backend.routes import patient_routes
-=======
 from routes import audio_upload
 from routes import auth
 from routes import patient_routes
 from routes import patients
 from routes import transcription
->>>>>>> main
 
 import uvicorn
 # Import route files (we'll create these later)
-from src.Backend.routes import audio_upload
-from src.Backend.routes import auth
+from routes import audio_upload
+from routes import auth
 
-from src.Backend.routes import patients
-from src.Backend.routes import patient_routes
+from routes import patients
+from routes import patient_routes
 
 
 app = FastAPI()
@@ -26,12 +20,7 @@ app = FastAPI()
 # Allow frontend (React) to talk to backend (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost",
-        "http://localhost:80",
-        "http://127.0.0.1",
-        "http://127.0.0.1:80"
-    ],
+    allow_origins=["http://localhost:3000"],  # change if deployed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
