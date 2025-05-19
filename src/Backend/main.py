@@ -1,16 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
 from src.Backend.routes import audio_upload
 from src.Backend.routes import auth
 from src.Backend.routes import patient_routes
-=======
 from routes import audio_upload
 from routes import auth
 from routes import patient_routes
 from routes import patients
 from routes import transcription
->>>>>>> main
 
 import uvicorn
 # Import route files (we'll create these later)
