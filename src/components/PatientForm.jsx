@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./PatientForm.css";
+import { useTranslation } from "react-i18next";
 
 const PatientForm = () => {
+  const { t } = useTranslation("patientForm");
+
   const [fullName, setFullName] = useState("");
   const [DateOfBirth, setDateOfBirth] = useState("");
   const [PatientEmail, setPatientEmail] = useState("");
@@ -21,34 +24,30 @@ const PatientForm = () => {
         medical_history: medicalHistory,
       });
 
-      setSuccessMessage(response.data.message || "Patient added successfully.");
+      setSuccessMessage(response.data.message || t("success_default_message"));
       setErrorMessage("");
       setFullName("");
       setDateOfBirth("");
       setPatientEmail("");
       setMedicalHistory("");
     } catch (error) {
-      setErrorMessage("Failed to add patient: " + (error.response?.data?.detail || "Unknown error"));
+      setErrorMessage(
+        `${t("error_default_message")}: ${error.response?.data?.detail || t("error_default_message")}`
+      );
       setSuccessMessage("");
     }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh"
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
       <div className="glass-card">
-        <h2>Add Patient</h2>
+        <h2>{t("add_patient_title")}</h2>
         {successMessage && <p className="success-message">{successMessage}</p>}
         {errorMessage && <p className="error-message">{errorMessage}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="full-name">Full Name</label>
+            <label htmlFor="full-name">{t("full_name_label")}</label>
             <input
               type="text"
               id="full-name"
@@ -59,7 +58,7 @@ const PatientForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="DateOfBirth">Date of Birth</label>
+            <label htmlFor="DateOfBirth">{t("date_of_birth_label")}</label>
             <input
               type="date"
               id="DateOfBirth"
@@ -70,7 +69,7 @@ const PatientForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="contact-info">Patient Email</label>
+            <label htmlFor="contact-info">{t("patient_email_label")}</label>
             <input
               type="text"
               id="contact-info"
@@ -81,7 +80,7 @@ const PatientForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="medical-history">Medical History</label>
+            <label htmlFor="medical-history">{t("medical_history_label")}</label>
             <textarea
               id="medical-history"
               value={medicalHistory}
@@ -92,7 +91,7 @@ const PatientForm = () => {
           </div>
 
           <button type="submit" className="btn-submit">
-            Add Patient
+            {t("add_patient_button")}
           </button>
         </form>
       </div>

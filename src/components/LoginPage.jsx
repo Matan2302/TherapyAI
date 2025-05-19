@@ -3,21 +3,40 @@ import { TherapistContext } from "../TherapistContext";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState(""); // changed from "username"
+  const { t } = useTranslation("login");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { setTherapistName } = useContext(TherapistContext);
   const [success, setSuccess] = useState("");
-
   const navigate = useNavigate();
-  <p className="redirect-link">
-    Not registered yet? <Link to="/register">Sign up here</Link>
-  </p>
+
+  const isDevelopment = true; // Toggle this flag to enable/disable authentication
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isDevelopment) {
+      const mockTherapistName = "John@Doe";
+      const mockAccessToken = "mock_token";
+      const mockTherapistId = "12345";
+
+      setTherapistName(mockTherapistName);
+      localStorage.setItem("token", mockAccessToken);
+      localStorage.setItem("therapist_id", mockTherapistId);
+      localStorage.setItem("therapist_name", mockTherapistName);
+
+      setSuccess(t("login_success_message") + " (development mode)!");
+      setError("");
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:8000/auth/login", {
@@ -25,34 +44,28 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
-        throw new Error("Invalid email or password");
+        throw new Error(t("invalid_credentials_error"));
       }
 
       const data = await res.json();
-      const { therapist_id, access_token,full_name } = data;
+      const { therapist_id, access_token, full_name } = data;
 
-      // Save therapist ID or name in context/localStorage
-      setTherapistName(email); // or use therapist_id
+      setTherapistName(email);
       localStorage.setItem("token", access_token);
       localStorage.setItem("therapist_id", therapist_id);
-      localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
-      
-      setSuccess("Login successful!");
+      localStorage.setItem("therapist_name", full_name);
+
+      setSuccess(t("login_success_message"));
       console.log(localStorage.getItem("token"));
-      setError(""); // clear error if there was one
-      // Redirect to home
-      
+      setError("");
+
       setTimeout(() => {
         navigate("/home");
-      }, 2000);// 2 seconds delay for success message
-
+      }, 2000);
     } catch (err) {
       setError(err.message);
     }
@@ -60,10 +73,10 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <h2>Login</h2>
+      <h2>{t("login_page_title")}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">{t("email_label")}</label>
           <input
             type="email"
             id="email"
@@ -74,7 +87,7 @@ const LoginPage = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">{t("password_label")}</label>
           <input
             type="password"
             id="password"
@@ -86,19 +99,16 @@ const LoginPage = () => {
 
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
-        
 
-
-        <button type="submit" className="btn">Login</button>
+        <button type="submit" className="btn">{t("login_button")}</button>
         <p>
-          Not registered yet?{" "}
-          <a href="/register" style={{ color: "blue", textDecoration: "underline" }}>
-            Create an account
-          </a>
+          {t("not_registered_question")}{" "}
+          <Link to="/register" style={{ color: "blue", textDecoration: "underline" }}>
+            {t("create_account_link")}
+          </Link>
         </p>
       </form>
     </div>
-    
   );
 };
 

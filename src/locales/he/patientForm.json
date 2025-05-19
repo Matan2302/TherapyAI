@@ -1,0 +1,10 @@
+{
+  "add_patient_title": "הוסף מטופל",
+  "full_name_label": "שם מלא",
+  "date_of_birth_label": "תאריך לידה",
+  "patient_email_label": "אימייל של המטופל",
+  "medical_history_label": "היסטוריה רפואית",
+  "add_patient_button": "הוסף מטופל",
+  "success_default_message": "המטופל נוסף בהצלחה.",
+  "error_default_message": "הוספת המטופל נכשלה: שגיאה לא ידועה"
+}

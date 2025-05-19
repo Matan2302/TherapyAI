@@ -1,0 +1,11 @@
+
+{
+  "add_patient_title": "إضافة مريض",
+  "full_name_label": "الاسم الكامل",
+  "date_of_birth_label": "تاريخ الميلاد",
+  "patient_email_label": "البريد الإلكتروني للمريض",
+  "medical_history_label": "السجل الطبي",
+  "add_patient_button": "إضافة مريض",
+  "success_default_message": "تمت إضافة المريض بنجاح.",
+  "error_default_message": "فشل في إضافة المريض: خطأ غير معروف"
+}

@@ -1,0 +1,21 @@
+
+{
+  "recording_page_title": "Страница записи",
+  "patient_name_label": "Имя пациента",
+  "patient_name_placeholder": "Введите имя пациента",
+  "session_date_label": "Дата сеанса",
+  "therapist_name_label": "Имя терапевта",
+  "session_notes_label": "Заметки о сеансе",
+  "session_notes_placeholder": "Напишите здесь заметки о сеансе...",
+  "consent_warning": "Пожалуйста, получите согласие пациента перед началом!",
+  "consent_label": "Пациент дал согласие на запись",
+  "start_recording_button": "Начать запись",
+  "pause_recording_button": "Пауза записи",
+  "resume_recording_button": "Продолжить запись",
+  "stop_recording_button": "Остановить запись",
+  "upload_recording_button": "Загрузить запись",
+  "uploading_status": "Загрузка...",
+  "upload_success_status": "Успешно загружено:",
+  "upload_failure_status": "Не удалось загрузить. Попробуйте еще раз.",
+  "connection_failure_status": "Не удалось загрузить. Проверьте подключение."
+}

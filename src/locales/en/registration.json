@@ -1,0 +1,11 @@
+{
+  "registration_page_title": "Register",
+  "full_name_label": "Full Name",
+  "specialization_label": "Specialization",
+  "contact_info_label": "Contact info",
+  "email_label": "Email",
+  "password_label": "Password",
+  "register_button": "Register",
+  "registration_success": "Registration successful!",
+  "registration_failed_default": "Registration failed"
+}

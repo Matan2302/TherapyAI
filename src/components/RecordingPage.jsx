@@ -1,31 +1,28 @@
 import React, { useState, useRef, useContext } from "react";
-import "./RecordingPage.css"; // Make sure this file exists and updated
-import { TherapistContext } from "../TherapistContext"; // Import TherapistContext
+import "./RecordingPage.css";
+import { TherapistContext } from "../TherapistContext";
+import { useTranslation } from "react-i18next";
 
 const RecordingPage = () => {
+  const { t } = useTranslation("recording");
   const [isConsentChecked, setIsConsentChecked] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [uploadStatus, setUploadStatus] = useState(null);
-  const [backgroundColor, setBackgroundColor] = useState("blue"); // Default background color
+  const [backgroundColor, setBackgroundColor] = useState("blue");
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const [sessionNotes, setSessionNotes] = useState("");
-
-  // Form State
   const [patientName, setPatientName] = useState("");
   const [sessionDate, setSessionDate] = useState("");
 
-  // Therapist Name from Context
   const { therapistName } = useContext(TherapistContext);
 
-  // Handle patient consent checkbox
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
   };
 
-  // Start Recording
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -47,42 +44,39 @@ const RecordingPage = () => {
       mediaRecorder.start();
       setIsRecording(true);
       setIsPaused(false);
-      setBackgroundColor("red"); // Change background to red
+      setBackgroundColor("red");
     } catch (error) {
       console.error("Error accessing microphone:", error);
-      alert("Microphone access denied. Please check your browser settings.");
+      alert(t("microphone_access_error"));
     }
   };
 
-  // Toggle Pause/Resume Recording
   const handleTogglePauseResume = () => {
     if (mediaRecorderRef.current) {
       if (isPaused) {
         mediaRecorderRef.current.resume();
         setIsPaused(false);
-        setBackgroundColor("red"); // Change background back to red
+        setBackgroundColor("red");
       } else {
         mediaRecorderRef.current.pause();
         setIsPaused(true);
-        setBackgroundColor("yellow"); // Change background to yellow
+        setBackgroundColor("yellow");
       }
     }
   };
 
-  // Stop Recording
   const handleStopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
       setIsPaused(false);
-      setBackgroundColor("blue"); // Change background back to blue
+      setBackgroundColor("blue");
     }
   };
 
-  // Upload Recording to FastAPI Backend
   const handleUploadRecording = async () => {
     if (!audioBlob || !patientName || !therapistName || !sessionDate) {
-      alert("Please fill in all fields before uploading.");
+      alert(t("fill_all_fields_error"));
       return;
     }
 
@@ -92,8 +86,9 @@ const RecordingPage = () => {
     formData.append("therapist_name", therapistName);
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
+
     try {
-      setUploadStatus("Uploading...");
+      setUploadStatus(t("uploading_status"));
       const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
         body: formData,
@@ -101,32 +96,32 @@ const RecordingPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        setUploadStatus(`Uploaded successfully: ${result.url}`);
+        setUploadStatus(t("upload_success_status") + ` ${result.url}`);
       } else {
-        setUploadStatus("Upload failed. Please try again.");
+        setUploadStatus(t("upload_failure_status"));
       }
     } catch (error) {
-      setUploadStatus("Upload failed. Please check your connection.");
+      setUploadStatus(t("connection_failure_status"));
       console.error(error);
     }
   };
 
   return (
     <div className="recording-page" style={{ backgroundColor }}>
-      <h2>Recording Page</h2>
+      <h2>{t("recording_page_title")}</h2>
       <form>
         <div className="form-group">
-          <label>Patient Name</label>
+          <label>{t("patient_name_label")}</label>
           <input
             type="text"
             value={patientName}
             onChange={(e) => setPatientName(e.target.value)}
-            placeholder="Enter patient name"
+            placeholder={t("patient_name_placeholder")}
             required
           />
         </div>
         <div className="form-group">
-          <label>Date of Treatment</label>
+          <label>{t("session_date_label")}</label>
           <input
             type="date"
             value={sessionDate}
@@ -135,47 +130,42 @@ const RecordingPage = () => {
           />
         </div>
         <div className="form-group">
-          <label>Therapist Name</label>
-          <input
-            type="text"
-            value={therapistName || ""}
-            readOnly
-            placeholder="Therapist Name"
-          />
+          <label>{t("therapist_name_label")}</label>
+          <input type="text" value={therapistName || ""} readOnly />
         </div>
         <div className="form-group">
-        <label>Session Notes</label>
-        <textarea
-          value={sessionNotes}
-          onChange={(e) => setSessionNotes(e.target.value)}
-          placeholder="Write session notes here..."
-          rows={6}
-        />
+          <label>{t("session_notes_label")}</label>
+          <textarea
+            value={sessionNotes}
+            onChange={(e) => setSessionNotes(e.target.value)}
+            placeholder={t("session_notes_placeholder")}
+            rows={6}
+          />
         </div>
         <div className="consent-section">
-          <span>Please obtain patient consent before starting!</span>
+          <span>{t("consent_warning")}</span>
           <input type="checkbox" onChange={handleConsentChange} />
-          <label>Patient has given recording consent</label>
+          <label>{t("consent_label")}</label>
         </div>
       </form>
+
       <div className="buttons-section">
         <button onClick={handleStartRecording} disabled={!isConsentChecked || isRecording}>
-          Start Recording
+          {t("start_recording_button")}
         </button>
         {isRecording && (
           <button onClick={handleTogglePauseResume}>
-            {isPaused ? "Resume Recording" : "Pause Recording"}
+            {isPaused ? t("resume_recording_button") : t("pause_recording_button")}
           </button>
         )}
         <button onClick={handleStopRecording} disabled={!isRecording}>
-          Stop Recording
+          {t("stop_recording_button")}
         </button>
       </div>
 
-      {/* Upload Section */}
       {audioBlob && (
         <div className="upload-section">
-          <button onClick={handleUploadRecording}>Upload Recording</button>
+          <button onClick={handleUploadRecording}>{t("upload_recording_button")}</button>
           {uploadStatus && <p>{uploadStatus}</p>}
         </div>
       )}

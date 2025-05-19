@@ -1,0 +1,10 @@
+{
+  "add_patient_title": "Добавить пациента",
+  "full_name_label": "Полное имя",
+  "date_of_birth_label": "Дата рождения",
+  "patient_email_label": "Электронная почта пациента",
+  "medical_history_label": "Медицинская история",
+  "add_patient_button": "Добавить пациента",
+  "success_default_message": "Пациент успешно добавлен.",
+  "error_default_message": "Не удалось добавить пациента: Неизвестная ошибка"
+}

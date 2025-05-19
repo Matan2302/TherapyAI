@@ -1,0 +1,20 @@
+{
+  "recording_page_title": "Recording Page",
+  "patient_name_label": "Patient Name",
+  "patient_name_placeholder": "Enter patient name",
+  "session_date_label": "Date of Treatment",
+  "therapist_name_label": "Therapist Name",
+  "session_notes_label": "Session Notes",
+  "session_notes_placeholder": "Write session notes here...",
+  "consent_warning": "Please obtain patient consent before starting!",
+  "consent_label": "Patient has given recording consent",
+  "start_recording_button": "Start Recording",
+  "pause_recording_button": "Pause Recording",
+  "resume_recording_button": "Resume Recording",
+  "stop_recording_button": "Stop Recording",
+  "upload_recording_button": "Upload Recording",
+  "uploading_status": "Uploading...",
+  "upload_success_status": "Uploaded successfully:",
+  "upload_failure_status": "Upload failed. Please try again.",
+  "connection_failure_status": "Upload failed. Please check your connection."
+}

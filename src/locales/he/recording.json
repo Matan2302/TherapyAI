@@ -1,0 +1,20 @@
+{
+  "recording_page_title": "דף הקלטה",
+  "patient_name_label": "שם המטופל",
+  "patient_name_placeholder": "הזן את שם המטופל",
+  "session_date_label": "תאריך הטיפול",
+  "therapist_name_label": "שם המטפל",
+  "session_notes_label": "הערות לפגישה",
+  "session_notes_placeholder": "כתוב כאן את הערות הפגישה...",
+  "consent_warning": "יש לקבל את הסכמת המטופל לפני התחלת ההקלטה!",
+  "consent_label": "המטופל נתן הסכמה להקלטה",
+  "start_recording_button": "התחל הקלטה",
+  "pause_recording_button": "השהה הקלטה",
+  "resume_recording_button": "חדש הקלטה",
+  "stop_recording_button": "עצור הקלטה",
+  "upload_recording_button": "העלה את ההקלטה",
+  "uploading_status": "מעלה...",
+  "upload_success_status": "הועלה בהצלחה:",
+  "upload_failure_status": "ההעלאה נכשלה. נסה שוב.",
+  "connection_failure_status": "ההעלאה נכשלה. בדוק את החיבור שלך."
+}

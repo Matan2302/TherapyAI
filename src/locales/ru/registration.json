@@ -1,0 +1,11 @@
+{
+  "registration_page_title": "Регистрация",
+  "full_name_label": "Полное имя",
+  "specialization_label": "Специализация",
+  "contact_info_label": "Контактная информация",
+  "email_label": "Электронная почта",
+  "password_label": "Пароль",
+  "register_button": "Зарегистрироваться",
+  "registration_success": "Регистрация прошла успешно!",
+  "registration_failed_default": "Не удалось зарегистрироваться"
+}

@@ -1,0 +1,8 @@
+{
+  "home_link": "Home",
+  "recording_link": "Recording",
+  "dashboard_link": "Dashboard",
+  "add_patient_link": "Add Patient",
+  "greeting": "Hello,",
+  "logout_button": "Logout"
+}

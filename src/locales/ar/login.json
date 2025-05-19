@@ -1,0 +1,10 @@
+{
+  "login_page_title": "تسجيل الدخول",
+  "email_label": "البريد الإلكتروني",
+  "password_label": "كلمة المرور",
+  "login_button": "تسجيل الدخول",
+  "not_registered_question": "لست مسجلًا بعد؟",
+  "create_account_link": "إنشاء حساب",
+  "login_success_message": "تم تسجيل الدخول بنجاح!",
+  "invalid_credentials_error": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+}

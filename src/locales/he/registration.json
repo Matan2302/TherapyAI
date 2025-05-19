@@ -1,0 +1,11 @@
+{
+  "registration_page_title": "הרשמה",
+  "full_name_label": "שם מלא",
+  "specialization_label": "התמחות",
+  "contact_info_label": "פרטי יצירת קשר",
+  "email_label": "אימייל",
+  "password_label": "סיסמה",
+  "register_button": "הירשם",
+  "registration_success": "ההרשמה בוצעה בהצלחה!",
+  "registration_failed_default": "ההרשמה נכשלה"
+}
