@@ -1,0 +1,8 @@
+{
+  "home_link": "Главная",
+  "recording_link": "Запись",
+  "dashboard_link": "Панель",
+  "add_patient_link": "Добавить пациента",
+  "greeting": "Здравствуйте,",
+  "logout_button": "Выйти"
+}

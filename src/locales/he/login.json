@@ -1,0 +1,10 @@
+{
+  "login_page_title": "התחברות",
+  "email_label": "אימייל",
+  "password_label": "סיסמה",
+  "login_button": "התחבר",
+  "not_registered_question": "עדיין לא רשום?",
+  "create_account_link": "צור חשבון",
+  "login_success_message": "ההתחברות הצליחה!",
+  "invalid_credentials_error": "אימייל או סיסמה שגויים"
+}

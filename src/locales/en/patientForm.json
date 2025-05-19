@@ -1,0 +1,10 @@
+{
+  "add_patient_title": "Add Patient",
+  "full_name_label": "Full Name",
+  "date_of_birth_label": "Date of Birth",
+  "patient_email_label": "Patient Email",
+  "medical_history_label": "Medical History",
+  "add_patient_button": "Add Patient",
+  "success_default_message": "Patient added successfully.",
+  "error_default_message": "Failed to add patient: Unknown error"
+}

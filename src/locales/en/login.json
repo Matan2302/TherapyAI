@@ -1,0 +1,10 @@
+{
+  "login_page_title": "Login",
+  "email_label": "Email",
+  "password_label": "Password",
+  "login_button": "Login",
+  "not_registered_question": "Not registered yet?",
+  "create_account_link": "Create an account",
+  "login_success_message": "Login successful!",
+  "invalid_credentials_error": "Invalid email or password"
+}

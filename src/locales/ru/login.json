@@ -1,0 +1,10 @@
+{
+  "login_page_title": "Вход",
+  "email_label": "Электронная почта",
+  "password_label": "Пароль",
+  "login_button": "Войти",
+  "not_registered_question": "Еще не зарегистрированы?",
+  "create_account_link": "Создать аккаунт",
+  "login_success_message": "Вход выполнен успешно!",
+  "invalid_credentials_error": "Неверный email или пароль"
+}

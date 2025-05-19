@@ -1,0 +1,20 @@
+{
+  "recording_page_title": "صفحة التسجيل",
+  "patient_name_label": "اسم المريض",
+  "patient_name_placeholder": "أدخل اسم المريض",
+  "session_date_label": "تاريخ الجلسة",
+  "therapist_name_label": "اسم المعالج",
+  "session_notes_label": "ملاحظات الجلسة",
+  "session_notes_placeholder": "اكتب ملاحظات الجلسة هنا...",
+  "consent_warning": "يرجى الحصول على موافقة المريض قبل البدء!",
+  "consent_label": "تمت موافقة المريض على التسجيل",
+  "start_recording_button": "بدء التسجيل",
+  "pause_recording_button": "إيقاف مؤقت للتسجيل",
+  "resume_recording_button": "استئناف التسجيل",
+  "stop_recording_button": "إيقاف التسجيل",
+  "upload_recording_button": "رفع التسجيل",
+  "uploading_status": "جاري الرفع...",
+  "upload_success_status": "تم الرفع بنجاح:",
+  "upload_failure_status": "فشل الرفع. الرجاء المحاولة مرة أخرى.",
+  "connection_failure_status": "فشل الرفع. تحقق من الاتصال."
+}
