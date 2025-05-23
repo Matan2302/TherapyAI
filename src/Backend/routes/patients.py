@@ -25,19 +25,25 @@ def get_patient_dashboard_data(
     patient_email: str = Query(...)
 ):
     print(f"Patient email received: {patient_email}")
-    # Step 1: verify token and extract payload
     
-    # For now, hardcoded patient email (you can get from request param later)
+    # Initialize variables
+    good = []
+    bad = []
+    therapist_name = ""
+    therapist_contact = ""
+    therapist_email = "unknown"  # Initialize with default value
+    session_date = ""
+    session_notes = ""
 
     patient = db.query(Patient).filter(Patient.PatientEmail == patient_email).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found please check the email or add patient to the system")
 
     last_session = (
-    db.query(SessionModel)
-    .filter(SessionModel.PatientID == patient.PatientID)
-    .order_by(SessionModel.Timestamp.desc())
-    .first()
+        db.query(SessionModel)
+        .filter(SessionModel.PatientID == patient.PatientID)
+        .order_by(SessionModel.Timestamp.desc())
+        .first()
     )
 
     total_sessions = (
@@ -45,13 +51,6 @@ def get_patient_dashboard_data(
         .filter(SessionModel.PatientID == patient.PatientID)
         .count()
     )
-
-    good = []
-    bad = []
-    therapist_name = ""
-    therapist_contact = ""
-    session_date = ""
-    session_notes = ""
 
     if last_session:
         try:
@@ -80,7 +79,7 @@ def get_patient_dashboard_data(
         "goodThema": good,
         "badThema": bad,
         "lastTherapist": therapist_name,
-        "lastTherapistEmail": therapist_email,  # You can link with TherapistLogin later
+        "lastTherapistEmail": therapist_email,
         "lastTherapistPatientEmail": therapist_contact,
         "lastSessionDate": session_date,
         "lastSessionNotes": session_notes,
