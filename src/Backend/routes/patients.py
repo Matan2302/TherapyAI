@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from services.token_service import verify_token
-from src.Backend.database import SessionLocal
+from database import SessionLocal
 from models import Patient, Session as SessionModel, Therapist,TherapistLogin
 from schemas.patient_data import PatientDataResponse
 from fastapi import Query
+from typing import List
+from schemas.patient_data import PatientBasicInfo  # Make sure this is imported
 
 import json
 
@@ -66,7 +68,7 @@ def get_patient_dashboard_data(
         therapist = db.query(Therapist).filter(Therapist.TherapistID == last_session.TherapistID).first()
         if therapist:
             therapist_name = therapist.FullName
-            therapist_contact = therapist.PatientEmail
+            therapist_contact = therapist.ContactInfo
             therapist_login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist.TherapistID).first()
             therapist_email = therapist_login.email if therapist_login else "unknown"
 
@@ -85,3 +87,19 @@ def get_patient_dashboard_data(
         "lastSessionNotes": session_notes,
         "totalSessionsDone": total_sessions
     }
+
+@router.get("/search-patients", response_model=List[PatientBasicInfo])
+def search_patients_by_name(
+    name: str = Query(..., description="Partial or full patient name"),
+    db: Session = Depends(get_db)
+):
+    patients = db.query(Patient).filter(Patient.FullName.ilike(f"%{name}%")).all()
+    return [
+        PatientBasicInfo(
+            FullName=patient.FullName,
+            PatientEmail=patient.PatientEmail,
+            DateOfBirth=patient.DateOfBirth.strftime("%Y-%m-%d") if patient.DateOfBirth else None,
+            MedicalHistory=patient.MedicalHistory or None
+        )
+        for patient in patients
+    ]

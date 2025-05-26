@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   BarChart,
   Bar,
@@ -30,39 +30,82 @@ const calculateAge = (DateOfBirth) => {
 const PatientDashboard = () => {
   const { t } = useTranslation("dashboard");
   const navigate = useNavigate();
-  const [inputEmail, setInputEmail] = useState("");
+  const [inputName, setInputName] = useState("");
   const [showData, setShowData] = useState(false);
   const [error, setError] = useState("");
   const [patientData, setPatientData] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const suggestionsRef = useRef(null);
 
+  // Fetch patient suggestions as user types
+  useEffect(() => {
+    if (inputName.trim().length === 0) {
+      setSuggestions([]);
+      return;
+    }
+    setIsLoadingSuggestions(true);
+    const token = localStorage.getItem("token");
+    fetch(
+      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(inputName)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setSuggestions(data);
+        setIsLoadingSuggestions(false);
+      })
+      .catch(() => {
+        setSuggestions([]);
+        setIsLoadingSuggestions(false);
+      });
+  }, [inputName]);
+
+  // Fetch patient data by email
   const fetchPatientData = async (email) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:8000/patientsdb/dashboard-data?patient_email=${email}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `http://localhost:8000/patientsdb/dashboard-data?patient_email=${email}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!res.ok) throw new Error(t("error_loading_data"));
       const data = await res.json();
       setPatientData(data);
       setShowData(true);
-      setError('');
+      setError("");
     } catch (err) {
       console.error(err);
       setError(t("error_loading_data"));
     }
   };
 
-  const handleGetData = () => {
-    const email = inputEmail.trim().toLowerCase();
-    if (email) {
-      fetchPatientData(email);
-    } else {
-      setShowData(false);
-      setError(t("error_loading_data"));
-    }
+  // Handle patient selection from suggestions
+  const handleSelectPatient = (patient) => {
+    setInputName(patient.FullName);
+    setSuggestions([]);
+    fetchPatientData(patient.PatientEmail);
   };
+
+  // Hide suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (showData && !patientData) {
     return (
@@ -88,26 +131,87 @@ const PatientDashboard = () => {
   const COLORS = ["#4ade80", "#f87171"];
 
   return (
-    //make white squre in the backgroound
-    <div className="patient-dashboard p-6" >
+    <div className="patient-dashboard p-6">
       <h2 className="text-2xl mb-4">{t("dashboard_title")}</h2>
 
       {!showData && (
-        <div className="email-input mb-4" style={{ backgroundColor: "white", padding: "1rem", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }}>
-          <label htmlFor="email" className="text-lg font-medium">
-            {t("enter_email_label")}
+        <div
+          className="name-input mb-4"
+          style={{
+            backgroundColor: "white",
+            padding: "1rem",
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            position: "relative",
+            minWidth: "420px", // Make input container wider
+            maxWidth: "600px",
+          }}
+        >
+          <label htmlFor="name" className="text-lg font-medium" style={{ display: "block", textAlign: "center" }}>
+            {t("input_name_label") || t("enter_name_label") || "Enter patient name"}
           </label>
           <input
-            type="email"
-            id="email"
-            value={inputEmail}
-            onChange={(e) => setInputEmail(e.target.value)}
+            type="text"
+            id="name"
+            value={inputName}
+            onChange={(e) => {
+              setInputName(e.target.value);
+              setShowData(false);
+              setPatientData(null);
+              setError("");
+            }}
             className="input mt-1 mb-2"
-            placeholder={t("email_placeholder")}
+            placeholder={t("input_name_placeholder") || t("name_placeholder") || "Type patient name..."}
+            autoComplete="off"
           />
-          <button onClick={handleGetData} className="btn-fetch">
-            {t("get_data_button")}
-          </button>
+          {isLoadingSuggestions && (
+            <div className="suggestions-loading">{t("loading") || "Loading..."}</div>
+          )}
+          {suggestions.length > 0 && (
+            <ul
+              className="suggestions-list"
+              ref={suggestionsRef}
+              style={{
+                listStyle: "none",
+                margin: 0,
+                padding: 0,
+                position: "absolute",
+                width: "100%",
+                minWidth: "420px", // Make suggestions wider
+                background: "#fff",
+                border: "1px solid #ddd",
+                borderRadius: "0 0 12px 12px",
+                zIndex: 10,
+                maxHeight: 400,
+                overflowY: "auto",
+                fontSize: "1.25rem",
+              }}
+            >
+              {suggestions.map((patient) => (
+                <li
+                  key={patient.PatientID}
+                  style={{
+                    padding: "16px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #eee",
+                  }}
+                  onClick={() => handleSelectPatient(patient)}
+                >
+                  <div><strong>{patient.FullName}</strong> ({patient.PatientEmail})</div>
+                  {patient.DateOfBirth && (
+                    <div style={{ fontSize: "1rem", color: "#555" }}>
+                      DOB: {patient.DateOfBirth}
+                    </div>
+                  )}
+                  {patient.MedicalHistory && (
+                    <div style={{ fontSize: "1rem", color: "#888" }}>
+                      History: {patient.MedicalHistory}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 

@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  const isDevelopment = true; // Toggle this flag to enable/disable authentication
+  const isDevelopment = false; // Toggle this flag to enable/disable authentication
 
   const handleSubmit = async (e) => {
     e.preventDefault();

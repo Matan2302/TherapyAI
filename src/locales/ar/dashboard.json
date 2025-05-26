@@ -22,5 +22,7 @@
   "time_intervals_label": "الفترات الزمنية",
   "sum_of_good_bad_label": "إجمالي الجيد/السيء",
   "good_thema_label": "تيمة جيدة",
-  "bad_thema_label": "تيمة سيئة"
+  "bad_thema_label": "تيمة سيئة",
+  "input_name_label": "أدخل اسم المريض:",
+  "input_name_placeholder": "ابدأ بكتابة اسم المريض..."
 }

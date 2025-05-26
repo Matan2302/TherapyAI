@@ -14,3 +14,10 @@ class PatientDataResponse(BaseModel):
     lastSessionDate: str
     lastSessionNotes: str
     totalSessionsDone: int
+
+
+class PatientBasicInfo(BaseModel):
+    FullName: str
+    PatientEmail: str
+    DateOfBirth: str | None
+    MedicalHistory: str | None

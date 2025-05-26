@@ -22,5 +22,7 @@
   "time_intervals_label": "Time Intervals",
   "sum_of_good_bad_label": "Sum of Good/Bad",
   "good_thema_label": "Good Thema",
-  "bad_thema_label": "Bad Thema"
+  "bad_thema_label": "Bad Thema",
+  "input_name_label": "Enter patient name:",
+  "input_name_placeholder": "Start typing patient name..."
 }

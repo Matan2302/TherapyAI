@@ -1,5 +1,5 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Date, Text
-from src.Backend.database import Base
+from database import Base
 from sqlalchemy.orm import relationship
 
 # TherapistPatient Model (Many-to-Many Relationship between Therapists and Patients)

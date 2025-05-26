@@ -22,5 +22,7 @@
   "time_intervals_label": "מרווחי זמן",
   "sum_of_good_bad_label": "סכום טוב/רע",
   "good_thema_label": "תמה טובה",
-  "bad_thema_label": "תמה רעה"
+  "bad_thema_label": "תמה רעה",
+  "input_name_label": "הזן שם מטופל:",
+  "input_name_placeholder": "התחל להקליד את שם המטופל..."
 }

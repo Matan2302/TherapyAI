@@ -22,5 +22,8 @@
   "time_intervals_label": "Временные интервалы",
   "sum_of_good_bad_label": "Сумма хорошего/плохого",
   "good_thema_label": "Хорошая тема",
-  "bad_thema_label": "Плохая тема"
+  "bad_thema_label": "Плохая тема",
+
+  "input_name_label": "Введите имя пациента:",
+  "input_name_placeholder": "Начните вводить имя пациента..."
 }
