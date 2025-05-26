@@ -13,17 +13,25 @@
   "last_therapist_name_label": "Имя терапевта на последнем сеансе:",
   "last_therapist_email_label": "Электронная почта терапевта на последнем сеансе:",
   "last_therapist_patient_email_label": "Электронная почта пациента на последнем сеансе:",
-  "session_details_title": "Детали последнего сеанса",
-  "session_date_label": "Дата сеанса:",
-  "session_notes_label": "Заметки о сеансе:",
+
   "total_sessions_label": "Всего проведено сеансов:",
-  "bar_chart_title": "Распределение тем по временным интервалам на последнем сеансе",
-  "pie_chart_title": "Общее распределение тем на последнем сеансе",
   "time_intervals_label": "Временные интервалы",
   "sum_of_good_bad_label": "Сумма хорошего/плохого",
   "good_thema_label": "Хорошая тема",
   "bad_thema_label": "Плохая тема",
 
   "input_name_label": "Введите имя пациента:",
-  "input_name_placeholder": "Начните вводить имя пациента..."
+  "input_name_placeholder": "Начните вводить имя пациента...",
+  "select_session_label": "Выберите сессию:",
+  "choose_session_option": "Выберите сессию...",
+  "analyze_session_button": "Анализировать сессию",
+  "please_select_session": "Пожалуйста, выберите сессию для просмотра деталей.",
+  "session_therapist_name_label": "Имя терапевта на сессии:",
+  "session_therapist_email_label": "Электронная почта терапевта на сессии:",
+  "session_therapist_patient_email_label": "Электронная почта пациента на сессии:",
+  "session_details_title": "Детали сессии",
+  "session_date_label": "Дата сессии:",
+  "session_notes_label": "Заметки о сессии:",
+  "bar_chart_title": "Распределение тем по временным интервалам на сессии",
+  "pie_chart_title": "Общее распределение тем на сессии"
 }

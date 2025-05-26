@@ -21,3 +21,10 @@ class PatientBasicInfo(BaseModel):
     PatientEmail: str
     DateOfBirth: str | None
     MedicalHistory: str | None
+
+
+class PatientSessionInfo(BaseModel):
+    SessionID: int 
+    SessionDate: str | None
+    SessionNotes: str | None
+    TherapistName: str | None

@@ -8,6 +8,7 @@ from schemas.patient_data import PatientDataResponse
 from fastapi import Query
 from typing import List
 from schemas.patient_data import PatientBasicInfo  # Make sure this is imported
+from schemas.patient_data import PatientSessionInfo  # Make sure this is imported
 
 import json
 
@@ -24,16 +25,17 @@ def get_db():
 @router.get("/dashboard-data", response_model=PatientDataResponse)
 def get_patient_dashboard_data(
     db: Session = Depends(get_db),
-    patient_email: str = Query(...)
+    patient_email: str = Query(...),
+    session_id: int = Query(None, description="Optional session ID")
 ):
-    print(f"Patient email received: {patient_email}")
-    
+    print(f"Patient email received: {patient_email}, session_id: {session_id}")
+
     # Initialize variables
     good = []
     bad = []
     therapist_name = ""
     therapist_contact = ""
-    therapist_email = "unknown"  # Initialize with default value
+    therapist_email = "unknown"
     session_date = ""
     session_notes = ""
 
@@ -41,12 +43,22 @@ def get_patient_dashboard_data(
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found please check the email or add patient to the system")
 
-    last_session = (
-        db.query(SessionModel)
-        .filter(SessionModel.PatientID == patient.PatientID)
-        .order_by(SessionModel.Timestamp.desc())
-        .first()
-    )
+    # Fetch the desired session
+    if session_id is not None:
+        session_query = db.query(SessionModel).filter(
+            SessionModel.PatientID == patient.PatientID,
+            SessionModel.SessionID == session_id
+        )
+        session_obj = session_query.first()
+        if not session_obj:
+            raise HTTPException(status_code=404, detail="Session not found for this patient")
+    else:
+        session_obj = (
+            db.query(SessionModel)
+            .filter(SessionModel.PatientID == patient.PatientID)
+            .order_by(SessionModel.Timestamp.desc())
+            .first()
+        )
 
     total_sessions = (
         db.query(SessionModel)
@@ -54,18 +66,17 @@ def get_patient_dashboard_data(
         .count()
     )
 
-    if last_session:
+    if session_obj:
         try:
-            good = json.loads(last_session.Good_Thema or "[]")
-            bad = json.loads(last_session.Bad_Thema or "[]")
+            good = json.loads(session_obj.Good_Thema or "[]")
+            bad = json.loads(session_obj.Bad_Thema or "[]")
         except Exception:
             good = [0]
             bad = [0]
 
-        session_date = last_session.SessionDate.strftime("%Y-%m-%d") if last_session.SessionDate else ""
-        session_notes = last_session.SessionNotes or ""
-        print(last_session.TherapistID)
-        therapist = db.query(Therapist).filter(Therapist.TherapistID == last_session.TherapistID).first()
+        session_date = session_obj.SessionDate.strftime("%Y-%m-%d") if session_obj.SessionDate else ""
+        session_notes = session_obj.SessionNotes or ""
+        therapist = db.query(Therapist).filter(Therapist.TherapistID == session_obj.TherapistID).first()
         if therapist:
             therapist_name = therapist.FullName
             therapist_contact = therapist.ContactInfo
@@ -103,3 +114,38 @@ def search_patients_by_name(
         )
         for patient in patients
     ]
+
+@router.get("/all-sessions", response_model=List[PatientSessionInfo])
+def get_all_sessions_for_patient(
+    patient_email: str = Query(..., description="Patient email"),
+    db: Session = Depends(get_db)
+):
+    patient = db.query(Patient).filter(Patient.PatientEmail == patient_email).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    sessions = (
+        db.query(SessionModel)
+        .filter(SessionModel.PatientID == patient.PatientID)
+        .order_by(SessionModel.SessionDate.desc())
+        .all()
+    )
+    #make session notes "Not Analyzed yet" if they are not look like link
+    for session in sessions:
+        if not session.SessionNotes or not session.SessionNotes.startswith("http"):
+            session.SessionNotes = "Not Analyzed yet"
+        else:
+            session.SessionNotes = "Analyzed"
+    result = []
+    for s in sessions:
+        therapist = db.query(Therapist).filter(Therapist.TherapistID == s.TherapistID).first()
+        therapist_name = therapist.FullName if therapist else None
+        result.append(
+            PatientSessionInfo(
+                SessionID=s.SessionID,  # <-- Add this line
+                SessionDate=s.SessionDate.strftime("%Y-%m-%d") if s.SessionDate else None,
+                SessionNotes=s.SessionNotes,
+                TherapistName=therapist_name
+            )
+        )
+    return result
