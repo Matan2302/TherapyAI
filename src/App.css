@@ -87,3 +87,21 @@ h1, h2, h3 {
 .content {
   padding-top: 120px;
 }
+
+.app-container {
+  position: relative;
+}
+
+.top-left-logo {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  width: 205px;        /* larger logo */
+  height: 205px;
+  border-radius: 50%;  /* make it fully rounded */
+  object-fit: cover;   /* ensures it fills the circle nicely */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* soft shadow */
+  z-index: 50;
+}
+
+
