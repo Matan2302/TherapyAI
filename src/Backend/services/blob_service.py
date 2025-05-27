@@ -17,13 +17,15 @@ import os
 import tempfile
 from datetime import datetime, timedelta
 from typing import List
-
+import requests
 import pymssql
 from azure.storage.blob import (
     BlobServiceClient,
     generate_blob_sas,
     BlobSasPermissions,
 )
+from urllib.parse import urlparse
+
 
 # ---------------------------------------------------------------------------
 # ❶  Load settings  (env-vars first, then config.py fallback)
@@ -40,7 +42,7 @@ AZURE_CONN_STR = (
 )
 CONTAINER = (
     os.getenv("AZURE_BLOB_CONTAINER_NAME")
-    or getattr(config, "AZURE_BLOB_CONTAINER_NAME", "recordings")
+    or getattr(config, "AZURE_BLOB_CONTAINER_NAME", "main")
 )
 
 if not AZURE_CONN_STR:
@@ -48,12 +50,6 @@ if not AZURE_CONN_STR:
         "Azure Blob connection string missing. "
         "Set AZURE_BLOB_CONN_STRING in .env or config.py"
     )
-
-# Azure SQL (TherapyDB)
-DB_SERVER = os.getenv("DB_SERVER") or getattr(config, "DB_SERVER", None)
-DB_USER = os.getenv("DB_USER") or getattr(config, "DB_USER", None)
-DB_PASSWORD = os.getenv("DB_PASSWORD") or getattr(config, "DB_PASSWORD", None)
-DB_DATABASE = os.getenv("DB_DATABASE") or getattr(config, "DB_DATABASE", None)
 
 # ---------------------------------------------------------------------------
 # ❷  Blob client
@@ -86,7 +82,7 @@ def create_sas_url(blob_name: str, minutes: int = 120) -> str:
     sas = generate_blob_sas(
         account_name=_blob_client.account_name,
         container_name=_container.container_name,
-        blob_name=blob_name,                       # <── no 'recordings/' prefix
+        blob_name=blob_name,         
         account_key=_blob_client.credential.account_key,
         permission=BlobSasPermissions(read=True),
         expiry=datetime.utcnow() + timedelta(minutes=minutes),
@@ -106,60 +102,25 @@ def upload_transcript_to_azure(lines: List[str], wav_filename: str) -> str:
     os.remove(tmp_path)
     return url
 
-# ---------------------------------------------------------------------------
-# ❻  Insert one row into dbo.Sessions  (pymssql)
-# ---------------------------------------------------------------------------
-def save_session_to_db(
-    patient_name: str,
-    therapist_name: str,
-    session_date: str,   # "YYYY-MM-DD"
-    blob_url: str,       # WAV URL
-    transcript_url: str, # TXT URL
-    notes: str = "",
-) -> None:
-    
-    try:
-        sess_date_obj = datetime.strptime(session_date, "%Y-%m-%d").date()
-    except ValueError as exc:
-        raise ValueError(
-        "session_date must be in YYYY-MM-DD format"
-    ) from exc
-        
-    db_cfg = {
-        "server":   DB_SERVER,
-        "user":     DB_USER,
-        "password": DB_PASSWORD,
-        "database": DB_DATABASE,
-    }
-    missing = [k for k, v in db_cfg.items() if not v]
-    if missing:
-        raise RuntimeError(
-            f"Missing DB settings: {', '.join(missing)}. "
-            "Check your .env or config.py."
-        )
-
-    conn = pymssql.connect(**db_cfg)
-    cur = conn.cursor()
-
-    # Replace `1,1` with real look-ups if you later add Patients / Therapists tables
-    sql = """
-        INSERT INTO dbo.Sessions
-            (PatientID, TherapistID, SessionDate,
-             SessionNotes, BlobURL, Transcript, Timestamp)
-        VALUES
-            (%s, %s, %s, %s, %s, %s, %s);
+def download_blob_to_tempfile(blob_url: str) -> str:
     """
-    cur.execute(
-        sql,
-        (
-            1,                       # PatientID placeholder
-            1,                       # TherapistID placeholder
-            session_date,
-            notes,
-            blob_url,
-            transcript_url,
-            datetime.utcnow(),
-        ),
-    )
-    conn.commit()
-    conn.close()
+    Downloads a blob from Azure Blob Storage using a full HTTPS blob URL.
+    Returns path to a local temp file.
+    """
+    # Extract path after container name
+    parsed = urlparse(blob_url)
+    path = parsed.path.lstrip("/")  # e.g. "main/transcriptions/file.txt"
+
+    # Remove the container name from path: e.g., "main/transcriptions/..." -> "transcriptions/..."
+    container_prefix = CONTAINER.rstrip("/") + "/"
+    if not path.startswith(container_prefix):
+        raise ValueError("Blob URL does not match expected container.")
+    blob_path = path[len(container_prefix):]  # e.g. "transcriptions/file.txt"
+
+    blob_client = _container.get_blob_client(blob_path)
+
+    with tempfile.NamedTemporaryFile("w+", delete=False, suffix=".txt", encoding="utf-8") as tmp:
+        download_stream = blob_client.download_blob()
+        tmp.write(download_stream.readall().decode("utf-8"))
+        return tmp.name
+

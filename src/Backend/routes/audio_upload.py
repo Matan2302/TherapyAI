@@ -15,9 +15,9 @@ from fastapi import (
 # ─── project helpers ─────────────────────────────────────────────────────────
 from services.blob_service import (
     upload_to_azure,     # push .wav / .txt to Blob Storage
-    create_sas_url,      # build read-only SAS for Azure Speech
-    save_session_to_db,  # insert a row into dbo.Sessions
+    create_sas_url     # build read-only SAS for Azure Speech  # insert a row into dbo.Sessions
 )
+from services.sql_service import save_session_to_db
 from services.azure_transcription import transcribe_dialog
 
 # ─── router setup ───────────────────────────────────────────────────────────
@@ -55,13 +55,13 @@ async def upload_audio(
         # ------------------------------------------------------------------
         # 2.  WAV ➝ Azure Blob
         # ------------------------------------------------------------------
-        audio_url = upload_to_azure(local_path, file.filename)
+        audio_url = upload_to_azure(local_path, file.filename, folder="recordings")
 
 
         # ------------------------------------------------------------------
         # 3.  Build SAS URL and transcribe
         # ------------------------------------------------------------------
-        sas_url = create_sas_url(file.filename, minutes=120)
+        sas_url = create_sas_url(f"recordings/{file.filename}", minutes=120)
         print(sas_url)
         _, transcript_url = transcribe_dialog(sas_url, locale="he-IL")
         print(transcript_url)

@@ -21,7 +21,7 @@ const AppContent = () => {
     <div
       className="app-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`,
+        //backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",

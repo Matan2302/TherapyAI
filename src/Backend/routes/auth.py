@@ -29,6 +29,7 @@ def get_db():
 # 📥 התחברות
 @router.post("/login", response_model=TherapistLoginResponse)
 def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
+    print(db)
     print("🔐 login called with:", credentials.email)
 
     therapist = db.query(TherapistLogin).filter(TherapistLogin.email == credentials.email).first()

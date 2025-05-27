@@ -170,15 +170,30 @@ const PatientDashboard = () => {
   ];
   const COLORS = ["#4ade80", "#f87171"];
 
-  const analyzeSession = (idx) => {
-    // Simulate analysis (in real app, call backend)
+const analyzeSession = async (idx) => {
+  const session = sessions[idx];
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch("http://localhost:8000/sentiment/analyze-sentiment/", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ session_id: session.SessionID }),  // ✅ Wrap in an object
+    });
+
+    const data = await res.json();
+    console.log("Analysis complete:", data);
+
     const updatedSessions = [...sessions];
-    updatedSessions[idx] = {
-      ...updatedSessions[idx],
-      SessionNotes: "Analyzed"
-    };
+    updatedSessions[idx].SessionNotes = "Analyzed";
     setSessions(updatedSessions);
-  };
+  } catch (err) {
+    console.error("Analysis failed:", err);
+  }
+};
 
   return (
     <div className="patient-dashboard p-6">

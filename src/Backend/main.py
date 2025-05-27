@@ -8,7 +8,7 @@ from routes import auth
 from routes import patient_routes
 from routes import patients
 from routes import transcription
-
+from routes import sentiment_analysis
 import uvicorn
 # Import route files (we'll create these later)
 from routes import audio_upload
@@ -41,11 +41,10 @@ async def ping():
 # Register your API routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(audio_upload.router, prefix="/audio", tags=["Audio Upload"])
-
 app.include_router(patients.router, prefix="/patientsdb", tags=["Patients"])
 app.include_router(patient_routes.router, prefix="/patients", tags=["Patients"])
-
 app.include_router(transcription.router, prefix="/transcription", tags=["Transcription"])
+app.include_router(sentiment_analysis.router, prefix="/sentiment", tags=["Sentiment"])
 
 
 if __name__ == "__main__":
