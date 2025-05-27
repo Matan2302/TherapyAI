@@ -32,7 +32,7 @@ async def analyze_sentiment(session_id: int):
 
         tmp_filename = f"{session_id}_analysis.json"
         with tempfile.NamedTemporaryFile("w+", delete=False, suffix=".json", encoding="utf-8") as tmp:
-            json.dump(sentiment_data, tmp, indent=2)
+            json.dump(sentiment_data, tmp, indent=2, ensure_ascii=False)
             tmp_path = tmp.name
 
         analysis_blob_url = upload_to_azure(tmp_path, tmp_filename, folder="analysis")
