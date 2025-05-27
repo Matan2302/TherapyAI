@@ -1,5 +1,3 @@
-# services/azure_sentiment.py
-
 import os
 import re
 import json
@@ -9,9 +7,9 @@ from dotenv import load_dotenv
 from services.blob_service import download_blob_to_tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()
 
-# Load API keys and endpoint from env
+# === ENV ===
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 AZURE_API_KEY = os.getenv("AZURE_LANGUAGE_KEY")
 AZURE_ENDPOINT = os.getenv("AZURE_LANGUAGE_ENDPOINT")
@@ -20,7 +18,7 @@ if not all([GEMINI_API_KEY, AZURE_API_KEY, AZURE_ENDPOINT]):
     raise RuntimeError("Missing one or more required environment variables for sentiment analysis.")
 
 
-# === Public API ===
+# === Public entry point ===
 def analyze_sentiment_from_blob(blob_url: str) -> dict:
     tmp_path = download_blob_to_tempfile(blob_url)
 
@@ -32,15 +30,23 @@ def analyze_sentiment_from_blob(blob_url: str) -> dict:
             os.remove(tmp_path)
 
 
-# === Internal Analysis Pipeline ===
+# === Core pipeline ===
 def analyze_conversation(file_path: str) -> str:
     cleaned_text = load_and_clean_text(file_path)
     short_text = cleaned_text[:4000]
 
-    language, answering_speaker = detect_language_and_speaker(short_text)
-    stats = get_sentiment_statistics(cleaned_text, language, answering_speaker)
+    # Concurrent: Gemini Language, Speaker, Summary
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        f_lang = executor.submit(detect_language, short_text)
+        f_speaker = executor.submit(detect_speaker, short_text)
+        f_summary = executor.submit(summarize_conversation, cleaned_text)
+
+        lang = f_lang.result()
+        speaker = f_speaker.result()
+        summary = f_summary.result()
+
+    stats = get_sentiment_statistics(cleaned_text, lang, speaker)
     top_sentences = get_top_sentences(stats['positive_scores'], stats['negative_scores'])
-    summary = summarize_conversation(cleaned_text)
 
     result = {
         'total_positive': stats['total_positive'],
@@ -53,7 +59,7 @@ def analyze_conversation(file_path: str) -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
-# === Helpers ===
+# === Text cleaning ===
 def load_and_clean_text(file_path: str) -> str:
     with open(file_path, 'r', encoding='utf-8') as f:
         raw_text = f.read()
@@ -69,40 +75,51 @@ def split_speaker_turns(text: str):
     return re.findall(r'(Speaker \d+: .*?)(?=Speaker \d+:|$)', text, flags=re.DOTALL)
 
 
-def detect_language_and_speaker(short_text: str):
-    def gemini_prompt(prompt):
-        response = requests.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-            headers={"Content-Type": "application/json"},
-            params={"key": GEMINI_API_KEY},
-            json={"contents": [{"parts": [{"text": prompt}]}]}
-        )
-        response.raise_for_status()
-        return response.json()['candidates'][0]['content']['parts'][0]['text']
+# === Gemini prompts ===
+def gemini_prompt(prompt: str) -> str:
+    response = requests.post(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+        headers={"Content-Type": "application/json"},
+        params={"key": GEMINI_API_KEY},
+        json={"contents": [{"parts": [{"text": prompt}]}]}
+    )
+    response.raise_for_status()
+    return response.json()['candidates'][0]['content']['parts'][0]['text']
 
-    lang_prompt = f"Detect the language of the following conversation:\n\n{short_text}"
-    speaker_prompt = (
+
+def detect_language(text: str) -> str:
+    prompt = f"Detect the language of the following conversation:\n\n{text}"
+    response = gemini_prompt(prompt).lower()
+    if "hebrew" in response:
+        return "he"
+    elif "arabic" in response:
+        return "ar"
+    elif "russian" in response:
+        return "ru"
+    return "en"
+
+
+def detect_speaker(text: str) -> str:
+    prompt = (
         "In the following therapy conversation transcript, identify which 'Speaker X' is primarily asking the questions "
         "and which is primarily giving the answers. Respond ONLY with the speaker number of the person who gives most of the answers.\n\n"
-        f"{short_text}"
+        + text
     )
-
-    lang_response = gemini_prompt(lang_prompt).lower()
-    speaker_response = gemini_prompt(speaker_prompt)
-
-    lang = "en"
-    if "hebrew" in lang_response:
-        lang = "he"
-    elif "arabic" in lang_response:
-        lang = "ar"
-    elif "russian" in lang_response:
-        lang = "ru"
-
-    match = re.search(r'(\d)', speaker_response)
-    speaker = f"Speaker {match.group(1)}:" if match else None
-    return lang, speaker
+    response = gemini_prompt(prompt)
+    match = re.search(r'(\d)', response)
+    return f"Speaker {match.group(1)}:" if match else None
 
 
+def summarize_conversation(full_text: str) -> str:
+    prompt = (
+        "Summarize this therapy conversation. Focus on emotional tone, key discussion points, "
+        "and the psychological state of the speakers. Return the summary in the same language. Limit to 10 sentences.\n\n"
+        + full_text
+    )
+    return gemini_prompt(prompt)
+
+
+# === Azure NLP ===
 def analyze_sentence_azure(text: str, lang: str):
     headers = {
         "Ocp-Apim-Subscription-Key": AZURE_API_KEY,
@@ -128,10 +145,10 @@ def analyze_sentence_azure(text: str, lang: str):
     return None, 0.0
 
 
+# === Sentiment statistics (multi-threaded) ===
 def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
     sentences = split_speaker_turns(text)
 
-    # Filter and clean relevant speaker lines
     filtered = []
     for sentence in sentences:
         sentence = sentence.strip()
@@ -145,7 +162,6 @@ def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
     positive_scores = {}
     negative_scores = {}
 
-    # Use threads for parallel Azure API calls
     with ThreadPoolExecutor(max_workers=8) as executor:
         future_to_sentence = {
             executor.submit(analyze_sentence_azure, s, lang): s for s in filtered
@@ -162,7 +178,7 @@ def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
                     total_negative += 1
                     negative_scores[sentence] = score
             except Exception as e:
-                print(f"[ERROR] Failed to analyze sentence: {sentence[:40]}... ({e})")
+                print(f"[ERROR] Failed to analyze: {sentence[:50]}... | {e}")
 
     return {
         'total_positive': total_positive,
@@ -172,6 +188,7 @@ def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
     }
 
 
+# === Utility ===
 def get_top_sentences(pos_scores: dict, neg_scores: dict) -> dict:
     top_pos = sorted(pos_scores.items(), key=lambda x: x[1], reverse=True)[:5]
     top_neg = sorted(neg_scores.items(), key=lambda x: x[1], reverse=True)[:5]
@@ -181,19 +198,3 @@ def get_top_sentences(pos_scores: dict, neg_scores: dict) -> dict:
     for i, (s, _) in enumerate(top_neg, 1):
         result[f'negative_{i}'] = s
     return result
-
-
-def summarize_conversation(full_text: str) -> str:
-    prompt = (
-        "Summarize this therapy conversation. Focus on emotional tone, key discussion points, "
-        "and the psychological state of the speakers. Return the summary in the same language. Limit to 10 sentences.\n\n"
-        + full_text
-    )
-    response = requests.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-        headers={"Content-Type": "application/json"},
-        params={"key": GEMINI_API_KEY},
-        json={"contents": [{"parts": [{"text": prompt}]}]}
-    )
-    response.raise_for_status()
-    return response.json()['candidates'][0]['content']['parts'][0]['text']
