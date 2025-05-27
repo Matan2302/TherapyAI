@@ -7,6 +7,7 @@ import requests
 import tempfile
 from dotenv import load_dotenv
 from services.blob_service import download_blob_to_tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -129,26 +130,39 @@ def analyze_sentence_azure(text: str, lang: str):
 
 def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
     sentences = split_speaker_turns(text)
+
+    # Filter and clean relevant speaker lines
+    filtered = []
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if sentence.startswith(speaker):
+            content = sentence[len(speaker):].strip()
+            if len(content.split()) > 1:
+                filtered.append(content)
+
     total_positive = 0
     total_negative = 0
     positive_scores = {}
     negative_scores = {}
 
-    for sentence in sentences:
-        sentence = sentence.strip()
-        if not sentence.startswith(speaker):
-            continue
-        content = sentence[len(speaker):].strip()
-        if len(content.split()) <= 1:
-            continue
+    # Use threads for parallel Azure API calls
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        future_to_sentence = {
+            executor.submit(analyze_sentence_azure, s, lang): s for s in filtered
+        }
 
-        label, score = analyze_sentence_azure(sentence, lang)
-        if label == "positive":
-            total_positive += 1
-            positive_scores[content] = score
-        elif label == "negative":
-            total_negative += 1
-            negative_scores[content] = score
+        for future in as_completed(future_to_sentence):
+            sentence = future_to_sentence[future]
+            try:
+                label, score = future.result()
+                if label == "positive":
+                    total_positive += 1
+                    positive_scores[sentence] = score
+                elif label == "negative":
+                    total_negative += 1
+                    negative_scores[sentence] = score
+            except Exception as e:
+                print(f"[ERROR] Failed to analyze sentence: {sentence[:40]}... ({e})")
 
     return {
         'total_positive': total_positive,
