@@ -81,7 +81,7 @@ const RecordingPage = () => {
     }
 
     const formData = new FormData();
-    formData.append("file", audioBlob, "recording.wav");
+    formData.append("file", audioBlob, sessionDate+"_"+patientName);
     formData.append("patient_name", patientName);
     formData.append("therapist_name", therapistName);
     formData.append("session_date", sessionDate);
