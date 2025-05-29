@@ -48,21 +48,42 @@ const LoginPage = () => {
       });
 
       if (!res.ok) {
-        throw new Error(t("invalid_credentials_error"));
-      }
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Login failed");
 
+}
+
+
+      //TODO: לתרגם את השגיאות גם לשפות האחרות
+      
+      
+      
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
-      setTherapistName(email);
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("therapist_id", therapist_id);
-      localStorage.setItem("therapist_name", full_name);
+      if (therapist_id === -1){
+        localStorage.setItem("therapist_name", "Admin");
+        localStorage.setItem("token", access_token);
+        setSuccess("Admin Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError(""); // clear error if there was one
+      // Redirect to home
+      }
+      else{
+        // Save therapist ID or name in context/localStorage
+        setTherapistName(email); // or use therapist_id
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("therapist_id", therapist_id);
+        localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
+      
+        setSuccess("Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError(""); // clear error if there was one
+        // Redirect to home
+      }
 
-      setSuccess(t("login_success_message"));
-      console.log(localStorage.getItem("token"));
-      setError("");
-
+      
+      
       setTimeout(() => {
         navigate("/home");
       }, 2000);

@@ -1,0 +1,79 @@
+.admin-dashboard {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .admin-dashboard h2 {
+    color: #007bff;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-dashboard p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  /* כרטיס רקע */
+  .therapist-table {
+    background-color: rgba(255, 255, 255, 0.9); /* לבן כמעט מלא */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 95%;
+    max-width: 1100px;
+    border-collapse: collapse;
+  }
+  
+  .therapist-table th {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .therapist-table td {
+    padding: 0.9rem 1rem;
+    border-top: 1px solid #ddd;
+    font-size: 0.95rem;
+  }
+  
+  .therapist-table tr:nth-child(even) {
+    background-color: #f7f9fc;
+  }
+  
+  /* כפתורים */
+  .approve-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 0.4rem;
+    transition: background-color 0.3s;
+  }
+  
+  .reject-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .approve-btn:hover {
+    background-color: #218838;
+  }
+  
+  .reject-btn:hover {
+    background-color: #c82333;
+  }
+  
