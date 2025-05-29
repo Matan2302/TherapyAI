@@ -52,6 +52,10 @@ const Header = () => {
           <Link to="/recording" className="nav-link">Recording</Link>
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
           <Link to="/PatientForm-form" className="nav-link">Add Patient</Link>
+          {/* ✅ כפתור ניווט לדשבורד אדמין - רק אם זה Admin */}
+          {therapistName === "Admin" && (
+            <Link to="/admin-dashboard" className="nav-link">Admin Dashboard</Link>
+  )}
         </div>
 
         <div className="profile-container" ref={dropdownRef}>

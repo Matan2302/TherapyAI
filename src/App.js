@@ -5,10 +5,11 @@ import LoginPage from "./components/LoginPage";
 import RecordingPage from "./components/RecordingPage";
 import PatientDashboard from "./components/PatientDashboard";
 import PatientForm from "./components/PatientForm";
+import AdminDashboard from "./components/AdminDashboard"; // ✅ חדש
 import { TherapistProvider } from "./TherapistContext";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
-import backgroundImage from "./assets/background_spanishHouseLogo.png"; // רקע
+import backgroundImage from "./assets/background_spanishHouseLogo.png";
 
 const App = () => {
   return (
@@ -64,6 +65,14 @@ const App = () => {
                 }
               />
               <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/home"
                 element={
                   <ProtectedRoute>
@@ -79,7 +88,7 @@ const App = () => {
   );
 };
 
-// ✅ דף הבית עם עיצוב glass-card
+// ✅ דף הבית
 const HomePage = () => (
   <div className="home-page">
     <div className="glass-card center-card">

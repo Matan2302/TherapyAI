@@ -32,22 +32,35 @@ const LoginPage = () => {
       });
 
       if (!res.ok) {
-        throw new Error("Invalid email or password");
-      }
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Login failed");
+}
 
       const data = await res.json();
       const { therapist_id, access_token,full_name } = data;
 
-      // Save therapist ID or name in context/localStorage
-      setTherapistName(email); // or use therapist_id
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("therapist_id", therapist_id);
-      localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
-      
-      setSuccess("Login successful!");
-      console.log(localStorage.getItem("token"));
-      setError(""); // clear error if there was one
+      if (therapist_id === -1){
+        localStorage.setItem("therapist_name", "Admin");
+        localStorage.setItem("token", access_token);
+        setSuccess("Admin Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError(""); // clear error if there was one
       // Redirect to home
+      }
+      else{
+        // Save therapist ID or name in context/localStorage
+        setTherapistName(email); // or use therapist_id
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("therapist_id", therapist_id);
+        localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
+      
+        setSuccess("Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError(""); // clear error if there was one
+        // Redirect to home
+      }
+
+      
       
       setTimeout(() => {
         navigate("/home");
