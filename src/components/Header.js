@@ -43,7 +43,7 @@ const Header = () => {
   const therapistName = localStorage.getItem("therapist_name");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-   const isAdmin = therapistName === "Admin";
+  const isAdmin = therapistName === "Admin";
   const getInitials = (name) => {
     if (!name) return "";
     const words = name.trim().split(" ");
