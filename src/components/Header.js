@@ -43,7 +43,7 @@ const Header = () => {
   const therapistName = localStorage.getItem("therapist_name");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+   const isAdmin = therapistName === "Admin";
   const getInitials = (name) => {
     if (!name) return "";
     const words = name.trim().split(" ");
@@ -87,6 +87,9 @@ const Header = () => {
           <Link to="/recording" className="nav-link">{t("recording_link")}</Link>
           <Link to="/dashboard" className="nav-link">{t("dashboard_link")}</Link>
           <Link to="/PatientForm-form" className="nav-link">{t("add_patient_link")}</Link>
+          {isAdmin && (
+            <Link to="/admin-dashboard" className="nav-link">{t("Admin Dashboard") || t("admin_dashboard_link")}</Link>
+          )}
         </div>
 
         <div className="language-switcher">
