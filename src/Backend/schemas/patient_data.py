@@ -22,9 +22,22 @@ class PatientBasicInfo(BaseModel):
     DateOfBirth: str | None
     MedicalHistory: str | None
 
-
 class PatientSessionInfo(BaseModel):
-    SessionID: int 
+    SessionID: int
     SessionDate: str | None
     SessionNotes: str | None
+    SessionAnalysis: str | None
     TherapistName: str | None
+    IsAnalyzed: bool
+
+class SentimentDetails(BaseModel):
+    total_positive: int
+    total_negative: int
+    top_5_positive: List[str]
+    top_5_negative: List[str]
+    summary: str
+
+class SentimentAnalysisResponse(BaseModel):
+    status: str
+    sentiment: SentimentDetails
+    analysis_url: str

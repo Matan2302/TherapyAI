@@ -28,7 +28,6 @@ def get_patient_dashboard_data(
     patient_email: str = Query(...),
     session_id: int = Query(None, description="Optional session ID")
 ):
-    print(f"Patient email received: {patient_email}, session_id: {session_id}")
 
     # Initialize variables
     good = []
@@ -130,22 +129,22 @@ def get_all_sessions_for_patient(
         .order_by(SessionModel.SessionDate.desc())
         .all()
     )
-    #make session notes "Not Analyzed yet" if they are not look like link
-    for session in sessions:
-        if not session.SessionNotes or not session.SessionNotes.startswith("http"):
-            session.SessionNotes = "Not Analyzed yet"
-        else:
-            session.SessionNotes = "Analyzed"
+
+
+    # You can append an 'IsAnalyzed' field to each session in your result:
     result = []
     for s in sessions:
         therapist = db.query(Therapist).filter(Therapist.TherapistID == s.TherapistID).first()
         therapist_name = therapist.FullName if therapist else None
+        is_analyzed = bool(s.analysis and isinstance(s.analysis, str) and s.analysis.startswith("http"))
         result.append(
             PatientSessionInfo(
-                SessionID=s.SessionID,  # <-- Add this line
+                SessionID=s.SessionID,
                 SessionDate=s.SessionDate.strftime("%Y-%m-%d") if s.SessionDate else None,
                 SessionNotes=s.SessionNotes,
-                TherapistName=therapist_name
+                SessionAnalysis=s.analysis,
+                TherapistName=therapist_name,
+                IsAnalyzed=is_analyzed  # <-- Add this field to your schema
             )
         )
     return result

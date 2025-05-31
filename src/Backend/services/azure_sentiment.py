@@ -198,3 +198,16 @@ def get_top_sentences(pos_scores: dict, neg_scores: dict) -> dict:
     for i, (s, _) in enumerate(top_neg, 1):
         result[f'negative_{i}'] = s
     return result
+
+#logic for connecting azure blob storage to get the analysis file like in # src/Backend/services/18_analysis.json
+def get_analysis_from_blob(url: str) -> dict:
+    """
+    Fetch the sentiment analysis from Azure Blob Storage using the provided URL.
+    """
+    file = download_blob_to_tempfile(url)
+    with open(file, 'r', encoding='utf-8') as f:
+        analysis_data = json.load(f)
+    if not analysis_data:
+        raise ValueError("Analysis data not found or is empty.")
+    return analysis_data
+    

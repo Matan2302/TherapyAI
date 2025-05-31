@@ -127,7 +127,6 @@ const PatientDashboard = () => {
     const idx = Number(e.target.value);
     setSelectedSessionIdx(idx);
     if (sessions[idx]) {
-      // Always use selectedPatientEmail
       fetchPatientData(selectedPatientEmail, sessions[idx].SessionID);
       setShowData(true);
     }
@@ -169,27 +168,34 @@ const PatientDashboard = () => {
     { name: t("bad_thema_label"), value: totalBad },
   ];
   const COLORS = ["#4ade80", "#f87171"];
-
 const analyzeSession = async (idx) => {
   const session = sessions[idx];
   const token = localStorage.getItem("token");
 
   try {
+    // Optional: add a loading state here if you want a spinner
     const res = await fetch("http://localhost:8000/sentiment/analyze-sentiment/", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ session_id: session.SessionID }),  // ✅ Wrap in an object
+      body: JSON.stringify({ session_id: session.SessionID }),
     });
 
     const data = await res.json();
     console.log("Analysis complete:", data);
 
+    // Update session state
     const updatedSessions = [...sessions];
-    updatedSessions[idx].SessionNotes = "Analyzed";
+    updatedSessions[idx] = {
+      ...updatedSessions[idx],
+      SessionNotes: "Analyzed",
+      IsAnalyzed: true,
+      SessionAnalysis: data.analysis_url,
+    };
     setSessions(updatedSessions);
+
   } catch (err) {
     console.error("Analysis failed:", err);
   }
@@ -201,83 +207,64 @@ const analyzeSession = async (idx) => {
 
       {/* Patient search input */}
       {!showData && (
-        <div
-          className="name-input mb-4"
-          style={{
-            backgroundColor: "white",
-            padding: "1rem",
-            borderRadius: "8px",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            position: "relative",
-            minWidth: "420px", // Make input container wider
-            maxWidth: "600px",
-          }}
-        >
-          <label htmlFor="name" className="text-lg font-medium" style={{ display: "block", textAlign: "center" }}>
-            {t("input_name_label") || t("enter_name_label") || "Enter patient name"}
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={inputName}
-            onChange={(e) => {
-              setInputName(e.target.value);
-              setShowData(false);
-              setPatientData(null);
-              setError("");
-            }}
-            className="input mt-1 mb-2"
-            placeholder={t("input_name_placeholder") || t("name_placeholder") || "Type patient name..."}
-            autoComplete="off"
-          />
-          {isLoadingSuggestions && (
-            <div className="suggestions-loading">{t("loading") || "Loading..."}</div>
-          )}
-          {suggestions.length > 0 && (
-            <ul
-              className="suggestions-list"
-              ref={suggestionsRef}
-              style={{
-                listStyle: "none",
-                margin: 0,
-                padding: 0,
-                position: "absolute",
-                width: "100%",
-                minWidth: "420px", // Make suggestions wider
-                background: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "0 0 12px 12px",
-                zIndex: 10,
-                maxHeight: 400,
-                overflowY: "auto",
-                fontSize: "1.25rem",
+        <div className="input-row">
+          <div className="name-input">
+            <label htmlFor="name" className="text-lg font-medium" style={{ display: "block", textAlign: "center" }}>
+              {t("input_name_label") || "Enter patient name"}
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={inputName}
+              onChange={(e) => {
+                setInputName(e.target.value);
+                setShowData(false);
+                setPatientData(null);
+                setError("");
               }}
-            >
-              {suggestions.map((patient) => (
-                <li
-                  key={patient.PatientID}
-                  style={{
-                    padding: "16px",
-                    cursor: "pointer",
-                    borderBottom: "1px solid #eee",
-                  }}
-                  onClick={() => handleSelectPatient(patient)}
-                >
-                  <div><strong>{patient.FullName}</strong> ({patient.PatientEmail})</div>
-                  {patient.DateOfBirth && (
-                    <div style={{ fontSize: "1rem", color: "#555" }}>
-                      DOB: {patient.DateOfBirth}
-                    </div>
-                  )}
-                  {patient.MedicalHistory && (
-                    <div style={{ fontSize: "1rem", color: "#888" }}>
-                      History: {patient.MedicalHistory}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+              className="input mt-1 mb-2"
+              placeholder={t("input_name_placeholder") || "Type patient name..."}
+              autoComplete="off"
+            />
+            {isLoadingSuggestions && (
+              <div className="suggestions-loading">{t("loading") || "Loading..."}</div>
+            )}
+            {suggestions.length > 0 && (
+              <ul
+                className="suggestions-list"
+                ref={suggestionsRef}
+                style={{
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                  position: "absolute",
+                  width: "100%",
+                  background: "#fff",
+                  border: "1px solid #ddd",
+                  borderRadius: "0 0 12px 12px",
+                  zIndex: 10,
+                  maxHeight: 400,
+                  overflowY: "auto",
+                  fontSize: "1.25rem",
+                }}
+              >
+                {suggestions.map((patient) => (
+                  <li
+                    key={patient.PatientID}
+                    style={{
+                      padding: "16px",
+                      cursor: "pointer",
+                      borderBottom: "1px solid #eee",
+                    }}
+                    onClick={() => handleSelectPatient(patient)}
+                  >
+                    <div><strong>{patient.FullName}</strong> ({patient.PatientEmail})</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {/* REMOVE the session dropdown here */}
         </div>
       )}
 
@@ -285,7 +272,7 @@ const analyzeSession = async (idx) => {
 
       {/* Always show session dropdown if sessions are loaded */}
       {sessions.length > 0 && (
-        <div style={{ margin: "1rem 0", maxWidth: 600 }}>
+        <div style={{ margin: "2rem 0 1rem 0", maxWidth: 600 }}>
           <label htmlFor="session-select" style={{ fontWeight: "bold" }}>
             {t("select_session_label") || "Select a session:"}
           </label>
@@ -307,7 +294,7 @@ const analyzeSession = async (idx) => {
             </option>
             {sessions.map((session, idx) => (
               <option key={idx} value={idx}>
-                {session.SessionDate} - {session.TherapistName} - {session.SessionNotes?.slice(0, 30) || ""}
+                {(session.SessionDate || session.session_date)} - {(session.TherapistName || session.therapist_name)} - {(session.IsAnalyzed === true || session.is_analyzed === true) ? t("analyzed") || "Analyzed" : t("not_analyzed") || "Not Analyzed"}
               </option>
             ))}
           </select>
@@ -320,18 +307,11 @@ const analyzeSession = async (idx) => {
           {/* Session details */}
           {selectedSessionIdx !== null && sessions[selectedSessionIdx] && (
             <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px" }}>
-              {sessions[selectedSessionIdx].SessionNotes === "Analyzed" ? (
+              {sessions[selectedSessionIdx].IsAnalyzed ? (
                 <>
-                  {/* DASHBOARD CONTENT GOES HERE */}
-                  <div>
-                    <strong>{t("session_date_label") || "Session Date"}:</strong> {sessions[selectedSessionIdx].SessionDate}
-                  </div>
-                  <div>
-                    <strong>{t("session_notes_label") || "Session Notes"}:</strong> {sessions[selectedSessionIdx].SessionNotes}
-                  </div>
-                  <div>
-                    <strong>{t("last_therapist_name_label") || "Therapist"}:</strong> {sessions[selectedSessionIdx].TherapistName}
-                  </div>
+                <h3 className="text-xl mb-2">
+                  {t("Analysed Session") || "Analyzed Session"}
+                </h3>
                 </>
               ) : (
                 <button
@@ -383,51 +363,114 @@ const analyzeSession = async (idx) => {
                 <label>{t("session_date_label")}</label>
                 <input type="text" value={patientData?.lastSessionDate} readOnly className="input" />
 
+                <label>{t("session_notes_label")}</label>
+                <textarea value={patientData?.lastSessionNotes || ""} readOnly className="input" />
+
                 <label>{t("total_sessions_label")}</label>
                 <input type="text" value={patientData?.totalSessionsDone} readOnly className="input" />
               </div>
             </div>
           </div>
 
-          {/* Only show charts if the selected session is analyzed */}
+          {/* Only show sentiment analysis details if the selected session is analyzed */}
           {selectedSessionIdx !== null &&
             sessions[selectedSessionIdx] &&
-            sessions[selectedSessionIdx].SessionNotes === "Analyzed" && (
-              <div className="chart-row">
-                <div className="section-box chart-box">
-                  <h3>{t("bar_chart_title")}</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={sessionData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="interval" label={{ value: t("time_intervals_label"), position: "insideBottom", offset: -5 }} />
-                      <YAxis label={{ value: t("sum_of_good_bad_label"), angle: -90, position: "insideLeft" }} />
-                      <Tooltip />
-                      <Bar dataKey="goodThema" fill="#4ade80" name={t("good_thema_label")} />
-                      <Bar dataKey="badThema" fill="#f87171" name={t("bad_thema_label")} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="section-box chart-box">
-                  <h3>{t("pie_chart_title")}</h3>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+            sessions[selectedSessionIdx].IsAnalyzed && (
+              <SentimentDetailsDisplay analysisUrl={sessions[selectedSessionIdx].SessionAnalysis} />
           )}
         </>
       )}
     </div>
   );
 };
+
+const SentimentDetailsDisplay = ({ analysisUrl }) => {
+  const { t } = useTranslation("dashboard");
+  const [sentiment, setSentiment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!analysisUrl) return;
+    setLoading(true);
+
+    // Call your FastAPI endpoint instead of fetching the blob directly
+    fetch(`http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(analysisUrl)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSentiment(data.sentiment || data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(t("error_loading_analysis") || "Error loading analysis");
+        setLoading(false);
+      });
+  }, [analysisUrl, t]);
+
+  if (loading) return <div>{t("loading_analysis") || "Loading analysis..."}</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!sentiment) return null;
+return (
+  <div className="chart-row-container">
+    <div className="chart-row">
+       <div className="section-box summary-box">
+      <h3>{t("session_summary") || "Sentiment Summary"}</h3>
+      <div>
+        <strong>{t("total_positive_label") || "Total Positive"}:</strong> {sentiment.total_positive}
+      </div>
+      <div>
+        <strong>{t("total_negative_label") || "Total Negative"}:</strong> {sentiment.total_negative}
+      </div>
+      <div>
+        <strong>{t("summary_label") || "Summary"}:</strong>
+        <div style={{ whiteSpace: "pre-line", marginTop: 4 }}>{sentiment.summary}</div>
+      </div>
+      </div>
+
+      {/* Pie chart */}
+      <div style={{ width: '100%', height: 250, marginTop: '1rem' }}>
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={[
+                { name: t("positive") || "Positive", value: sentiment.total_positive },
+                { name: t("negative") || "Negative", value: sentiment.total_negative },
+              ]}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={80}
+              label
+            >
+              <Cell fill="#4ade80" /> {/* green */}
+              <Cell fill="#f87171" /> {/* red */}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+    <div className="chart-row">
+    <div className="section-box chart-box">
+      <h3>{t("top_5_positive_label") || "Top 5 Positive"}</h3>
+      <ul>
+        {(sentiment.top_5_positive || []).map((item, idx) => (
+          <li key={idx}>{item}</li>
+        ))}
+      </ul>
+    </div>
+    <div className="section-box chart-box">
+      <h3>{t("top_5_negative_label") || "Top 5 Negative"}</h3>
+      <ul>
+        {(sentiment.top_5_negative || []).map((item, idx) => (
+          <li key={idx}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  </div>
+);
+}
+
 
 export default PatientDashboard;
