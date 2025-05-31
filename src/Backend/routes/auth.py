@@ -8,6 +8,7 @@ from schemas.TherapistRegister import TherapistRegisterRequest
 from database import SessionLocal
 import hashlib
 import jwt
+import re
 
 from config import SECRET_KEY
 from fastapi.security import OAuth2PasswordBearer
@@ -84,6 +85,14 @@ def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
 
 
 
+def is_password_strong(password: str) -> bool:
+    if len(password) < 7:
+        return False
+    if not re.search(r"[A-Z]", password):
+        return False
+    if not re.search(r"[a-z]", password):
+        return False
+    return True
 
 @router.get("/verify")
 def verify_token_route(token: str = Depends(oauth2_scheme)):
@@ -100,8 +109,11 @@ def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
     if existing:
         print("❌ Email already registered")
         raise HTTPException(status_code=400, detail="Email already registered")
-
+    
+    if not is_password_strong(data.password):
+        raise HTTPException(status_code=400, detail="Password is not strong enough. It must be at least 7 characters long and include both uppercase and lowercase letters.")
     # יצירת רשומת מטפל (שמות השדות מותאמים למודל שלך)
+   
     new_therapist = Therapist(
         FullName=data.full_name,
         Specialization=data.specialization,

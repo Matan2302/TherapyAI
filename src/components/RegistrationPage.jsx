@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./RegistrationPage.css"; // אם יש לך עיצוב
+import "./RegistrationPage.css";
 
 const RegistrationPage = () => {
   const [fullName, setFullName] = useState("");
@@ -10,9 +10,26 @@ const RegistrationPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+  const [strength, setStrength] = useState("weak");
 
   const navigate = useNavigate();
+
+  const checkStrength = (password) => {
+    const lengthValid = password.length >= 7;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+
+    if (!lengthValid || !(hasUpper && hasLower)) return "weak";
+    if (hasSpecial) return "strong";
+    return "medium";
+  };
+
+  const handlePasswordChange = (e) => {
+    const val = e.target.value;
+    setPassword(val);
+    setStrength(checkStrength(val));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,18 +47,15 @@ const RegistrationPage = () => {
           email,
           password,
         }),
-        
       });
 
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.detail || "Registration failed");
       }
-      // הרשמה הצליחה – הפנייה להתחברות
+
       setSuccess("Registration successful!");
       setTimeout(() => navigate("/login"), 2000);
-      
-      
     } catch (err) {
       setError(err.message);
     }
@@ -101,14 +115,19 @@ const RegistrationPage = () => {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             required
           />
+          {password && (
+          <div className="strength-container">
+            <div className={`strength-bar ${strength}`}></div>
+            <small className="strength-text">Strength: {strength}</small>
+          </div>
+        )}
         </div>
 
         {error && <p className="error">{error}</p>}
         {success && <p className="success-message">{success}</p>}
-
 
         <button type="submit" className="btn">
           Register

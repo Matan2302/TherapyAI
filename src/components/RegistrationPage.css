@@ -1,70 +1,104 @@
-/* RegistrationPage.css */
-
 .registration-page {
-    max-width: 400px;
-    margin: 3rem auto;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  max-width: 400px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.registration-page h2 {
+  color: #007bff;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* Strength bar */
+.strength-container {
+  margin-top: 6px;
+}
+
+.strength-bar {
+  height: 10px;
+  border-radius: 4px;
+  background-color: #ccc;
+  margin-bottom: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.strength-bar.weak {
+  background-color: #f87171; /* red */
+}
+
+.strength-bar.medium {
+  background-color: #fbbf24; /* yellow */
+}
+
+.strength-bar.strong {
+  background-color: #4ade80; /* green */
+}
+
+.strength-text {
+  font-size: 0.85rem;
+  color: #333;
+  display: block;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .registration-page {
+    padding: 1.5rem;
   }
-  
-  .registration-page h2 {
-    color: #007bff;
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1rem;
-    text-align: left;
-  }
-  
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
+
   .btn {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1.2rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 1rem;
   }
-  
-  .btn:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .registration-page {
-      padding: 1.5rem;
-    }
-  
-    .btn {
-      font-size: 1rem;
-    }
-    
-    
-  }
-  .success-message {
-    color: green;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  
+}
