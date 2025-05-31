@@ -16,7 +16,6 @@
 .mood-tracking {
   text-align: center;
 }
-* Add space between summary text and pie chart */
 .chart-row {
   display: flex;
   flex-wrap: wrap;
@@ -78,7 +77,6 @@
     direction: rtl;
   }
 }
-* Make unordered lists RTL and bullets on the right */
 ul {
   direction: rtl;
   text-align: right;
