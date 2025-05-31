@@ -57,6 +57,25 @@ def get_transcript_url_by_SID(session_id: int) -> str | None:
 
     return row[0] if row else None
 
+def get_patient_id_by_email(email: str) -> int | None:
+    _check_db_config()
+    conn = pymssql.connect(**DB_CONFIG)
+    cur = conn.cursor()
+    cur.execute("SELECT PatientID FROM dbo.Patients WHERE PatientEmail = %s", (email,))
+    row = cur.fetchone()
+    conn.close()
+    return row[0] if row else None
+
+
+def get_therapist_id_by_email(email: str) -> int | None:
+    _check_db_config()
+    conn = pymssql.connect(**DB_CONFIG)
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM dbo.TherapistsLogin WHERE email = %s", (email,))
+    row = cur.fetchone()
+    conn.close()
+    return row[0] if row else None
+
 
 def save_session_to_db(
     patient_name: str,
@@ -73,6 +92,13 @@ def save_session_to_db(
     except ValueError as exc:
         raise ValueError("session_date must be in YYYY-MM-DD format") from exc
 
+    patient_id = get_patient_id_by_email(patient_name)
+    therapist_id = get_therapist_id_by_email(therapist_name)
+    print(f"patient_id: {patient_id}")
+    print(f"therapist_id: {therapist_id}")
+    if not patient_id or not therapist_id:
+        raise ValueError("Invalid patient or therapist email")
+    
     conn = pymssql.connect(**DB_CONFIG)
     cur = conn.cursor()
 
@@ -86,8 +112,8 @@ def save_session_to_db(
     cur.execute(
         sql,
         (
-            1,  # PatientID placeholder
-            1,  # TherapistID placeholder
+            patient_id,  # PatientID placeholder
+            therapist_id,  # TherapistID placeholder
             session_date,
             notes,
             blob_url,

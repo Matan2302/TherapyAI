@@ -1,9 +1,9 @@
 {
   "recording_page_title": "דף הקלטה",
-  "patient_name_label": "שם המטופל",
+  "patient_name_label": "מייל המטופל",
   "patient_name_placeholder": "הזן את שם המטופל",
   "session_date_label": "תאריך הטיפול",
-  "therapist_name_label": "שם המטפל",
+  "therapist_name_label": "מייל המטפל",
   "session_notes_label": "הערות לפגישה",
   "session_notes_placeholder": "כתוב כאן את הערות הפגישה...",
   "consent_warning": "יש לקבל את הסכמת המטופל לפני התחלת ההקלטה!",

@@ -1,9 +1,9 @@
 {
   "recording_page_title": "Recording Page",
-  "patient_name_label": "Patient Name",
+  "patient_name_label": "Patient Email",
   "patient_name_placeholder": "Enter patient name",
   "session_date_label": "Date of Treatment",
-  "therapist_name_label": "Therapist Name",
+  "therapist_name_label": "Therapist Email",
   "session_notes_label": "Session Notes",
   "session_notes_placeholder": "Write session notes here...",
   "consent_warning": "Please obtain patient consent before starting!",
