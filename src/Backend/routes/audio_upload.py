@@ -47,6 +47,7 @@ async def upload_audio(
     # ------------------------------------------------------------------ #
     # 1.  Persist locally just long enough to upload
     # ------------------------------------------------------------------ #
+    file.filename = file.filename + ".wav"
     local_path = os.path.join(UPLOAD_DIR, file.filename)
     async with aiofiles.open(local_path, "wb") as out_fh:
         await out_fh.write(await file.read())
@@ -62,7 +63,7 @@ async def upload_audio(
         # 3.  Build SAS URL and transcribe
         # ------------------------------------------------------------------
         sas_url = create_sas_url(f"recordings/{file.filename}", minutes=120)
-        print(sas_url)
+        print(f"SAS URL = {sas_url}")
         _, transcript_url = transcribe_dialog(sas_url, locale="he-IL")
         print(transcript_url)
 
