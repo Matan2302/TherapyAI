@@ -284,6 +284,11 @@ const PatientDashboard = () => {
 
                 <label>Medical History</label>
                 <textarea value={patientData?.medicalHistory} readOnly className="medical-history-box-wide" />
+
+                <label>Total Sessions Completed</label>
+                <input type="text" value={patientData?.totalSessionsDone} readOnly className="input" />
+                <label>Patient Contact Info</label>
+                <input type="text" value={patientData?.lastTherapistPatientEmail} readOnly className="input" />
               </div>
 
               <div className="section-box">
@@ -294,8 +299,7 @@ const PatientDashboard = () => {
                 <label>Therapist Email</label>
                 <input type="text" value={patientData?.lastTherapistEmail} readOnly className="input" />
 
-                <label>Patient Email</label>
-                <input type="text" value={patientData?.lastTherapistPatientEmail} readOnly className="input" />
+                
               </div>
 
               <div className="section-box">
@@ -306,8 +310,7 @@ const PatientDashboard = () => {
                 <label>Session Notes</label>
                 <textarea value={patientData?.lastSessionNotes || ""} readOnly className="input" />
 
-                <label>Total Sessions</label>
-                <input type="text" value={patientData?.totalSessionsDone} readOnly className="input" />
+                
               </div>
             </div>
           </div>

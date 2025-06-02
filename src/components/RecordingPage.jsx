@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import "./RecordingPage.css";
 import { TherapistContext } from "../TherapistContext";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,11 @@ const RecordingPage = () => {
   const audioChunksRef = useRef([]);
   const [sessionNotes, setSessionNotes] = useState("");
   const [patientName, setPatientName] = useState("");
-  const [sessionDate, setSessionDate] = useState("");
+  const [patientEmail, setPatientEmail] = useState(""); // <-- Add this line
+  const [sessionDate, setSessionDate] = useState(new Date().toISOString().split("T")[0]);
+  const [patientSuggestions, setPatientSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const suggestionsRef = useRef(null);
 
   const { therapistName } = useContext(TherapistContext);
 
@@ -75,14 +79,14 @@ const RecordingPage = () => {
   };
 
   const handleUploadRecording = async () => {
-    if (!audioBlob || !patientName || !therapistName || !sessionDate) {
+    if (!audioBlob || !patientEmail || !therapistName || !sessionDate) { // <-- Use patientEmail
       alert(t("fill_all_fields_error"));
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", audioBlob, sessionDate+"_"+patientName);
-    formData.append("patient_name", patientName);
+    formData.append("file", audioBlob, sessionDate + "_" + patientEmail); // <-- Use email in filename if needed
+    formData.append("patient_email", patientEmail); // <-- Use patient_email
     formData.append("therapist_name", therapistName);
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
@@ -106,11 +110,52 @@ const RecordingPage = () => {
     }
   };
 
+  // Fetch patient suggestions as user types
+  useEffect(() => {
+    if (!patientName || patientName.trim().length === 0) {
+      setPatientSuggestions([]);
+      return;
+    }
+    setIsLoadingSuggestions(true);
+    fetch(
+      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(patientName)}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setPatientSuggestions(data);
+        setIsLoadingSuggestions(false);
+      })
+      .catch(() => {
+        setPatientSuggestions([]);
+        setIsLoadingSuggestions(false);
+      });
+  }, [patientName]);
+
+  // Hide suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setPatientSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelectSuggestion = (suggestion) => {
+    setPatientName(suggestion.FullName);
+    setPatientEmail(suggestion.PatientEmail); // <-- Store the email
+    setPatientSuggestions([]);
+  };
+
   return (
     <div className="recording-page" style={{ backgroundColor }}>
       <h2>{t("recording_page_title")}</h2>
-      <form>
-        <div className="form-group">
+      <form autoComplete="off">
+        <div className="form-group" style={{ position: "relative" }}>
           <label>{t("patient_name_label")}</label>
           <input
             type="text"
@@ -118,7 +163,36 @@ const RecordingPage = () => {
             onChange={(e) => setPatientName(e.target.value)}
             placeholder={t("patient_name_placeholder")}
             required
+            autoComplete="off"
           />
+          {patientSuggestions.length > 0 && (
+            <ul
+              className="suggestions-list"
+              ref={suggestionsRef}
+              style={{
+                position: "absolute",
+                zIndex: 10,
+                background: "#fff",
+                border: "1px solid #ccc",
+                width: "100%",
+                maxHeight: "150px",
+                overflowY: "auto",
+                margin: 0,
+                padding: 0,
+                listStyle: "none",
+              }}
+            >
+              {patientSuggestions.map((s, idx) => (
+                <li
+                  key={s.PatientEmail || idx}
+                  style={{ padding: "0.5rem", cursor: "pointer" }}
+                  onClick={() => handleSelectSuggestion(s)}
+                >
+                  {s.FullName} ({s.PatientEmail})
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="form-group">
           <label>{t("session_date_label")}</label>

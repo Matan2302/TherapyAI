@@ -64,7 +64,6 @@ def get_analysis_from_url(url: str):
     Fetch the sentiment analysis from Azure Blob Storage using the session ID.
     """
     try:
-        print(f"Fetching analysis from URL: {url}")
         # Assuming you have a function to fetch the analysis from Azure Blob Storage
         analysis_data = get_analysis_from_blob(url)
 
@@ -78,7 +77,6 @@ def get_analysis_from_url(url: str):
             top_5_negative=analysis_data["top_5_negative"],
             summary=analysis_data["summary"],
         )
-        print(f"Fetched analysis details: {sentiment_details}")
 
         return SentimentAnalysisResponse(
             status="fetched",

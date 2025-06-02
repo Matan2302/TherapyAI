@@ -78,7 +78,7 @@ def get_therapist_id_by_email(email: str) -> int | None:
 
 
 def save_session_to_db(
-    patient_name: str,
+    patient_email: str,
     therapist_name: str,
     session_date: str,   # "YYYY-MM-DD"
     blob_url: str,       # WAV URL
@@ -91,8 +91,9 @@ def save_session_to_db(
         sess_date_obj = datetime.strptime(session_date, "%Y-%m-%d").date()
     except ValueError as exc:
         raise ValueError("session_date must be in YYYY-MM-DD format") from exc
-
-    patient_id = get_patient_id_by_email(patient_name)
+    print(f"patient name: {patient_email}")
+    print(f"therapist name: {therapist_name}")
+    patient_id = get_patient_id_by_email(patient_email)
     therapist_id = get_therapist_id_by_email(therapist_name)
     print(f"patient_id: {patient_id}")
     print(f"therapist_id: {therapist_id}")
