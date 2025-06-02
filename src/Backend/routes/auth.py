@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Security
 from sqlalchemy.orm import Session
 from models.TherapistLogin import TherapistLogin
 from models.Therapist import Therapist
@@ -11,12 +11,14 @@ import jwt
 import re
 
 from config import SECRET_KEY
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, HTTPAuthorizationCredentials, HTTPBearer
 from services.token_service import verify_token
 from datetime import datetime, timedelta
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 router = APIRouter()
+security = HTTPBearer()
+
 print("✅ auth.py loaded")
 
 def get_db():
@@ -141,18 +143,27 @@ def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
 
     return {"message": "Registration successful"}
 
-
+def get_current_admin(credentials: HTTPAuthorizationCredentials = Security(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized as admin")
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
 @router.get("/admin/pending-therapists")
-def get_pending_therapists(db: Session = Depends(get_db)):
+def get_pending_therapists(
+    db: Session = Depends(get_db),
+    admin=Depends(get_current_admin)
+):
     results = (
         db.query(Therapist, TherapistLogin)
         .join(TherapistLogin, Therapist.TherapistID == TherapistLogin.id)
         .filter(TherapistLogin.is_approved == False)
         .all()
     )
-    
     return [
         {
             "id": login.id,
@@ -163,30 +174,31 @@ def get_pending_therapists(db: Session = Depends(get_db)):
         for therapist, login in results
     ]
 
-
-
-
 @router.post("/admin/approve/{therapist_id}")
-def approve_therapist(therapist_id: int, db: Session = Depends(get_db)):
+def approve_therapist(
+    therapist_id: int,
+    db: Session = Depends(get_db),
+    admin=Depends(get_current_admin)
+):
     therapist = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
     if not therapist:
         raise HTTPException(status_code=404, detail="Therapist not found")
-    
     therapist.is_approved = True
     db.commit()
     return {"message": "Therapist approved successfully"}
 
-
 @router.delete("/admin/reject/{therapist_id}")
-def reject_therapist(therapist_id: int, db: Session = Depends(get_db)):
+def reject_therapist(
+    therapist_id: int,
+    db: Session = Depends(get_db),
+    admin=Depends(get_current_admin)
+):
     login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
     therapist = db.query(Therapist).filter(Therapist.TherapistID == therapist_id).first()
-
     if login:
         db.delete(login)
     if therapist:
         db.delete(therapist)
-
     db.commit()
     return {"message": "Therapist rejected and deleted"}
 
