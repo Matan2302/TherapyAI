@@ -47,7 +47,8 @@ async def upload_audio(
     # ------------------------------------------------------------------ #
     # 1.  Persist locally just long enough to upload
     # ------------------------------------------------------------------ #
-    file.filename = file.filename + ".wav"
+    if not file.filename.lower().endswith(".wav"):
+        file.filename = file.filename + ".wav"
     local_path = os.path.join(UPLOAD_DIR, file.filename)
     async with aiofiles.open(local_path, "wb") as out_fh:
         await out_fh.write(await file.read())
