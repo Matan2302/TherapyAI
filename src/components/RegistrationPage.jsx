@@ -8,6 +8,7 @@ const RegistrationPage = () => {
   const [Contactinfo, setContactinfo] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState(""); // Add this line
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [strength, setStrength] = useState("weak");
@@ -33,6 +34,11 @@ const RegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== repeatPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     try {
       const res = await fetch("http://127.0.0.1:8000/auth/register", {
@@ -124,6 +130,17 @@ const RegistrationPage = () => {
             <small className="strength-text">Strength: {strength}</small>
           </div>
         )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="repeatPassword">Repeat Password</label>
+          <input
+            type="password"
+            id="repeatPassword"
+            value={repeatPassword}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+            required
+          />
         </div>
 
         {error && <p className="error">{error}</p>}
