@@ -264,3 +264,11 @@ ul li {
     height: 240px;
   }
 }
+
+.highlight-positive::marker {
+  color: #22c55e; /* Tailwind green-500 */
+}
+
+.highlight-negative::marker {
+  color: #ef4444; /* Tailwind red-500 */
+}

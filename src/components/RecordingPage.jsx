@@ -16,8 +16,7 @@ const RecordingPage = () => {
   const [sessionNotes, setSessionNotes] = useState("");
   const [patientName, setPatientName] = useState("");
   const [sessionDate, setSessionDate] = useState("");
-
-  const therapistName = localStorage.getItem("therapist_name");
+  const [therapistName, setTherapistName] = useState("");
 
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
@@ -91,6 +90,8 @@ const RecordingPage = () => {
       setUploadStatus(t("uploading_status"));
       const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
+        headers: {Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
         body: formData,
       });
 
@@ -131,7 +132,11 @@ const RecordingPage = () => {
         </div>
         <div className="form-group">
           <label>{t("therapist_name_label")}</label>
-          <input type="text" value={therapistName || ""} readOnly />
+          <input type="text" value={therapistName}
+  onChange={(e) => setTherapistName(e.target.value)}
+  placeholder={t("therapist_name_placeholder")}
+/>
+
         </div>
         <div className="form-group">
           <label>{t("session_notes_label")}</label>

@@ -415,7 +415,7 @@ useEffect(() => {
           <h3>Positive Highlights</h3>
           <ul>
             {(sentiment.top_5_positive || []).map((item, idx) => (
-              <li key={idx}>{item}</li>
+              <li key={idx} className="highlight-positive">{item}</li>
             ))}
           </ul>
         </div>
@@ -423,7 +423,7 @@ useEffect(() => {
           <h3>Negative Highlights</h3>
           <ul>
             {(sentiment.top_5_negative || []).map((item, idx) => (
-              <li key={idx}>{item}</li>
+              <li key={idx} className="highlight-negative">{item}</li>
             ))}
           </ul>
         </div>
