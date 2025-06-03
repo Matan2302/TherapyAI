@@ -1,17 +1,18 @@
 # routes/sentiment_analysis.py
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from schemas.patient_data import SentimentAnalysisResponse, SentimentDetails  # <-- import your schemas
 from services.blob_service import upload_to_azure
 from services.azure_sentiment import analyze_sentiment_from_blob, get_analysis_from_blob
 from services.sql_service import update_session_analysis, get_transcript_url_by_SID
+from services.token_service import get_current_user
 from pydantic import BaseModel
 
 import tempfile
 import os
 import json
 
-router = APIRouter(tags=["Sentiment"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class AnalyzeRequest(BaseModel):
     session_id: int

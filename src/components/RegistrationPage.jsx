@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RegistrationPage.css";
 
@@ -13,6 +13,14 @@ const RegistrationPage = () => {
   const [strength, setStrength] = useState("weak");
 
   const navigate = useNavigate();
+
+  // ✅ Redirect logged-in users away from registration page
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      navigate("/home");
+    }
+  }, []);
 
   const checkStrength = (password) => {
     const lengthValid = password.length >= 7;
@@ -119,11 +127,11 @@ const RegistrationPage = () => {
             required
           />
           {password && (
-          <div className="strength-container">
-            <div className={`strength-bar ${strength}`}></div>
-            <small className="strength-text">Strength: {strength}</small>
-          </div>
-        )}
+            <div className="strength-container">
+              <div className={`strength-bar ${strength}`}></div>
+              <small className="strength-text">Strength: {strength}</small>
+            </div>
+          )}
         </div>
 
         {error && <p className="error">{error}</p>}

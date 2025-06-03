@@ -1,26 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer
-from services.token_service import verify_token
-from database import SessionLocal
+from database import get_db
 from models import Patient, Session as SessionModel, Therapist,TherapistLogin
 from schemas.patient_data import PatientDataResponse
 from fastapi import Query
 from typing import List
 from schemas.patient_data import PatientBasicInfo  # Make sure this is imported
 from schemas.patient_data import PatientSessionInfo  # Make sure this is imported
-
+from services.token_service import get_current_user
 import json
 
-router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 @router.get("/dashboard-data", response_model=PatientDataResponse)
 def get_patient_dashboard_data(
