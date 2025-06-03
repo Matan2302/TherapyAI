@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { TherapistContext } from "../TherapistContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
@@ -10,11 +9,19 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setTherapistName } = useContext(TherapistContext);
   const [success, setSuccess] = useState("");
+  const { setTherapistName } = useContext(TherapistContext);
   const navigate = useNavigate();
 
-  const isDevelopment = false; // Toggle this flag to enable/disable authentication
+  const isDevelopment = false;
+
+  // ✅ Redirect logged-in users away from login page
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      navigate("/home");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +32,7 @@ const LoginPage = () => {
       const mockTherapistId = "12345";
 
       setTherapistName(mockTherapistName);
-      localStorage.setItem("token", mockAccessToken);
+      localStorage.setItem("access_token", mockAccessToken);
       localStorage.setItem("therapist_id", mockTherapistId);
       localStorage.setItem("therapist_name", mockTherapistName);
 
@@ -50,40 +57,19 @@ const LoginPage = () => {
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.detail || "Login failed");
+      }
 
-}
-
-
-      //TODO: לתרגם את השגיאות גם לשפות האחרות
-      
-      
-      
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
-      if (therapist_id === -1){
-        localStorage.setItem("therapist_name", "Admin");
-        localStorage.setItem("token", access_token);
-        setSuccess("Admin Login successful!");
-        console.log(localStorage.getItem("token"));
-        setError(""); // clear error if there was one
-      // Redirect to home
-      }
-      else{
-        // Save therapist ID or name in context/localStorage
-        setTherapistName(email); // or use therapist_id
-        localStorage.setItem("token", access_token);
-        localStorage.setItem("therapist_id", therapist_id);
-        localStorage.setItem("therapist_name", full_name); // ✅ לשמור את השם המלא
-      
-        setSuccess("Login successful!");
-        console.log(localStorage.getItem("token"));
-        setError(""); // clear error if there was one
-        // Redirect to home
-      }
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("therapist_id", therapist_id);
+      localStorage.setItem("therapist_name", full_name);
 
-      
-      
+      setTherapistName(full_name);
+      setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
+      setError("");
+
       setTimeout(() => {
         navigate("/home");
       }, 2000);

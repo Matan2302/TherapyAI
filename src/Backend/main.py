@@ -40,6 +40,7 @@ async def ping():
     return {"message": "pong"}
 # Register your API routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(auth.admin_router, prefix="/admin", tags=["Admin Panel"])
 app.include_router(audio_upload.router, prefix="/audio", tags=["Audio Upload"])
 app.include_router(patients.router, prefix="/patientsdb", tags=["Patients"])
 app.include_router(patient_routes.router, prefix="/patients", tags=["Patients"])

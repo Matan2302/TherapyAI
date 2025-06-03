@@ -17,7 +17,7 @@ const RecordingPage = () => {
   const [patientName, setPatientName] = useState("");
   const [sessionDate, setSessionDate] = useState("");
 
-  const { therapistName } = useContext(TherapistContext);
+  const therapistName = localStorage.getItem("therapist_name");
 
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);

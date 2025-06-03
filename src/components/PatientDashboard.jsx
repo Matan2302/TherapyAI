@@ -45,7 +45,7 @@ const PatientDashboard = () => {
       return;
     }
     setIsLoadingSuggestions(true);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     fetch(
       `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(inputName)}`,
       {
@@ -64,7 +64,7 @@ const PatientDashboard = () => {
   }, [inputName]);
 
   const fetchPatientData = async (email, sessionId = null) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     try {
       let url = `http://localhost:8000/patientsdb/dashboard-data?patient_email=${email}`;
       if (sessionId !== null) {
@@ -87,7 +87,7 @@ const PatientDashboard = () => {
   };
 
   const fetchPatientSessions = async (email) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     try {
       const res = await fetch(
         `http://localhost:8000/patientsdb/all-sessions?patient_email=${email}`,
@@ -149,7 +149,7 @@ const PatientDashboard = () => {
 
   const analyzeSession = async (idx) => {
     const session = sessions[idx];
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
 
     try {
       const res = await fetch("http://localhost:8000/sentiment/analyze-sentiment/", {
@@ -328,21 +328,34 @@ const SentimentDetailsDisplay = ({ analysisUrl }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!analysisUrl) return;
-    setLoading(true);
+useEffect(() => {
+  if (!analysisUrl) return;
+  setLoading(true);
 
-    fetch(`http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(analysisUrl)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setSentiment(data.sentiment || data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Error loading analysis");
-        setLoading(false);
-      });
-  }, [analysisUrl]);
+  const token = localStorage.getItem("access_token");
+  fetch(
+    `http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(analysisUrl)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+    .then((res) => {
+      if (!res.ok) throw new Error("403 or invalid response");
+      return res.json();
+    })
+    .then((data) => {
+      setSentiment(data.sentiment || data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error("Sentiment fetch error:", err);
+      setError("Error loading analysis");
+      setLoading(false);
+    });
+}, [analysisUrl]);
+
 
   if (loading) return <div>Loading analysis...</div>;
   if (error) return <div className="text-red-500">{error}</div>;

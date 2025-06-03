@@ -40,7 +40,7 @@ const LanguageSwitcher = () => {
 const Header = () => {
   const { t } = useTranslation("header"); // ✅ Correct placement here
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem("token");
+  const isAuthenticated = !!localStorage.getItem("access_token");
   const therapistName = localStorage.getItem("therapist_name");
   const isAdmin = therapistName === "Admin"; // 💡 זיהוי אם זה אדמין
 
@@ -62,7 +62,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("therapist_id");
     localStorage.removeItem("therapist_name");
     navigate("/login");

@@ -2,21 +2,13 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import get_db
 from models import Patient  # מוודאים שיש מודל Patient בקובץ models.py
 from schemas.patient import PatientCreateRequest
 
 router = APIRouter()
 
-# פונקציית עזר לקבלת session מהדאטאבייס
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
-# POST: הוספת מטופל
 @router.post("/add")
 def add_patient(data: PatientCreateRequest, db: Session = Depends(get_db)):
     print(f"📥 Adding patient: {data.full_name}")

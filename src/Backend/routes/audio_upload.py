@@ -1,10 +1,11 @@
 # routes/audio_upload.py
 from __future__ import annotations
-
+from services.token_service import get_current_user
 import os
 import aiofiles
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Form,
     UploadFile,
@@ -21,7 +22,7 @@ from services.sql_service import save_session_to_db
 from services.azure_transcription import transcribe_dialog
 
 # ─── router setup ───────────────────────────────────────────────────────────
-router = APIRouter( tags=["Audio"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 UPLOAD_DIR = "recordings"         # local temp folder
 os.makedirs(UPLOAD_DIR, exist_ok=True)
