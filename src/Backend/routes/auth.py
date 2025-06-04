@@ -123,12 +123,25 @@ def approve_therapist(therapist_id: int, db: Session = Depends(get_db)):
 
 @admin_router.delete("/reject/{therapist_id}")
 def reject_therapist(therapist_id: int, db: Session = Depends(get_db)):
-    login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
-    therapist = db.query(Therapist).filter(Therapist.TherapistID == therapist_id).first()
-    if login:
-        db.delete(login)
-    if therapist:
-        db.delete(therapist)
-    db.commit()
-    return {"message": "Therapist rejected and deleted"}
+    try:
+        login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
+        therapist = db.query(Therapist).filter(Therapist.TherapistID == therapist_id).first()
+
+        print(f"[DEBUG] login: {login}")
+        print(f"[DEBUG] therapist: {therapist}")
+
+        if therapist:
+            print("Deleting therapist")
+            db.delete(therapist)
+        if login:
+            print("Deleting login")
+            db.delete(login)
+
+        db.commit()
+        return {"message": "Therapist rejected and deleted"}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 

@@ -49,6 +49,7 @@ const AdminDashboard = () => {
   const handleReject = async (id) => {
     const token = localStorage.getItem("access_token");
     try {
+      console.log(id)
       await fetch(`http://127.0.0.1:8000/admin/reject/${id}`, {
         method: "DELETE",
         headers: {

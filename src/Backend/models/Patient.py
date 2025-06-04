@@ -17,4 +17,4 @@ class Patient(Base):
     
     # Relationship with sessions
     sessions = relationship("Session", back_populates="patient")
-    therapist_patients = relationship("TherapistPatient", back_populates="patient")
+    #therapist_patients = relationship("TherapistPatient", back_populates="patient")
