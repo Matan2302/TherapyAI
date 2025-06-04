@@ -17,7 +17,10 @@ const RecordingPage = () => {
   const [patientName, setPatientName] = useState("");
   const [sessionDate, setSessionDate] = useState("");
   const [therapistName, setTherapistName] = useState("");
-  
+  const [patientEmail, setPatientEmail] = useState(""); // ✅ new
+  const [patientSuggestions, setPatientSuggestions] = useState([]); // ✅ new
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false); // ✅ new
+  const suggestionsRef = useRef(null); // ✅ new
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
   };
