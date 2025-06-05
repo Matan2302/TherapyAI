@@ -6,5 +6,15 @@
   "not_registered_question": "Еще не зарегистрированы?",
   "create_account_link": "Создать аккаунт",
   "login_success_message": "Вход выполнен успешно!",
-  "invalid_credentials_error": "Неверный email или пароль"
+  "invalid_credentials_error": "Неверный email или пароль",
+  "forgot_password": "Забыли пароль?",
+  "forgot_password_title": "Сброс пароля",
+  "send_reset_code": "Отправить код сброса",
+  "reset_code": "Код сброса",
+  "new_password": "Новый пароль",
+  "reset_password": "Сбросить пароль",
+  "back_to_login": "Вернуться к входу",
+  "wait_2_minutes": "Пожалуйста, подождите 2 минуты перед следующей попыткой",
+  "wait_1_hour": "Пожалуйста, подождите 1 час перед следующей попыткой",
+  "wait_1_day": "Пожалуйста, подождите 1 день перед следующей попыткой"
 }

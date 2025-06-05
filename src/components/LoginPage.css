@@ -44,6 +44,11 @@
     margin-top: 10px;
     font-weight: bold;
   }
+  .error {
+    color: #dc3545;
+    margin-top: 10px;
+    font-weight: bold;
+  }
   .btn {
     width: 100%;
     padding: 0.75rem;
@@ -53,10 +58,40 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 1rem;
   }
   
   .btn:hover {
     background-color: #0056b3;
+  }
+  
+  .forgot-password {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .link-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+  }
+  
+  .link-button:hover {
+    color: #0056b3;
+  }
+  
+  .forgot-password-form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .forgot-password-form h2 {
+    color: #007bff;
+    margin-bottom: 1.5rem;
   }
   
   /* Responsive Design */
