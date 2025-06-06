@@ -10,7 +10,15 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [resetStep, setResetStep] = useState(1); // 1: email, 2: code, 3: new password
+
   const { setTherapistName } = useContext(TherapistContext);
+
   const navigate = useNavigate();
 
   const isDevelopment = false;
@@ -62,13 +70,31 @@ const LoginPage = () => {
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("therapist_id", therapist_id);
-      localStorage.setItem("therapist_name", full_name);
+// <<<<<<< Tomer
+      if (therapist_id === -1) {
+        localStorage.setItem("therapist_name", "Admin");
+        localStorage.setItem("token", access_token);
+        setSuccess("Admin Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError("");
+      } else {
+        setTherapistName(email);
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("therapist_id", therapist_id);
+        localStorage.setItem("therapist_name", full_name);
+        setSuccess("Login successful!");
+        console.log(localStorage.getItem("token"));
+        setError("");
+      }
+// =======
+//       localStorage.setItem("access_token", access_token);
+//       localStorage.setItem("therapist_id", therapist_id);
+//       localStorage.setItem("therapist_name", full_name);
 
-      setTherapistName(full_name);
-      setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
-      setError("");
+//       setTherapistName(full_name);
+//       setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
+//       setError("");
+// >>>>>>> main
 
       setTimeout(() => {
         navigate("/home");
@@ -78,43 +104,192 @@ const LoginPage = () => {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:8000/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: resetEmail }),
+      });
+
+      if (!res.ok) {
+        let errorText = "Failed to send reset code";
+        try {
+          const errorData = await res.json();
+          errorText = errorData.detail || errorText;
+        } catch (e) {}
+        setError(errorText);
+        return;
+      }
+
+      setResetStep(2);
+      setError("");
+      setSuccess("Reset code sent to your email");
+    } catch (err) {
+      setError(err.message || String(err));
+    }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:8000/auth/verify-reset-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: resetEmail,
+          code: resetCode,
+          new_password: newPassword,
+        }),
+      });
+
+      if (!res.ok) {
+        let errorText = "Failed to reset password";
+        try {
+          const errorData = await res.json();
+          errorText = errorData.detail || errorText;
+        } catch (e) {}
+        setError(errorText);
+        return;
+      }
+
+      setSuccess("Password reset successful! Please login with your new password.");
+      setShowForgotPassword(false);
+      setResetStep(1);
+      setResetEmail("");
+      setResetCode("");
+      setNewPassword("");
+      setError("");
+    } catch (err) {
+      setError(err.message || String(err));
+    }
+  };
+
   return (
     <div className="login-page">
-      <h2>{t("login_page_title")}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">{t("email_label")}</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+      {!showForgotPassword ? (
+        <>
+          <h2>{t("login_page_title")}</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email">{t("email_label")}</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">{t("password_label")}</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn">
+              {t("login_button")}
+            </button>
+
+            <div className="forgot-password">
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => setShowForgotPassword(true)}
+              >
+                {t("forgot_password")}
+              </button>
+            </div>
+
+            {error && <p className="error">{error}</p>}
+            {success && <p className="success">{success}</p>}
+
+            <div className="register-link">
+              <p>
+                {t("not_registered_question")}{" "}
+                <Link to="/register">{t("create_account_link")}</Link>
+              </p>
+            </div>
+          </form>
+        </>
+      ) : (
+        <div className="forgot-password-form">
+          <h2>{t("forgot_password_title")}</h2>
+          {resetStep === 1 && (
+            <form onSubmit={handleForgotPassword}>
+              <div className="form-group">
+                <label htmlFor="resetEmail">{t("email_label")}</label>
+                <input
+                  type="email"
+                  id="resetEmail"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn">
+                {t("send_reset_code")}
+              </button>
+            </form>
+          )}
+
+          {resetStep === 2 && (
+            <form onSubmit={handleVerifyCode}>
+              <div className="form-group">
+                <label htmlFor="resetCode">{t("reset_code")}</label>
+                <input
+                  type="text"
+                  id="resetCode"
+                  value={resetCode}
+                  onChange={(e) => setResetCode(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="newPassword">{t("new_password")}</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn">
+                {t("reset_password")}
+              </button>
+            </form>
+          )}
+
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => {
+              setShowForgotPassword(false);
+              setResetStep(1);
+              setResetEmail("");
+              setResetCode("");
+              setNewPassword("");
+            }}
+          >
+            {t("back_to_login")}
+          </button>
+
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
         </div>
-
-        <div className="form-group">
-          <label htmlFor="password">{t("password_label")}</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
-
-        <button type="submit" className="btn">{t("login_button")}</button>
-        <p>
-          {t("not_registered_question")}{" "}
-          <Link to="/register" style={{ color: "blue", textDecoration: "underline" }}>
-            {t("create_account_link")}
-          </Link>
-        </p>
-      </form>
+      )}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 
 # Input from frontend
@@ -12,3 +11,11 @@ class TherapistLoginResponse(BaseModel):
     access_token: str
     full_name :str
     token_type: str = "bearer"
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class VerifyResetCodeRequest(BaseModel):
+    email: str
+    code: str
+    new_password: str

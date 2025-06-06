@@ -27,7 +27,13 @@ BLOB_DATABASE = os.getenv("BLOB_DATABASE")
 FRONTEND_ORIGINS = os.getenv("FRONTEND_ORIGINS", "http://localhost:80").split(",")
 
 #Secret key as the user wont needed to show user name and password in every page
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
 
 #THis is the hash function 
 ALGORITHM = "HS256"
+
+# SMTP Configuration
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
