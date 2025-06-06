@@ -3,14 +3,62 @@ import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const [pendingTherapists, setPendingTherapists] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchPending = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/admin/pending-therapists");
+      const token = localStorage.getItem("access_token");
+      const res = await fetch("http://127.0.0.1:8000/admin/pending-therapists", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
       const data = await res.json();
       setPendingTherapists(data);
+      setIsAdmin(true);
     } catch (err) {
       console.error("Error fetching pending therapists:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    const token = localStorage.getItem("access_token");
+    try {
+      await fetch(`http://127.0.0.1:8000/admin/approve/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchPending();
+    } catch (err) {
+      console.error("Failed to approve:", err);
+    }
+  };
+
+  const handleReject = async (id) => {
+    const token = localStorage.getItem("access_token");
+    try {
+      console.log(id)
+      await fetch(`http://127.0.0.1:8000/admin/reject/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchPending();
+    } catch (err) {
+      console.error("Failed to reject:", err);
     }
   };
 
@@ -18,27 +66,9 @@ const AdminDashboard = () => {
     fetchPending();
   }, []);
 
-  const handleApprove = async (id) => {
-    try {
-      await fetch(`http://127.0.0.1:8000/auth/admin/approve/${id}`, {
-        method: "POST",
-      });
-      fetchPending(); // רענון רשימה
-    } catch (err) {
-      console.error("Failed to approve:", err);
-    }
-  };
+  if (loading) return <p>Loading admin dashboard...</p>;
 
-  const handleReject = async (id) => {
-    try {
-      await fetch(`http://127.0.0.1:8000/auth/admin/reject/${id}`, {
-        method: "DELETE",
-      });
-      fetchPending(); // רענון רשימה
-    } catch (err) {
-      console.error("Failed to reject:", err);
-    }
-  };
+  if (!isAdmin) return <p>Access denied. Admins only.</p>;
 
   return (
     <div className="admin-dashboard">

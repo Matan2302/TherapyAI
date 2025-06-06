@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { TherapistContext } from "../TherapistContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
@@ -10,16 +9,27 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setTherapistName } = useContext(TherapistContext);
   const [success, setSuccess] = useState("");
+
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [resetStep, setResetStep] = useState(1); // 1: email, 2: code, 3: new password
+
+  const { setTherapistName } = useContext(TherapistContext);
+
   const navigate = useNavigate();
 
-  const isDevelopment = false; // Toggle this flag to enable/disable authentication
+  const isDevelopment = false;
+
+  // ✅ Redirect logged-in users away from login page
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      navigate("/home");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +40,7 @@ const LoginPage = () => {
       const mockTherapistId = "12345";
 
       setTherapistName(mockTherapistName);
-      localStorage.setItem("token", mockAccessToken);
+      localStorage.setItem("access_token", mockAccessToken);
       localStorage.setItem("therapist_id", mockTherapistId);
       localStorage.setItem("therapist_name", mockTherapistName);
 
@@ -60,6 +70,7 @@ const LoginPage = () => {
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
+// <<<<<<< Tomer
       if (therapist_id === -1) {
         localStorage.setItem("therapist_name", "Admin");
         localStorage.setItem("token", access_token);
@@ -75,6 +86,15 @@ const LoginPage = () => {
         console.log(localStorage.getItem("token"));
         setError("");
       }
+// =======
+//       localStorage.setItem("access_token", access_token);
+//       localStorage.setItem("therapist_id", therapist_id);
+//       localStorage.setItem("therapist_name", full_name);
+
+//       setTherapistName(full_name);
+//       setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
+//       setError("");
+// >>>>>>> main
 
       setTimeout(() => {
         navigate("/home");

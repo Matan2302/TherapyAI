@@ -1,10 +1,11 @@
 # routes/audio_upload.py
 from __future__ import annotations
-
+from services.token_service import get_current_user
 import os
 import aiofiles
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Form,
     UploadFile,
@@ -21,7 +22,7 @@ from services.sql_service import save_session_to_db
 from services.azure_transcription import transcribe_dialog
 
 # ─── router setup ───────────────────────────────────────────────────────────
-router = APIRouter( tags=["Audio"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 UPLOAD_DIR = "recordings"         # local temp folder
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -30,7 +31,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 @router.post("/upload-audio/", status_code=status.HTTP_201_CREATED)
 async def upload_audio(
     file: UploadFile = File(...),
-    patient_name: str = Form(...),
+    patient_email: str = Form(...),
     therapist_name: str = Form(...),
     session_date: str = Form(...),   # YYYY-MM-DD from the form
     notes: str = Form(""),           # optional
@@ -47,7 +48,8 @@ async def upload_audio(
     # ------------------------------------------------------------------ #
     # 1.  Persist locally just long enough to upload
     # ------------------------------------------------------------------ #
-    file.filename = file.filename + ".wav"
+    if not file.filename.lower().endswith(".wav"):
+        file.filename = file.filename + ".wav"
     local_path = os.path.join(UPLOAD_DIR, file.filename)
     async with aiofiles.open(local_path, "wb") as out_fh:
         await out_fh.write(await file.read())
@@ -82,8 +84,10 @@ async def upload_audio(
     # 4.  Store metadata in SQL
     # ---------------------------------------------------------------------- #
     # NOTE: current helper still inserts PatientID / TherapistID = 1, 1.
+    print(f"patient_email: {patient_email}")
+    print(f"therapist_name: {therapist_name}")
     save_session_to_db(
-        patient_name,          # placeholder, not yet used in the helper
+        patient_email,          # placeholder, not yet used in the helper
         therapist_name,        # placeholder, not yet used
         session_date,
         audio_url,             # BlobURL column

@@ -27,3 +27,10 @@ engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}", echo=True)  # 
 # 4. Create session and base
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -1,12 +1,13 @@
 # routes/transcription.py
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from services.token_service import get_current_user
 from pydantic import BaseModel, HttpUrl
 
 from services.azure_transcription import transcribe_dialog
 
-router = APIRouter(prefix="/transcription", tags=["Transcription"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 class TranscriptionIn(BaseModel):

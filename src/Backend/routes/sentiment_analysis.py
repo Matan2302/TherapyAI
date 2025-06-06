@@ -1,17 +1,18 @@
 # routes/sentiment_analysis.py
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from schemas.patient_data import SentimentAnalysisResponse, SentimentDetails  # <-- import your schemas
 from services.blob_service import upload_to_azure
 from services.azure_sentiment import analyze_sentiment_from_blob, get_analysis_from_blob
 from services.sql_service import update_session_analysis, get_transcript_url_by_SID
+from services.token_service import get_current_user
 from pydantic import BaseModel
 
 import tempfile
 import os
 import json
 
-router = APIRouter(tags=["Sentiment"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class AnalyzeRequest(BaseModel):
     session_id: int
@@ -64,7 +65,6 @@ def get_analysis_from_url(url: str):
     Fetch the sentiment analysis from Azure Blob Storage using the session ID.
     """
     try:
-        print(f"Fetching analysis from URL: {url}")
         # Assuming you have a function to fetch the analysis from Azure Blob Storage
         analysis_data = get_analysis_from_blob(url)
 
@@ -78,7 +78,6 @@ def get_analysis_from_url(url: str):
             top_5_negative=analysis_data["top_5_negative"],
             summary=analysis_data["summary"],
         )
-        print(f"Fetched analysis details: {sentiment_details}")
 
         return SentimentAnalysisResponse(
             status="fetched",
