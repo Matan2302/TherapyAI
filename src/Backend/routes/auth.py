@@ -1,89 +1,51 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.TherapistLogin import TherapistLogin
 from models.Therapist import Therapist
-from models.Admin import Admin  # ✅ ייבוא מודל אדמין
+from models.Admin import Admin
 from schemas.TherapistLogin import TherapistLoginRequest, TherapistLoginResponse
 from schemas.TherapistRegister import TherapistRegisterRequest
-from database import SessionLocal
+from database import get_db
 import hashlib
-import jwt
+from services.token_service import create_access_token, get_current_admin
 import re
 
-from config import SECRET_KEY
-from fastapi.security import OAuth2PasswordBearer
-from services.token_service import verify_token
-from datetime import datetime, timedelta
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 router = APIRouter()
-print("✅ auth.py loaded")
+admin_router = APIRouter(dependencies=[Depends(get_current_admin)])
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# 📥 Register therapist
+@router.post("/register")
+def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
+    print("📥 Register attempt:", data.email)
 
-# 📥 התחברות
-@router.post("/login", response_model=TherapistLoginResponse)
-def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
-    print(db)
-    print("🔐 login called with:", credentials.email)
+    existing = db.query(TherapistLogin).filter(TherapistLogin.email == data.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-    # 🔒 בדיקה אם המשתמש הוא אדמין (לפי Adminusername)
-    admin = db.query(Admin).filter(Admin.Adminusername == credentials.email).first()
-    if admin:
-        if credentials.password == admin.AdminPassword:  # אין צורך ב-hash
-            print("👑 Admin login successful")
-            token_data = {
-                "sub": "admin",
-                "role": "admin",
-                "exp": datetime.utcnow() + timedelta(minutes=60)
-            }
-            access_token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
-            return TherapistLoginResponse(
-                therapist_id=-1,
-                access_token=access_token,
-                full_name="Admin",
-                token_type="bearer"
-            )
-        else:
-            raise HTTPException(status_code=401, detail="Invalid admin password")
+    if not is_password_strong(data.password):
+        raise HTTPException(status_code=400, detail="Password is not strong enough. It must be at least 7 characters long and include both uppercase and lowercase letters.")
 
-    # 🔄 אם לא אדמין, בדיקה רגילה של מטפל
-    therapist = db.query(TherapistLogin).filter(TherapistLogin.email == credentials.email).first()
-
-    if not therapist:
-        raise HTTPException(status_code=401, detail="Invalid email")
-
-    hashed_input = hashlib.sha256(credentials.password.encode()).hexdigest()
-    if hashed_input != therapist.hashed_password:
-        raise HTTPException(status_code=401, detail="Invalid password")
-
-    if not therapist.is_approved:
-        raise HTTPException(status_code=403, detail="Account pending admin approval")
-
-    # Generate JWT token
-    token_data = {
-        "sub": therapist.id,
-        "exp": datetime.utcnow() + timedelta(minutes=30)
-    }
-    access_token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
-
-    therapist_details = db.query(Therapist).filter(Therapist.TherapistID == therapist.id).first()
-    if not therapist_details:
-        raise HTTPException(status_code=404, detail="Therapist details not found")
-
-    return TherapistLoginResponse(
-        therapist_id=therapist.id,
-        access_token=access_token,
-        full_name=therapist_details.FullName,
-        token_type="bearer"
+    new_therapist = Therapist(
+        FullName=data.full_name,
+        Specialization=data.specialization,
+        ContactInfo=data.contact_info
     )
+    db.add(new_therapist)
+    db.commit()
+    db.refresh(new_therapist)
 
+    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
 
+    login_record = TherapistLogin(
+        id=new_therapist.TherapistID,
+        email=data.email,
+        hashed_password=hashed_password,
+        is_approved=False
+    )
+    db.add(login_record)
+    db.commit()
+
+    return {"message": "Registration successful"}
 
 def is_password_strong(password: str) -> bool:
     if len(password) < 7:
@@ -94,57 +56,45 @@ def is_password_strong(password: str) -> bool:
         return False
     return True
 
-@router.get("/verify")
-def verify_token_route(token: str = Depends(oauth2_scheme)):
-    print("Received token:", token)
-    verify_token(token)
-    return {"valid": True}
+@router.post("/login", response_model=TherapistLoginResponse)
+def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
+    print("🔐 Login called with:", credentials.email)
 
-@router.post("/register")
-def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
-    print("📥 Register attempt:", data.email)
-
-    # בדיקה אם מייל כבר רשום
-    existing = db.query(TherapistLogin).filter(TherapistLogin.email == data.email).first()
-    if existing:
-        print("❌ Email already registered")
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    if not is_password_strong(data.password):
-        raise HTTPException(status_code=400, detail="Password is not strong enough. It must be at least 7 characters long and include both uppercase and lowercase letters.")
-    # יצירת רשומת מטפל (שמות השדות מותאמים למודל שלך)
-   
-    new_therapist = Therapist(
-        FullName=data.full_name,
-        Specialization=data.specialization,
-        ContactInfo=data.contact_info
-    )
-    db.add(new_therapist)
-    db.commit()
-    db.refresh(new_therapist)
-    print("👤 Therapist created with ID:", new_therapist.TherapistID)
-
-    # יצירת hash לסיסמה
-    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
-
-    # שמירה בטבלת התחברות (בהנחה שיש שדה therapist_id)
-    login_record = TherapistLogin(
-        id=new_therapist.TherapistID,
-        email=data.email,
-        hashed_password=hashed_password,
-        is_approved=False  # ✅ מוודא שמטפל חדש לא יאושר אוטומטית
+    # Admin check
+    admin = db.query(Admin).filter(Admin.Adminusername == credentials.email).first()
+    if admin and credentials.password == admin.AdminPassword:
+        token = create_access_token(user_id="admin", role="admin")
+        return TherapistLoginResponse(
+            therapist_id=-1,
+            access_token=token,
+            full_name="Admin",
+            token_type="bearer"
         )
-    
-    db.add(login_record)
-    db.commit()
-    print("✅ Registration completed")
 
-    return {"message": "Registration successful"}
+    # Therapist check
+    therapist = db.query(TherapistLogin).filter(TherapistLogin.email == credentials.email).first()
+    if not therapist:
+        raise HTTPException(status_code=401, detail="Invalid email")
 
+    hashed_input = hashlib.sha256(credentials.password.encode()).hexdigest()
+    if hashed_input != therapist.hashed_password:
+        raise HTTPException(status_code=401, detail="Invalid password")
 
+    if not therapist.is_approved:
+        raise HTTPException(status_code=403, detail="Account pending admin approval")
 
+    token = create_access_token(user_id=therapist.id, role="therapist")
 
-@router.get("/admin/pending-therapists")
+    therapist_details = db.query(Therapist).filter(Therapist.TherapistID == therapist.id).first()
+    return TherapistLoginResponse(
+        therapist_id=therapist.id,
+        access_token=token,
+        full_name=therapist_details.FullName,
+        token_type="bearer"
+    )
+  # ✅ Applies to all endpoints in this router
+
+@admin_router.get("/pending-therapists")
 def get_pending_therapists(db: Session = Depends(get_db)):
     results = (
         db.query(Therapist, TherapistLogin)
@@ -152,7 +102,6 @@ def get_pending_therapists(db: Session = Depends(get_db)):
         .filter(TherapistLogin.is_approved == False)
         .all()
     )
-    
     return [
         {
             "id": login.id,
@@ -163,30 +112,36 @@ def get_pending_therapists(db: Session = Depends(get_db)):
         for therapist, login in results
     ]
 
-
-
-
-@router.post("/admin/approve/{therapist_id}")
+@admin_router.post("/approve/{therapist_id}")
 def approve_therapist(therapist_id: int, db: Session = Depends(get_db)):
     therapist = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
     if not therapist:
         raise HTTPException(status_code=404, detail="Therapist not found")
-    
     therapist.is_approved = True
     db.commit()
     return {"message": "Therapist approved successfully"}
 
-
-@router.delete("/admin/reject/{therapist_id}")
+@admin_router.delete("/reject/{therapist_id}")
 def reject_therapist(therapist_id: int, db: Session = Depends(get_db)):
-    login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
-    therapist = db.query(Therapist).filter(Therapist.TherapistID == therapist_id).first()
+    try:
+        login = db.query(TherapistLogin).filter(TherapistLogin.id == therapist_id).first()
+        therapist = db.query(Therapist).filter(Therapist.TherapistID == therapist_id).first()
 
-    if login:
-        db.delete(login)
-    if therapist:
-        db.delete(therapist)
+        print(f"[DEBUG] login: {login}")
+        print(f"[DEBUG] therapist: {therapist}")
 
-    db.commit()
-    return {"message": "Therapist rejected and deleted"}
+        if therapist:
+            print("Deleting therapist")
+            db.delete(therapist)
+        if login:
+            print("Deleting login")
+            db.delete(login)
+
+        db.commit()
+        return {"message": "Therapist rejected and deleted"}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 

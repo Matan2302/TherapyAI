@@ -1,10 +1,11 @@
 # routes/audio_upload.py
 from __future__ import annotations
-
+from services.token_service import get_current_user
 import os
 import aiofiles
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Form,
     UploadFile,
@@ -21,7 +22,7 @@ from services.sql_service import save_session_to_db
 from services.azure_transcription import transcribe_dialog
 
 # ─── router setup ───────────────────────────────────────────────────────────
-router = APIRouter( tags=["Audio"])
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 UPLOAD_DIR = "recordings"         # local temp folder
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -47,7 +48,8 @@ async def upload_audio(
     # ------------------------------------------------------------------ #
     # 1.  Persist locally just long enough to upload
     # ------------------------------------------------------------------ #
-    file.filename = file.filename + ".wav"
+    if not file.filename.lower().endswith(".wav"):
+        file.filename = file.filename + ".wav"
     local_path = os.path.join(UPLOAD_DIR, file.filename)
     async with aiofiles.open(local_path, "wb") as out_fh:
         await out_fh.write(await file.read())

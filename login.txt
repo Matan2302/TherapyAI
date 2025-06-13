@@ -1,0 +1,1 @@
+{"therapist_id":-1,"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc0OTAzMzI2OC44Mjc0MTZ9.9sncdM4w_GKk4PoXO3Ez-CHLuh__WBymNCHW7vjRN1I","full_name":"Admin","token_type":"bearer"}
