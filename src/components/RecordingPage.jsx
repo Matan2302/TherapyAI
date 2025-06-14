@@ -32,6 +32,8 @@ const RecordingPage = () => {
   const [canvasHeight] = useState(60);
 
   const { therapistName } = useContext(TherapistContext);
+  // Add this line below to allow editing therapist name:
+  const [editableTherapistName, setTherapistName] = useState(therapistName || "");
 
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
@@ -148,15 +150,15 @@ const RecordingPage = () => {
   };
 
   const handleUploadRecording = async () => {
-    if (!audioBlob || !patientEmail || !therapistName || !sessionDate) { // <-- Use patientEmail
+    if (!audioBlob || !patientEmail || !editableTherapistName || !sessionDate) {
       alert(t("fill_all_fields_error"));
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", audioBlob, sessionDate + "_" + patientEmail); // <-- Use email in filename if needed
-    formData.append("patient_email", patientEmail); // <-- Use patient_email
-    formData.append("therapist_name", therapistName);
+    formData.append("file", audioBlob, sessionDate + "_" + patientEmail);
+    formData.append("patient_email", patientEmail);
+    formData.append("therapist_name", editableTherapistName);
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
 
@@ -164,8 +166,7 @@ const RecordingPage = () => {
       setUploadStatus(t("uploading_status"));
       const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
-        headers: {Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-    },
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
         body: formData,
       });
 
@@ -276,11 +277,12 @@ const RecordingPage = () => {
         </div>
         <div className="form-group">
           <label>{t("therapist_name_label")}</label>
-          <input type="text" value={therapistName}
-  onChange={(e) => setTherapistName(e.target.value)}
-  placeholder={t("therapist_name_placeholder")}
-/>
-
+          <input
+            type="text"
+            value={editableTherapistName}
+            onChange={(e) => setTherapistName(e.target.value)}
+            placeholder={t("therapist_name_placeholder")}
+          />
         </div>
         <div className="form-group">
           <label>{t("session_notes_label")}</label>
@@ -318,8 +320,6 @@ const RecordingPage = () => {
           {uploadStatus && <p>{uploadStatus}</p>}
         </div>
       )}
-
-      
 
       {isRecording && (
         <div
