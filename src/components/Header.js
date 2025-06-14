@@ -38,15 +38,15 @@ const LanguageSwitcher = () => {
 };
 
 const Header = () => {
-  const { t } = useTranslation("header"); // ✅ Correct placement here
+  const { t } = useTranslation("header");
   const navigate = useNavigate();
   const isAuthenticated = !!localStorage.getItem("access_token");
   const therapistName = localStorage.getItem("therapist_name");
-  const isAdmin = therapistName === "Admin"; // 💡 זיהוי אם זה אדמין
+  const isAdmin = therapistName === "Admin";
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   const getInitials = (name) => {
     if (!name) return "";
     const words = name.trim().split(" ");
@@ -95,10 +95,6 @@ const Header = () => {
           )}
         </div>
 
-        <div className="language-switcher">
-          <LanguageSwitcher />
-        </div>
-
         <div className="profile-container" ref={dropdownRef}>
           <div
             className="profile-icon"
@@ -120,4 +116,5 @@ const Header = () => {
   );
 };
 
+export { LanguageSwitcher };
 export default Header;

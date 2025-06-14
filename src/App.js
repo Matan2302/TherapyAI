@@ -12,12 +12,14 @@ import PatientDashboard from "./components/PatientDashboard";
 import PatientForm from "./components/PatientForm";
 import AdminDashboard from "./components/AdminDashboard";
 import { TherapistProvider } from "./TherapistContext";
-import Header from "./components/Header";
+import Header, { LanguageSwitcher } from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import logo from "./assets/background_spanishHouseLogo.png"; // ✅ לוגו
 import "./i18n";
 
 const App = () => {
+  const isAuthenticated = !!localStorage.getItem("token");
+
   return (
     <TherapistProvider>
       <Router>
@@ -40,6 +42,13 @@ const App = () => {
             alt="Logo"
             className="top-left-logo"
           />
+
+          {/* Show LanguageSwitcher only if Header is NOT displayed (not authenticated) */}
+          {!isAuthenticated && (
+            <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+              <LanguageSwitcher />
+            </div>
+          )}
 
           <div className="content">
             <Routes>

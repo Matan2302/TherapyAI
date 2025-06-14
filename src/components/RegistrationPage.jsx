@@ -158,6 +158,14 @@ const RegistrationPage = () => {
           Register
         </button>
       </form>
+      <button
+        type="button"
+        className="btn secondary"
+        onClick={() => navigate("/login")}
+        style={{ marginTop: "1rem" }}
+      >
+        Back to Login
+      </button>
     </div>
   );
 };

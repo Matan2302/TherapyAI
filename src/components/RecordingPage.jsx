@@ -15,12 +15,24 @@ const RecordingPage = () => {
   const audioChunksRef = useRef([]);
   const [sessionNotes, setSessionNotes] = useState("");
   const [patientName, setPatientName] = useState("");
-  const [sessionDate, setSessionDate] = useState("");
-  const [therapistName, setTherapistName] = useState("");
-  const [patientEmail, setPatientEmail] = useState(""); // ✅ new
-  const [patientSuggestions, setPatientSuggestions] = useState([]); // ✅ new
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false); // ✅ new
-  const suggestionsRef = useRef(null); // ✅ new
+  const [patientEmail, setPatientEmail] = useState(""); // <-- Add this line
+  const [sessionDate, setSessionDate] = useState(new Date().toISOString().split("T")[0]);
+  const [patientSuggestions, setPatientSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const suggestionsRef = useRef(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const recordingIntervalRef = useRef(null);
+  const [volume, setVolume] = useState(0);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const dataArrayRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [canvasWidth] = useState(400);
+  const [canvasHeight] = useState(60);
+
+  const { therapistName } = useContext(TherapistContext);
+
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
   };
@@ -47,23 +59,57 @@ const RecordingPage = () => {
       setIsRecording(true);
       setIsPaused(false);
       setBackgroundColor("red");
+      setRecordingTime(0);
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+
+      // Voice meter setup
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      analyserRef.current.fftSize = 256; // Set a lower fftSize for faster updates
+      source.connect(analyserRef.current);
+      dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
+
+      const updateVolume = () => {
+        analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
+        let sum = 0;
+        for (let i = 0; i < dataArrayRef.current.length; i++) {
+          const val = (dataArrayRef.current[i] - 128) / 128;
+          sum += val * val;
+        }
+        setVolume(Math.sqrt(sum / dataArrayRef.current.length));
+
+        // Draw waveform
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+          ctx.beginPath();
+          const sliceWidth = canvasWidth / dataArrayRef.current.length;
+          let x = 0;
+          for (let i = 0; i < dataArrayRef.current.length; i++) {
+            const v = dataArrayRef.current[i] / 255;
+            const y = v * canvasHeight;
+            if (i === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+            x += sliceWidth;
+          }
+          ctx.strokeStyle = "#222";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        animationFrameRef.current = requestAnimationFrame(updateVolume);
+      };
+      updateVolume();
     } catch (error) {
       console.error("Error accessing microphone:", error);
       alert(t("microphone_access_error"));
-    }
-  };
-
-  const handleTogglePauseResume = () => {
-    if (mediaRecorderRef.current) {
-      if (isPaused) {
-        mediaRecorderRef.current.resume();
-        setIsPaused(false);
-        setBackgroundColor("red");
-      } else {
-        mediaRecorderRef.current.pause();
-        setIsPaused(true);
-        setBackgroundColor("yellow");
-      }
     }
   };
 
@@ -73,6 +119,31 @@ const RecordingPage = () => {
       setIsRecording(false);
       setIsPaused(false);
       setBackgroundColor("blue");
+      clearInterval(recordingIntervalRef.current);
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      cancelAnimationFrame(animationFrameRef.current);
+      setVolume(0);
+    }
+  };
+
+  const handleTogglePauseResume = () => {
+    if (mediaRecorderRef.current) {
+      if (isPaused) {
+        mediaRecorderRef.current.resume();
+        setIsPaused(false);
+        setBackgroundColor("red");
+        recordingIntervalRef.current = setInterval(() => {
+          setRecordingTime((prev) => prev + 1);
+        }, 1000);
+      } else {
+        mediaRecorderRef.current.pause();
+        setIsPaused(true);
+        setBackgroundColor("yellow");
+        clearInterval(recordingIntervalRef.current);
+      }
     }
   };
 
@@ -245,6 +316,37 @@ const RecordingPage = () => {
         <div className="upload-section">
           <button onClick={handleUploadRecording}>{t("upload_recording_button")}</button>
           {uploadStatus && <p>{uploadStatus}</p>}
+        </div>
+      )}
+
+      
+
+      {isRecording && (
+        <div
+          className="recording-timer"
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            color: "#222",
+            background: "#ffe082",
+            padding: "0.5rem 1rem",
+            borderRadius: "8px",
+            width: "fit-content",
+            margin: "1rem auto"
+          }}
+        >
+          {t("recording_time") || "Recording"}: {Math.floor(recordingTime / 60).toString().padStart(2, "0")}:{(recordingTime % 60).toString().padStart(2, "0")}
+        </div>
+      )}
+
+      {isRecording && (
+        <div style={{ margin: "1rem auto", width: canvasWidth, background: "#fff", borderRadius: "8px", boxShadow: "0 2px 8px #0002" }}>
+          <canvas
+            ref={canvasRef}
+            width={canvasWidth}
+            height={canvasHeight}
+            style={{ display: "block", width: "100%", height: canvasHeight, background: "#fff" }}
+          />
         </div>
       )}
     </div>
