@@ -11,6 +11,9 @@ import {
   Pie,
   Cell,
   Legend,
+  LineChart,
+  Line,
+  ReferenceLine,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 import "./PatientDashboard.css";
@@ -37,6 +40,7 @@ const PatientDashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [selectedSessionIdx, setSelectedSessionIdx] = useState(null);
   const [selectedPatientEmail, setSelectedPatientEmail] = useState("");
+  const [sessionRatios, setSessionRatios] = useState([]);
   const suggestionsRef = useRef(null);
 
   useEffect(() => {
@@ -100,10 +104,48 @@ const PatientDashboard = () => {
       const data = await res.json();
       setSessions(data);
       setSelectedSessionIdx(null);
+
+      // Only fetch ratios for analyzed sessions
+      const analyzedSessions = data.filter(
+        (s) => s.IsAnalyzed === true || s.is_analyzed === true
+      );
+      if (analyzedSessions.length > 0) {
+        fetchSessionRatios(analyzedSessions);
+      } else {
+        setSessionRatios([]);
+      }
     } catch (err) {
       setSessions([]);
       setSelectedSessionIdx(null);
+      setSessionRatios([]);
     }
+  };
+
+  const fetchSessionRatios = async (sessions) => {
+    const token = localStorage.getItem("token");
+    const results = await Promise.all(
+      sessions.map(async (session) => {
+        try {
+          const res = await fetch(
+            `http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(session.SessionAnalysis)}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (!res.ok) return null;
+          const data = await res.json();
+          const sentiment = data.sentiment || data;
+          return {
+            sessionDate: session.SessionDate || session.session_date,
+            ratio:
+              sentiment && sentiment.total_negative > 0
+                ? Number((sentiment.total_positive / sentiment.total_negative).toFixed(2))
+                : null,
+          };
+        } catch {
+          return null;
+        }
+      })
+    );
+    setSessionRatios(results.filter(Boolean));
   };
 
   const handleSelectPatient = (patient) => {
@@ -320,6 +362,39 @@ const PatientDashboard = () => {
             sessions[selectedSessionIdx].IsAnalyzed && (
               <SentimentDetailsDisplay analysisUrl={sessions[selectedSessionIdx].SessionAnalysis} />
           )}
+
+          {sessionRatios.length > 0 && (
+  <div style={{ margin: "2rem 0", background: "#fff", padding: "1rem", borderRadius: "8px" }}>
+    <h3>
+      Positive/Negative Ratio Across Sessions
+      {sessions.length > sessionRatios.length && (
+        <span style={{ color: "#f87171", fontWeight: "normal", fontSize: "1rem", marginLeft: "10px" }}>
+          (Not all sessions are analyzed)
+        </span>
+      )}
+    </h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={sessionRatios}>
+        <XAxis dataKey="sessionDate" />
+        <YAxis domain={[0, 1]} />
+        <Tooltip
+          formatter={(value, name) =>
+            name === "ratio" && typeof value === "number"
+              ? value.toFixed(2)
+              : value
+          }
+        />
+        <Line type="monotone" dataKey="ratio" stroke="#4ade80" />
+        <ReferenceLine
+          y={1}
+          label="Max Positive"
+          stroke="#f87171"
+          strokeDasharray="3 3"
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+)}
         </>
       )}
     </div>
