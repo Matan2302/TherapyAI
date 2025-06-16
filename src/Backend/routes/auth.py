@@ -16,7 +16,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-from config import SECRET_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD
+from config import SECRET_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, SMTP_FROM_EMAIL, SMTP_USE_TLS
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 
@@ -100,7 +100,7 @@ def reset_failed_attempt(db: Session, email: str):
 
 def send_reset_email(email: str, reset_token: str):
     msg = MIMEMultipart()
-    msg['From'] = SMTP_USERNAME
+    msg['From'] = SMTP_FROM_EMAIL
     msg['To'] = email
     msg['Subject'] = "Password Reset Request"
     
@@ -116,10 +116,21 @@ def send_reset_email(email: str, reset_token: str):
     
     try:
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        if SMTP_USE_TLS:
+            server.starttls()
+        
+        # Only attempt login if credentials are provided
+        if SMTP_USERNAME and SMTP_PASSWORD:
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        
         server.send_message(msg)
         server.quit()
+    except smtplib.SMTPAuthenticationError:
+        print("SMTP Authentication failed. Please check your SMTP credentials.")
+        raise HTTPException(status_code=500, detail="Email service configuration error")
+    except smtplib.SMTPException as e:
+        print(f"SMTP error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send reset email")
     except Exception as e:
         print(f"Failed to send email: {e}")
         raise HTTPException(status_code=500, detail="Failed to send reset email")
