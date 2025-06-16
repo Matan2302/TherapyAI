@@ -30,11 +30,13 @@ const LoginPage = () => {
       const mockTherapistName = "John@Doe";
       const mockAccessToken = "mock_token";
       const mockTherapistId = "12345";
+      const mockTherapistEmail = "john@doe.com"; // Add mock email
 
       setTherapistName(mockTherapistName);
       localStorage.setItem("access_token", mockAccessToken);
       localStorage.setItem("therapist_id", mockTherapistId);
       localStorage.setItem("therapist_name", mockTherapistName);
+      localStorage.setItem("therapist_email", mockTherapistEmail); // Save email
 
       setSuccess(t("login_success_message") + " (development mode)!");
       setError("");
@@ -65,6 +67,7 @@ const LoginPage = () => {
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("therapist_id", therapist_id);
       localStorage.setItem("therapist_name", full_name);
+      localStorage.setItem("therapist_email", email); // Save therapist email
 
       setTherapistName(full_name);
       setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");

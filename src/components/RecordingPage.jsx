@@ -32,8 +32,7 @@ const RecordingPage = () => {
   const [canvasHeight] = useState(60);
 
   const { therapistName } = useContext(TherapistContext);
-  // Add this line below to allow editing therapist name:
-  const [editableTherapistName, setTherapistName] = useState(therapistName || "");
+  const therapistEmail = localStorage.getItem("therapist_email") || "";
 
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
@@ -150,7 +149,7 @@ const RecordingPage = () => {
   };
 
   const handleUploadRecording = async () => {
-    if (!audioBlob || !patientEmail || !editableTherapistName || !sessionDate) {
+    if (!audioBlob || !patientEmail || !therapistEmail || !sessionDate) {
       alert(t("fill_all_fields_error"));
       return;
     }
@@ -158,7 +157,7 @@ const RecordingPage = () => {
     const formData = new FormData();
     formData.append("file", audioBlob, sessionDate + "_" + patientEmail);
     formData.append("patient_email", patientEmail);
-    formData.append("therapist_name", editableTherapistName);
+    formData.append("therapist_email", therapistEmail); // Send therapist email
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
 
@@ -189,8 +188,12 @@ const RecordingPage = () => {
       return;
     }
     setIsLoadingSuggestions(true);
+    const token = localStorage.getItem("access_token");
     fetch(
-      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(patientName)}`
+      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(patientName)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     )
       .then((res) => res.json())
       .then((data) => {
@@ -276,12 +279,12 @@ const RecordingPage = () => {
           />
         </div>
         <div className="form-group">
-          <label>{t("therapist_name_label")}</label>
+          <label>{t("therapist_email_label") || "Therapist Email"}</label>
           <input
-            type="text"
-            value={editableTherapistName}
-            onChange={(e) => setTherapistName(e.target.value)}
-            placeholder={t("therapist_name_placeholder")}
+            type="email"
+            value={therapistEmail}
+            readOnly
+            style={{ background: "#f3f3f3" }}
           />
         </div>
         <div className="form-group">

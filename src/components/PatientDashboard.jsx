@@ -94,6 +94,7 @@ const PatientDashboard = () => {
     const token = localStorage.getItem("access_token");
     try {
       const res = await fetch(
+        
         `http://localhost:8000/patientsdb/all-sessions?patient_email=${email}`,
         {
           method: "GET",
