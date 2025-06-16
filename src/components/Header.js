@@ -56,11 +56,6 @@ const Header = () => {
     return (words[0][0] + words[1][0]).toUpperCase();
   };
 
-  const getRandomColor = () => {
-    const colors = ["#4CAF50", "#2196F3", "#FF5722", "#9C27B0", "#3F51B5", "#00BCD4", "#FF9800"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("therapist_id");
@@ -98,7 +93,7 @@ const Header = () => {
         <div className="profile-container" ref={dropdownRef}>
           <div
             className="profile-icon"
-            style={{ backgroundColor: getRandomColor() }}
+            style={{ backgroundColor: "#ADD8E6" }}
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             {getInitials(therapistName)}
