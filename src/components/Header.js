@@ -94,7 +94,7 @@ const Header = () => {
             <Link to="/admin-dashboard" className="nav-link">{t("Admin Dashboard") || t("admin_dashboard_link")}</Link>
           )}
         </div>
-
+        <LanguageSwitcher />
         <div className="profile-container" ref={dropdownRef}>
           <div
             className="profile-icon"

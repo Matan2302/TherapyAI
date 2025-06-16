@@ -3,6 +3,7 @@ import { TherapistContext } from "../TherapistContext";
 import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
 import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./Header";
 
 const LoginPage = () => {
   const { t } = useTranslation("login");
@@ -83,8 +84,11 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <h2>{t("login_page_title")}</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0 }}>
+          <LanguageSwitcher />
+        </div>
+        <h2>{t("login_page_title")}</h2>
         <div className="form-group">
           <label htmlFor="email">{t("email_label")}</label>
           <input

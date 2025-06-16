@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./RegistrationPage.css";
+import { LanguageSwitcher } from "./Header";
 
 const RegistrationPage = () => {
   const { t } = useTranslation("registration");
@@ -115,8 +116,11 @@ const RegistrationPage = () => {
 
   return (
     <div className="registration-page">
-      <h2>{t("register_title")}</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0 }}>
+          <LanguageSwitcher />
+        </div>
+        <h2>{t("register_title")}</h2>
         <div className="form-group">
           <label htmlFor="fullName">{t("full_name_label")}</label>
           <input
