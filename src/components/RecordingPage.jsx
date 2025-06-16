@@ -2,6 +2,8 @@ import React, { useState, useRef, useContext, useEffect } from "react";
 import "./RecordingPage.css";
 import { TherapistContext } from "../TherapistContext";
 import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RecordingPage = () => {
   const { t } = useTranslation("recording");
@@ -39,6 +41,11 @@ const RecordingPage = () => {
   };
 
   const handleStartRecording = async () => {
+    // Validate all required fields before starting recording
+    if (!patientName || !patientEmail || !sessionDate || !sessionNotes) {
+      alert(t("fill_all_fields_error") || "Please fill in all required fields before recording.");
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -150,7 +157,7 @@ const RecordingPage = () => {
 
   const handleUploadRecording = async () => {
     if (!audioBlob || !patientEmail || !therapistEmail || !sessionDate) {
-      alert(t("fill_all_fields_error"));
+      toast.error(t("fill_all_fields_error"));
       return;
     }
 
@@ -161,22 +168,24 @@ const RecordingPage = () => {
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
 
+    const toastId = toast.info(t("uploading_status"), { autoClose: false, closeOnClick: false });
     try {
-      setUploadStatus(t("uploading_status"));
       const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
         body: formData,
       });
 
+      toast.dismiss(toastId);
       if (response.ok) {
         const result = await response.json();
-        setUploadStatus(t("upload_success_status") + ` ${result.url}`);
+        toast.success(t("upload_success_status"));
       } else {
-        setUploadStatus(t("upload_failure_status"));
+        toast.error(t("upload_failure_status"));
       }
     } catch (error) {
-      setUploadStatus(t("connection_failure_status"));
+      toast.dismiss(toastId);
+      toast.error(t("connection_failure_status"));
       console.error(error);
     }
   };
@@ -320,7 +329,6 @@ const RecordingPage = () => {
       {audioBlob && (
         <div className="upload-section">
           <button onClick={handleUploadRecording}>{t("upload_recording_button")}</button>
-          {uploadStatus && <p>{uploadStatus}</p>}
         </div>
       )}
 
@@ -352,6 +360,8 @@ const RecordingPage = () => {
           />
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 };
