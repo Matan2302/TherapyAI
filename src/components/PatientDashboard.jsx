@@ -94,7 +94,6 @@ const PatientDashboard = () => {
     const token = localStorage.getItem("access_token");
     try {
       const res = await fetch(
-        
         `http://localhost:8000/patientsdb/all-sessions?patient_email=${email}`,
         {
           method: "GET",
@@ -123,7 +122,7 @@ const PatientDashboard = () => {
   };
 
   const fetchSessionRatios = async (sessions) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token"); // <-- FIXED: use correct token key
     const results = await Promise.all(
       sessions.map(async (session) => {
         try {
