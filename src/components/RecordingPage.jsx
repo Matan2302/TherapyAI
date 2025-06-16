@@ -32,6 +32,7 @@ const RecordingPage = () => {
   const canvasRef = useRef(null);
   const [canvasWidth] = useState(400);
   const [canvasHeight] = useState(60);
+  const [isAudioUploaded, setIsAudioUploaded] = useState(true);
 
   const { therapistName } = useContext(TherapistContext);
   const therapistEmail = localStorage.getItem("therapist_email") || "";
@@ -46,6 +47,7 @@ const RecordingPage = () => {
       alert(t("fill_all_fields_error") || "Please fill in all required fields before recording.");
       return;
     }
+    setIsAudioUploaded(true); // Reset upload state when starting new recording
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -61,6 +63,7 @@ const RecordingPage = () => {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
         setAudioBlob(audioBlob);
+        setIsAudioUploaded(false); // Mark as not uploaded after stopping recording
       };
 
       mediaRecorder.start();
@@ -134,6 +137,7 @@ const RecordingPage = () => {
       }
       cancelAnimationFrame(animationFrameRef.current);
       setVolume(0);
+      // Do NOT set isAudioUploaded here, it is set in onstop after audioBlob is set
     }
   };
 
@@ -180,6 +184,8 @@ const RecordingPage = () => {
       if (response.ok) {
         const result = await response.json();
         toast.success(t("upload_success_status"));
+        setIsAudioUploaded(true); // Mark as uploaded after successful upload
+        setRecordingTime(0); // Reset timer after successful upload
       } else {
         toast.error(t("upload_failure_status"));
       }
@@ -234,6 +240,25 @@ const RecordingPage = () => {
     setPatientEmail(suggestion.PatientEmail); // <-- Store the email
     setPatientSuggestions([]);
   };
+
+  // Warn user if they try to leave while recording or if audio is not uploaded
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isRecording || (audioBlob && !isAudioUploaded)) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+    if (isRecording || (audioBlob && !isAudioUploaded)) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    } else {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isRecording, audioBlob, isAudioUploaded]);
 
   return (
     <div className="recording-page" style={{ backgroundColor }}>
@@ -332,7 +357,7 @@ const RecordingPage = () => {
         </div>
       )}
 
-      {isRecording && (
+      {(isRecording || (audioBlob && !isAudioUploaded)) && (
         <div
           className="recording-timer"
           style={{
