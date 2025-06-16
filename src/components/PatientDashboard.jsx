@@ -14,6 +14,7 @@ import {
   LineChart,
   Line,
   ReferenceLine,
+  ComposedChart,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 import "./PatientDashboard.css";
@@ -29,6 +30,31 @@ const calculateAge = (DateOfBirth) => {
   return age;
 };
 
+const PatientInfoCard = ({ patientData }) => {
+  if (!patientData) return null;
+
+  return (
+    <div className="section-box">
+      <h3>Patient Info</h3>
+      <label>Full Name</label>
+      <input type="text" value={patientData.fullName} readOnly className="input" />
+
+      <label>Age</label>
+      <input type="text" value={calculateAge(patientData.DateOfBirth)} readOnly className="input" />
+
+      <label>Medical History</label>
+      <textarea value={patientData.medicalHistory} readOnly className="medical-history-box-wide" />
+
+      <label>Total Sessions Completed</label>
+      <input type="text" value={patientData.totalSessionsDone} readOnly className="input" />
+
+      <label>Patient Email</label>
+      <input type="text" value={patientData.email} readOnly className="input" />
+    </div>
+  );
+};
+
+
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const [inputName, setInputName] = useState("");
@@ -42,6 +68,8 @@ const PatientDashboard = () => {
   const [selectedPatientEmail, setSelectedPatientEmail] = useState("");
   const [sessionRatios, setSessionRatios] = useState([]);
   const suggestionsRef = useRef(null);
+  const [viewMode, setViewMode] = useState(""); // "" | "single" | "progress"
+
 
   useEffect(() => {
     if (inputName.trim().length === 0) {
@@ -121,34 +149,48 @@ const PatientDashboard = () => {
     }
   };
 
-  const fetchSessionRatios = async (sessions) => {
-    const token = localStorage.getItem("access_token"); // <-- FIXED: use correct token key
-    const results = await Promise.all(
-      sessions.map(async (session) => {
-        try {
-          const res = await fetch(
-            `http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(session.SessionAnalysis)}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          if (!res.ok) return null;
-          const data = await res.json();
-          const sentiment = data.sentiment || data;
-          return {
-            sessionDate: session.SessionDate || session.session_date,
-            ratio:
-              sentiment && sentiment.total_negative > 0
-                ? Number((sentiment.total_positive / sentiment.total_negative).toFixed(2))
-                : null,
-          };
-        } catch {
-          return null;
-        }
-      })
-    );
-    setSessionRatios(results.filter(Boolean));
-  };
+const fetchSessionRatios = async (sessions) => {
+  const token = localStorage.getItem("access_token");
+
+  const results = await Promise.all(
+    sessions.map(async (session) => {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/sentiment/get-analysis-from-url/?url=${encodeURIComponent(session.SessionAnalysis)}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        const sentiment = data.sentiment || data;
+
+        return {
+          sessionDate: session.SessionDate || session.session_date,
+          ratio:
+            sentiment && sentiment.total_negative > 0
+              ? Number(
+                  (
+                    sentiment.total_positive / sentiment.total_negative
+                  ).toFixed(2)
+                )
+              : null,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  const sortedResults = results
+    .filter((r) => r && r.ratio !== null && r.sessionDate)
+    .sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate));
+
+  setSessionRatios(sortedResults);
+};
+
 
   const handleSelectPatient = (patient) => {
+    setViewMode("");
     setInputName(patient.FullName);
     setSuggestions([]);
     setSelectedPatientEmail(patient.PatientEmail);
@@ -156,6 +198,8 @@ const PatientDashboard = () => {
     setShowData(false);
     setPatientData(null);
     setSelectedSessionIdx(null);
+    fetchPatientSessions(patient.PatientEmail)
+    fetchPatientData(patient.PatientEmail)
   };
 
   const handleSessionSelect = (e) => {
@@ -164,6 +208,7 @@ const PatientDashboard = () => {
     if (sessions[idx]) {
       fetchPatientData(selectedPatientEmail, sessions[idx].SessionID);
       setShowData(true);
+      setViewMode("single")
     }
   };
 
@@ -288,52 +333,77 @@ const PatientDashboard = () => {
           </select>
         </div>
       )}
+          {sessions.length > 0 && selectedPatientEmail && (
+      <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+        <button
+          onClick={() => setViewMode("single")}
+          disabled={selectedSessionIdx === null}
+          style={{
+            padding: "0.5rem 1rem",
+            background: viewMode === "single" ? "#4ade80" : "#e5e7eb",
+            color: viewMode === "single" ? "#fff" : "#000",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          View Single Session
+        </button>
+
+        <button
+          onClick={() => setViewMode("progress")}
+          style={{
+            padding: "0.5rem 1rem",
+            background: viewMode === "progress" ? "#4ade80" : "#e5e7eb",
+            color: viewMode === "progress" ? "#fff" : "#000",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          View Progress
+        </button>
+      </div>
+    )}
 
       {showData && (
         <>
-          {selectedSessionIdx !== null && sessions[selectedSessionIdx] && (
-            <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px" }}>
-              {sessions[selectedSessionIdx].IsAnalyzed ? (
-                <h3 className="text-xl mb-2">Analyzed Session</h3>
-              ) : (
-                <button
-                  onClick={() => analyzeSession(selectedSessionIdx)}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: "#4ade80",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "bold"
-                  }}
-                >
-                  Analyze Session
-                </button>
-              )}
-            </div>
-          )}
+{selectedSessionIdx !== null &&
+  sessions[selectedSessionIdx] &&
+  viewMode === "single" && (
+    <div
+      style={{
+        marginTop: "1rem",
+        background: "#f9f9f9",
+        padding: "1rem",
+        borderRadius: "8px",
+      }}
+    >
+      {!sessions[selectedSessionIdx].IsAnalyzed && (
+        <button
+          onClick={() => analyzeSession(selectedSessionIdx)}
+          style={{
+            padding: "0.5rem 1rem",
+            background: "#4ade80",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          Analyze Session
+        </button>
+      )}
+    </div>
+)}
 
+          {viewMode == "single" && (
           <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
             <div className="info-row">
-              <div className="section-box">
-                <h3>Patient Info</h3>
-                <label>Full Name</label>
-                <input type="text" value={patientData?.fullName} readOnly className="input" />
-
-                <label>Age</label>
-                <input type="text" value={calculateAge(patientData?.DateOfBirth)} readOnly className="input" />
-
-                <label>Medical History</label>
-                <textarea value={patientData?.medicalHistory} readOnly className="medical-history-box-wide" />
-
-                <label>Total Sessions Completed</label>
-                <input type="text" value={patientData?.totalSessionsDone} readOnly className="input" />
-
-                <label>Patient Email</label>
-                <input type="text" value={patientData?.email} readOnly className="input" />
-              </div>
-
+              <PatientInfoCard patientData={patientData} />
               <div className="section-box">
                 <h3>Therapist Info</h3>
                 <label>Therapist Name</label>
@@ -358,43 +428,92 @@ const PatientDashboard = () => {
               </div>
             </div>
           </div>
+          )}
 
-          {selectedSessionIdx !== null &&
+          {viewMode == "single" && 
+            selectedSessionIdx !== null &&
             sessions[selectedSessionIdx] &&
             sessions[selectedSessionIdx].IsAnalyzed && (
               <SentimentDetailsDisplay analysisUrl={sessions[selectedSessionIdx].SessionAnalysis} />
           )}
+{viewMode === "progress" && patientData && (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: "2rem",
+      width: "100%",
+      maxWidth: "1100px",
+      margin: "2rem auto",
+    }}
+  >
+    {/* Left: Patient Info */}
+    <PatientInfoCard patientData={patientData} />
 
-          {sessionRatios.length > 0 && (
-  <div style={{ margin: "2rem 0", background: "#fff", padding: "1rem", borderRadius: "8px" }}>
-    <h3>
-      Positive/Negative Ratio Across Sessions
-      {sessions.length > sessionRatios.length && (
-        <span style={{ color: "#f87171", fontWeight: "normal", fontSize: "1rem", marginLeft: "10px" }}>
-          (Not all sessions are analyzed)
-        </span>
-      )}
-    </h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={sessionRatios}>
-        <XAxis dataKey="sessionDate" />
-        <YAxis domain={[0, 1]} />
-        <Tooltip
-          formatter={(value, name) =>
-            name === "ratio" && typeof value === "number"
-              ? value.toFixed(2)
-              : value
-          }
-        />
-        <Line type="monotone" dataKey="ratio" stroke="#4ade80" />
-        <ReferenceLine
-          y={1}
-          label="Max Positive"
-          stroke="#f87171"
-          strokeDasharray="3 3"
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    {/* Right: Progress Chart */}
+    {sessionRatios.length > 0 ? (
+      <div style={{ flex: 2, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
+        <h3>
+          Progress Summary
+          {sessions.length > sessionRatios.length && (
+            <span
+              style={{
+                color: "#f87171",
+                fontWeight: "normal",
+                fontSize: "1rem",
+                marginLeft: "10px",
+              }}
+            >
+              (Not all sessions are analyzed)
+            </span>
+          )}
+        </h3>
+<ResponsiveContainer width="100%" height={450}>
+  <ComposedChart data={sessionRatios}>
+<ReferenceLine
+  y={1}
+  stroke="#f87171"
+  strokeDasharray="4 4"
+  label={{
+    value: "Balanced Session",
+    position: "right",
+    fill: "#f87171",
+    fontSize: 12,
+    dy: -6, // optional vertical offset
+  }}
+/>
+    <CartesianGrid stroke="#f0f0f0" />
+    <XAxis dataKey="sessionDate" />
+    <YAxis domain={[0, 1]} />
+    <Tooltip
+      formatter={(value, name) =>
+        name === "ratio" && typeof value === "number"
+          ? value.toFixed(2)
+          : value
+      }
+    />
+    {/* Histogram bars */}
+    <Bar dataKey="ratio" fill="#8c92ac" barSize={40} />
+
+    {/* Trendline over bar tops */}
+    <Line
+      type="monotone"
+      dataKey="ratio"
+      stroke="#60a5fa"
+      strokeDasharray="5 5"
+      strokeWidth={2}
+      dot={{ r: 3 }}
+    />
+  </ComposedChart>
+</ResponsiveContainer>
+
+      </div>
+    ) : (
+      <div style={{ flex: 2, padding: "1rem" }}>
+        <p style={{ color: "#888" }}>No analyzed sessions to show progress.</p>
+      </div>
+    )}
   </div>
 )}
         </>
