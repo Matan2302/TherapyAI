@@ -48,13 +48,18 @@ def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
     return {"message": "Registration successful"}
 
 def is_password_strong(password: str) -> bool:
-    if len(password) < 7:
-        return False
-    if not re.search(r"[A-Z]", password):
-        return False
-    if not re.search(r"[a-z]", password):
-        return False
-    return True
+    """
+    Checks if the password:
+    - Has at least one lowercase letter
+    - Has at least one uppercase letter
+    - Has at least one digit
+    - Has at least one special character
+    - Is at least 8 characters long
+    """
+    strong_password_regex = re.compile(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"
+    )
+    return bool(strong_password_regex.match(password))
 
 @router.post("/login", response_model=TherapistLoginResponse)
 def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
