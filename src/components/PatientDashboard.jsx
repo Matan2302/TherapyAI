@@ -329,8 +329,9 @@ const PatientDashboard = () => {
 
                 <label>Total Sessions Completed</label>
                 <input type="text" value={patientData?.totalSessionsDone} readOnly className="input" />
-                <label>Patient Contact Info</label>
-                <input type="text" value={patientData?.lastTherapistPatientEmail} readOnly className="input" />
+
+                <label>Patient Email</label>
+                <input type="text" value={patientData?.email} readOnly className="input" />
               </div>
 
               <div className="section-box">
@@ -341,7 +342,8 @@ const PatientDashboard = () => {
                 <label>Therapist Email</label>
                 <input type="text" value={patientData?.lastTherapistEmail} readOnly className="input" />
 
-                
+                <label>Therapist Contact Info</label>
+                <input type="text" value={patientData?.lastTherapistPatientEmail} readOnly className="input" />
               </div>
 
               <div className="section-box">
