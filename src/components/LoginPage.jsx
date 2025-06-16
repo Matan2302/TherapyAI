@@ -70,31 +70,21 @@ const LoginPage = () => {
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
-// <<<<<<< Tomer
       if (therapist_id === -1) {
         localStorage.setItem("therapist_name", "Admin");
-        localStorage.setItem("token", access_token);
+        localStorage.setItem("access_token", access_token);
         setSuccess("Admin Login successful!");
-        console.log(localStorage.getItem("token"));
+        console.log(localStorage.getItem("access_token"));
         setError("");
       } else {
         setTherapistName(email);
-        localStorage.setItem("token", access_token);
+        localStorage.setItem("access_token", access_token);
         localStorage.setItem("therapist_id", therapist_id);
         localStorage.setItem("therapist_name", full_name);
         setSuccess("Login successful!");
-        console.log(localStorage.getItem("token"));
+        console.log(localStorage.getItem("access_token"));
         setError("");
       }
-// =======
-//       localStorage.setItem("access_token", access_token);
-//       localStorage.setItem("therapist_id", therapist_id);
-//       localStorage.setItem("therapist_name", full_name);
-
-//       setTherapistName(full_name);
-//       setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
-//       setError("");
-// >>>>>>> main
 
       setTimeout(() => {
         navigate("/home");

@@ -5,9 +5,10 @@ from models.Therapist import Therapist
 from models.Admin import Admin  # ✅ ייבוא מודל אדמין
 from schemas.TherapistLogin import TherapistLoginRequest, TherapistLoginResponse, ForgotPasswordRequest, VerifyResetCodeRequest
 from schemas.TherapistRegister import TherapistRegisterRequest
-from database import get_db
+from database import get_db, SessionLocal
 import hashlib
-from services.token_service import create_access_token, get_current_admin
+import jwt
+from services.token_service import create_access_token, get_current_admin, decode_access_token
 import re
 import secrets
 import smtplib
@@ -17,11 +18,11 @@ from email.mime.multipart import MIMEMultipart
 
 from config import SECRET_KEY, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD
 from fastapi.security import OAuth2PasswordBearer
-from services.token_service import verify_token
 from datetime import datetime, timedelta
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 router = APIRouter()
+admin_router = APIRouter(dependencies=[Depends(get_current_admin)])
 print("✅ auth.py loaded")
 
 def get_db():
@@ -205,7 +206,7 @@ def is_password_strong(password: str) -> bool:
 @router.get("/verify")
 def verify_token_route(token: str = Depends(oauth2_scheme)):
     print("Received token:", token)
-    verify_token(token)
+    decode_access_token(token)
     return {"valid": True}
 # admin_router = APIRouter(dependencies=[Depends(get_current_admin)])
 
