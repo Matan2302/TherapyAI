@@ -5,6 +5,13 @@
   "patient_email_label": "Электронная почта пациента",
   "medical_history_label": "Медицинская история",
   "add_patient_button": "Добавить пациента",
-  "success_default_message": "Пациент успешно добавлен.",
-  "error_default_message": "Не удалось добавить пациента: Неизвестная ошибка"
+  "invalid_name_message": "Имя должно содержать не менее 2 символов и только допустимые символы.",
+  "invalid_email_message": "Пожалуйста, введите действительный адрес электронной почты.",
+  "medical_history_required_message": "Медицинская история должна содержать не менее 10 символов и буквы.",
+  "dob_required_message": "Дата рождения обязательна.",
+  "dob_future_message": "Дата рождения не может быть в будущем.",
+  "dob_too_young_message": "Пациенту должно быть не менее 1 года.",
+  "success_default_message": "Пациент успешно добавлен!",
+  "error_default_message": "Произошла ошибка.",
+  "submitting_message": "Отправка..."
 }

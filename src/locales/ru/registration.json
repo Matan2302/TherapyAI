@@ -1,11 +1,18 @@
 {
-  "registration_page_title": "Регистрация",
+  "register_title": "Регистрация",
   "full_name_label": "Полное имя",
   "specialization_label": "Специализация",
   "contact_info_label": "Контактная информация",
   "email_label": "Электронная почта",
   "password_label": "Пароль",
+  "repeat_password_label": "Повторите пароль",
   "register_button": "Зарегистрироваться",
+  "registering_message": "Регистрация...",
+  "back_to_login_button": "Назад к входу",
+  "invalid_name_message": "Имя должно содержать не менее 2 символов и только допустимые символы.",
+  "invalid_email_message": "Пожалуйста, введите действительный адрес электронной почты.",
+  "strength_label": "Надежность",
   "registration_success": "Регистрация прошла успешно!",
-  "registration_failed_default": "Не удалось зарегистрироваться"
+  "registration_failed_default": "Не удалось зарегистрироваться",
+  "invalid_password_message": "Пароль должен содержать не менее 8 символов, включая заглавные и строчные буквы, цифру и специальный символ."
 }

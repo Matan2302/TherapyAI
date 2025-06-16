@@ -1,11 +1,16 @@
 {
-  "registration_page_title": "הרשמה",
+  "register_title": "הרשמה",
   "full_name_label": "שם מלא",
   "specialization_label": "התמחות",
-  "contact_info_label": "פרטי יצירת קשר",
+  "contact_info_label": "פרטי קשר",
   "email_label": "אימייל",
   "password_label": "סיסמה",
-  "register_button": "הירשם",
-  "registration_success": "ההרשמה בוצעה בהצלחה!",
-  "registration_failed_default": "ההרשמה נכשלה"
+  "repeat_password_label": "אימות סיסמה",
+  "register_button": "הרשם",
+  "registering_message": "נרשם...",
+  "back_to_login_button": "חזרה להתחברות",
+  "invalid_name_message": "השם חייב להכיל לפחות 2 תווים וללא תווים לא חוקיים.",
+  "invalid_email_message": "אנא הזן כתובת אימייל תקינה.",
+  "strength_label": "חוזק",
+  "invalid_password_message": "הסיסמה חייבת להכיל לפחות 8 תווים, אות גדולה, אות קטנה, מספר ותו מיוחד."
 }
