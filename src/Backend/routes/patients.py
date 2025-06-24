@@ -104,6 +104,22 @@ def search_patients_by_name(
         for patient in patients
     ]
 
+@router.get("/mail-search", response_model=List[PatientBasicInfo])
+def search_patients_by_mail(
+    name: str = Query(..., description="Partial or full email"),
+    db: Session = Depends(get_db)
+):
+    patients = db.query(Patient).filter(Patient.PatientEmail.ilike(f"%{name}%")).all()
+    return [
+        PatientBasicInfo(
+            FullName=patient.FullName,
+            PatientEmail=patient.PatientEmail,
+            DateOfBirth=patient.DateOfBirth.strftime("%Y-%m-%d") if patient.DateOfBirth else None,
+            MedicalHistory=patient.MedicalHistory or None
+        )
+        for patient in patients
+    ]
+
 @router.get("/all-sessions", response_model=List[PatientSessionInfo])
 def get_all_sessions_for_patient(
     patient_email: str = Query(..., description="Patient email"),

@@ -205,7 +205,7 @@ const RecordingPage = () => {
     setIsLoadingSuggestions(true);
     const token = localStorage.getItem("access_token");
     fetch(
-      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(patientName)}`,
+      `http://localhost:8000/patientsdb/mail-search?name=${encodeURIComponent(patientName)}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

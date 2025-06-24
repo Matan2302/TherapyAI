@@ -2,7 +2,7 @@
   "register_title": "Register",
   "full_name_label": "Full Name",
   "specialization_label": "Specialization",
-  "contact_info_label": "Contact info",
+  "contact_info_label": "Phone number",
   "email_label": "Email",
   "password_label": "Password",
   "repeat_password_label": "Repeat Password",

@@ -19,6 +19,8 @@ const RegistrationPage = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactError, setContactError] = useState("");
+  const [specializationError, setSpecializationError] = useState("");
 
   const navigate = useNavigate();
 
@@ -42,28 +44,70 @@ const RegistrationPage = () => {
   };
 
   // Name validation: at least 2 chars, only valid chars
-  const nameRegex = /^[a-zA-Z0-9\s,'-]{2,}$/;
+  const nameRegex = /^[a-zA-Z0-9\s'-]{2,}$/;
   const handleNameChange = (e) => {
     const value = e.target.value;
     setFullName(value);
     if (!nameRegex.test(value)) {
-      setNameError(t("invalid_name_message") || "Name must be at least 2 characters and contain only valid characters.");
+      setNameError(
+  t("invalid_name_message", {
+    defaultValue: "Name must be at least 2 characters and contain only valid characters.",
+  })
+);
+
     } else {
       setNameError("");
     }
   };
 
   // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|icloud|walla|live)\.[a-zA-Z]{2,}$/;
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
     if (value && !emailRegex.test(value)) {
-      setEmailError(t("invalid_email_message")||"Please enter a valid email address.");
+      setEmailError(
+  t("invalid_email_message", {
+    defaultValue: "Please enter a valid email address.",
+  })
+);
     } else {
       setEmailError("");
     }
   };
+
+  const specializationRegex = /^[a-zA-Z\s]{3,}$/;
+  const handleSpecializationChange = (e) => {
+  const value = e.target.value;
+  setSpecialization(value);
+  if (!specializationRegex.test(value)) {
+    setSpecializationError(
+      t("invalid_specialization_message", {
+      defaultValue: "Specialization must contain only letters and spaces.",
+    })
+    );
+  } else {
+    setSpecializationError("");
+  }
+};
+
+
+  const contactRegex = /^05\d{8}$/;
+  const handleContactChange = (e) => {
+  const value = e.target.value;
+  setContactinfo(value);
+  if (value && !contactRegex.test(value)) {
+setContactError(
+  t("invalid_contact_message", {
+    defaultValue: "Please enter a valid Israeli phone number (e.g., 05XXXXXXXX).",
+  })
+);
+
+  } else {
+    setContactError("");
+  }
+};
+
 
   // Password validation: strong password (min 8 chars, upper, lower, number, special char)
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
@@ -72,7 +116,11 @@ const RegistrationPage = () => {
     setPassword(val);
     setStrength(checkStrength(val));
     if (!strongPasswordRegex.test(val)) {
-      setPasswordError(t("invalid_password_message")||"Password must be at least 8 characters and include upper and lower case letters, a number, and a special character.");
+setPasswordError(
+  t("invalid_password_message", {
+    defaultValue: "Password must be at least 8 characters and include upper and lower case letters, a number, and a special character.",
+  })
+);
     } else {
       setPasswordError("");
     }
@@ -139,20 +187,30 @@ const RegistrationPage = () => {
             type="text"
             id="specialization"
             value={specialization}
-            onChange={(e) => setSpecialization(e.target.value)}
+            onChange={handleSpecializationChange}
             required
           />
+          {specializationError && (
+          <span className="error-message" style={{ color: 'red', fontSize: '0.9em' }}>
+            {specializationError}
+          </span>
+        )}
         </div>
 
         <div className="form-group">
           <label htmlFor="Contactinfo">{t("contact_info_label")}</label>
           <input
-            type="text"
-            id="Contactinfo"
-            value={Contactinfo}
-            onChange={(e) => setContactinfo(e.target.value)}
-            required
-          />
+          type="text"
+          id="Contactinfo"
+          value={Contactinfo}
+          onChange={handleContactChange}
+          required
+        />
+        {contactError && (
+          <span className="error-message" style={{ color: "red", fontSize: "0.9em" }}>
+            {contactError}
+          </span>
+        )}
         </div>
 
         <div className="form-group">
@@ -199,7 +257,7 @@ const RegistrationPage = () => {
         {error && <p className="error">{error}</p>}
         {success && <p className="success-message">{success}</p>}
 
-        <button type="submit" className="btn" disabled={isSubmitting || nameError || emailError || passwordError}>
+        <button type="submit" className="btn" disabled={isSubmitting || nameError || emailError || passwordError || contactError || specializationError}>
           {isSubmitting ? t("registering_message") || "Registering..." : t("register_button")}
         </button>
       </form>

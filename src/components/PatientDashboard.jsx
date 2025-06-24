@@ -267,7 +267,20 @@ const fetchSessionRatios = async (sessions) => {
 
   return (
     <div className="patient-dashboard p-6">
-      <h2 className="text-2xl mb-4">Patient Dashboard</h2>
+      <h2 className="text-2xl mb-4">Patient Dashboard</h2><br></br>
+        {selectedPatientEmail && inputName && (
+  <h3
+    style={{
+      fontSize: "1.25rem",
+      fontWeight: "500",
+      marginBottom: "1.5rem",
+      color: "#374151", // Tailwind gray-700
+      textAlign: "center",
+    }}
+  >
+    Current patient: <span style={{ fontWeight: "600", color: "#1f2937" }}>{inputName}</span>
+  </h3>
+)}
 
       {!showData && (
         <div className="input-row">
@@ -333,40 +346,74 @@ const fetchSessionRatios = async (sessions) => {
           </select>
         </div>
       )}
-          {sessions.length > 0 && selectedPatientEmail && (
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-        <button
-          onClick={() => setViewMode("single")}
-          disabled={selectedSessionIdx === null}
-          style={{
-            padding: "0.5rem 1rem",
-            background: viewMode === "single" ? "#4ade80" : "#e5e7eb",
-            color: viewMode === "single" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          View Single Session
-        </button>
 
-        <button
-          onClick={() => setViewMode("progress")}
-          style={{
-            padding: "0.5rem 1rem",
-            background: viewMode === "progress" ? "#4ade80" : "#e5e7eb",
-            color: viewMode === "progress" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          View Progress
-        </button>
-      </div>
-    )}
+
+    {sessions.length > 0 && selectedPatientEmail && (
+  <>
+    <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+      <button
+        onClick={() => setViewMode("single")}
+        disabled={selectedSessionIdx === null}
+        style={{
+          padding: "0.5rem 1rem",
+          background: viewMode === "single" ? "#4ade80" : "#e5e7eb",
+          color: viewMode === "single" ? "#fff" : "#000",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        View Single Session
+      </button>
+
+      <button
+        onClick={() => setViewMode("progress")}
+        style={{
+          padding: "0.5rem 1rem",
+          background: viewMode === "progress" ? "#4ade80" : "#e5e7eb",
+          color: viewMode === "progress" ? "#fff" : "#000",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        View Progress
+      </button>
+    </div>
+
+    {/* 👇 Switch Patient Button */}
+    <div style={{ marginBottom: "2rem" }}>
+      <button
+        onClick={() => {
+          // Reset state
+          setShowData(false);
+          setPatientData(null);
+          setInputName("");
+          setSuggestions([]);
+          setSelectedSessionIdx(null);
+          setSessions([]);
+          setSessionRatios([]);
+          setViewMode("");
+          setSelectedPatientEmail("");
+        }}
+        style={{
+          padding: "0.5rem 1rem",
+          background: "#facc15",
+          color: "#000",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        🔄 Switch Patient
+      </button>
+    </div>
+  </>
+)}
+
 
       {showData && (
         <>
