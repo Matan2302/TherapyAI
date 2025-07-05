@@ -226,14 +226,17 @@ def verify_token_route(token: str = Depends(oauth2_scheme)):
 @router.post("/register")
 def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
     print("📥 Register attempt:", data.email)
-
+    
     existing = db.query(TherapistLogin).filter(TherapistLogin.email == data.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
+    
+    if not validate_registration_data(data):
+        raise HTTPException(status_code=400, detail="One or more fields are invalid.")
 
     if not is_password_strong(data.password):
         raise HTTPException(status_code=400, detail="Password is not strong enough. It must be at least 7 characters long and include both uppercase and lowercase letters.")
-
+        
     new_therapist = Therapist(
         FullName=data.full_name,
         Specialization=data.specialization,
@@ -256,14 +259,44 @@ def register(data: TherapistRegisterRequest, db: Session = Depends(get_db)):
 
     return {"message": "Registration successful"}
 
-def is_password_strong(password: str) -> bool:
-    if len(password) < 7:
+def validate_registration_data(data) -> bool:
+    """
+    Validates user registration input data against frontend constraints.
+    Returns True if valid, False otherwise.
+    """
+
+    full_name = data.full_name.strip()
+    specialization = data.specialization.strip()
+    contact_info = data.contact_info.strip()
+    email = data.email.strip()
+
+    if not re.match(r"^[a-zA-Z0-9\s'-]{2,}$", full_name):
         return False
-    if not re.search(r"[A-Z]", password):
+
+    if not re.match(r"^[a-zA-Z\s]{3,}$", specialization):
         return False
-    if not re.search(r"[a-z]", password):
+
+    if not re.match(r"^05\d{8}$", contact_info):
         return False
+
+    if not re.match(r"^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|icloud|walla|live)\.[a-zA-Z]{2,}$", email):
+        return False
+
     return True
+
+def is_password_strong(password: str) -> bool:
+    """
+    Checks if the password:
+    - Has at least one lowercase letter
+    - Has at least one uppercase letter
+    - Has at least one digit
+    - Has at least one special character
+    - Is at least 8 characters long
+    """
+    strong_password_regex = re.compile(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"
+    )
+    return bool(strong_password_regex.match(password))
 
 @router.post("/login", response_model=TherapistLoginResponse)
 def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):

@@ -1,11 +1,18 @@
 {
-  "registration_page_title": "التسجيل",
+  "register_title": "تسجيل",
   "full_name_label": "الاسم الكامل",
   "specialization_label": "التخصص",
   "contact_info_label": "معلومات الاتصال",
   "email_label": "البريد الإلكتروني",
   "password_label": "كلمة المرور",
+  "repeat_password_label": "تأكيد كلمة المرور",
   "register_button": "تسجيل",
+  "registering_message": "جاري التسجيل...",
+  "back_to_login_button": "العودة لتسجيل الدخول",
+  "invalid_name_message": "يجب أن يحتوي الاسم على حرفين على الأقل ولا يحتوي على رموز غير صالحة.",
+  "invalid_email_message": "يرجى إدخال بريد إلكتروني صالح.",
+  "strength_label": "القوة",
   "registration_success": "تم التسجيل بنجاح!",
-  "registration_failed_default": "فشل التسجيل"
+  "registration_failed_default": "فشل التسجيل",
+  "invalid_password_message": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل وتشمل حرفًا كبيرًا وصغيرًا ورقمًا وحرفًا خاصًا."
 }

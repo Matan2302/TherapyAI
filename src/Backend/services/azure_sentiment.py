@@ -51,8 +51,8 @@ def analyze_conversation(file_path: str) -> str:
     result = {
         'total_positive': stats['total_positive'],
         'total_negative': stats['total_negative'],
-        'top_5_positive': [top_sentences.get(f'positive_{i}', '') for i in range(1, 6)],
-        'top_5_negative': [top_sentences.get(f'negative_{i}', '') for i in range(1, 6)],
+        'top_5_positive': [v for k, v in top_sentences.items() if k.startswith('positive_')],
+        'top_5_negative': [v for k, v in top_sentences.items() if k.startswith('negative_')],
         'summary': summary
     }
 
@@ -190,8 +190,8 @@ def get_sentiment_statistics(text: str, lang: str, speaker: str) -> dict:
 
 # === Utility ===
 def get_top_sentences(pos_scores: dict, neg_scores: dict) -> dict:
-    top_pos = sorted(pos_scores.items(), key=lambda x: x[1], reverse=True)[:5]
-    top_neg = sorted(neg_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+    top_pos = sorted(pos_scores.items(), key=lambda x: x[1], reverse=True)
+    top_neg = sorted(neg_scores.items(), key=lambda x: x[1], reverse=True)
     result = {}
     for i, (s, _) in enumerate(top_pos, 1):
         result[f'positive_{i}'] = s

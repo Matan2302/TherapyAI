@@ -3,6 +3,7 @@ import { TherapistContext } from "../TherapistContext";
 import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
 import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./Header";
 
 const LoginPage = () => {
   const { t } = useTranslation("login");
@@ -38,11 +39,13 @@ const LoginPage = () => {
       const mockTherapistName = "John@Doe";
       const mockAccessToken = "mock_token";
       const mockTherapistId = "12345";
+      const mockTherapistEmail = "john@doe.com"; // Add mock email
 
       setTherapistName(mockTherapistName);
       localStorage.setItem("access_token", mockAccessToken);
       localStorage.setItem("therapist_id", mockTherapistId);
       localStorage.setItem("therapist_name", mockTherapistName);
+      localStorage.setItem("therapist_email", mockTherapistEmail); // Save email
 
       setSuccess(t("login_success_message") + " (development mode)!");
       setError("");
@@ -70,21 +73,16 @@ const LoginPage = () => {
       const data = await res.json();
       const { therapist_id, access_token, full_name } = data;
 
-      if (therapist_id === -1) {
-        localStorage.setItem("therapist_name", "Admin");
-        localStorage.setItem("access_token", access_token);
-        setSuccess("Admin Login successful!");
-        console.log(localStorage.getItem("access_token"));
-        setError("");
-      } else {
-        setTherapistName(email);
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("therapist_id", therapist_id);
-        localStorage.setItem("therapist_name", full_name);
-        setSuccess("Login successful!");
-        console.log(localStorage.getItem("access_token"));
-        setError("");
-      }
+
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("therapist_id", therapist_id);
+      localStorage.setItem("therapist_name", full_name);
+      localStorage.setItem("therapist_email", email); // Save therapist email
+
+      setTherapistName(full_name);
+      setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");
+      setError("");
+
 
       setTimeout(() => {
         navigate("/home");
@@ -162,20 +160,23 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      {!showForgotPassword ? (
-        <>
-          <h2>{t("login_page_title")}</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">{t("email_label")}</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0 }}>
+          <LanguageSwitcher />
+        </div>
+        <h2>{t("login_page_title")}</h2>
+        <div className="form-group">
+          <label htmlFor="email">{t("email_label")}</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
 
             <div className="form-group">
               <label htmlFor="password">{t("password_label")}</label>

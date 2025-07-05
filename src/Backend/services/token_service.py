@@ -3,9 +3,8 @@ from fastapi import HTTPException, Depends, Security, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 from jwt import ExpiredSignatureError, InvalidTokenError
-
 from sqlalchemy.orm import Session
-
+from datetime import timedelta
 from database import get_db
 from models.TherapistLogin import TherapistLogin
 from config import SECRET_KEY
@@ -23,10 +22,12 @@ def create_access_token(user_id: int | str, role: str) -> str:
     Create a signed JWT token without expiration (session-style).
     You may later add exp if needed.
     """
+    #expire = datetime.utcnow()+timedelta(hours=4)
     payload = {
         "sub": str(user_id),
         "role": role,
         "iat": datetime.utcnow().timestamp()
+        #"exp": expire
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 

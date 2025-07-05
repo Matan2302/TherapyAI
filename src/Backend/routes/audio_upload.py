@@ -32,7 +32,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 async def upload_audio(
     file: UploadFile = File(...),
     patient_email: str = Form(...),
-    therapist_name: str = Form(...),
+    therapist_email: str = Form(...),
     session_date: str = Form(...),   # YYYY-MM-DD from the form
     notes: str = Form(""),           # optional
 ):
@@ -85,10 +85,10 @@ async def upload_audio(
     # ---------------------------------------------------------------------- #
     # NOTE: current helper still inserts PatientID / TherapistID = 1, 1.
     print(f"patient_email: {patient_email}")
-    print(f"therapist_name: {therapist_name}")
+    print(f"therapist_email: {therapist_email}")
     save_session_to_db(
         patient_email,          # placeholder, not yet used in the helper
-        therapist_name,        # placeholder, not yet used
+        therapist_email,        # placeholder, not yet used
         session_date,
         audio_url,             # BlobURL column
         transcript_url,        # Transcript column

@@ -1,11 +1,17 @@
-
 {
   "add_patient_title": "إضافة مريض",
   "full_name_label": "الاسم الكامل",
   "date_of_birth_label": "تاريخ الميلاد",
   "patient_email_label": "البريد الإلكتروني للمريض",
-  "medical_history_label": "السجل الطبي",
+  "medical_history_label": "التاريخ الطبي",
   "add_patient_button": "إضافة مريض",
-  "success_default_message": "تمت إضافة المريض بنجاح.",
-  "error_default_message": "فشل في إضافة المريض: خطأ غير معروف"
+  "invalid_name_message": "يجب أن يحتوي الاسم على حرفين على الأقل ولا يحتوي على رموز غير صالحة.",
+  "invalid_email_message": "يرجى إدخال بريد إلكتروني صالح.",
+  "medical_history_required_message": "يجب أن يكون التاريخ الطبي 10 أحرف على الأقل ويحتوي على أحرف.",
+  "dob_required_message": "تاريخ الميلاد مطلوب.",
+  "dob_future_message": "تاريخ الميلاد لا يمكن أن يكون في المستقبل.",
+  "dob_too_young_message": "يجب أن يكون عمر المريض سنة واحدة على الأقل.",
+  "success_default_message": "تمت إضافة المريض بنجاح!",
+  "error_default_message": "حدث خطأ ما.",
+  "submitting_message": "جارٍ الإرسال..."
 }

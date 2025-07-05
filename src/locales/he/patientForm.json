@@ -5,6 +5,13 @@
   "patient_email_label": "אימייל של המטופל",
   "medical_history_label": "היסטוריה רפואית",
   "add_patient_button": "הוסף מטופל",
-  "success_default_message": "המטופל נוסף בהצלחה.",
-  "error_default_message": "הוספת המטופל נכשלה: שגיאה לא ידועה"
+  "invalid_name_message": "השם חייב להכיל לפחות 2 תווים וללא תווים לא חוקיים.",
+  "invalid_email_message": "אנא הזן כתובת אימייל תקינה.",
+  "medical_history_required_message": "ההיסטוריה הרפואית חייבת להכיל לפחות 10 תווים ולכלול אותיות.",
+  "dob_required_message": "יש להזין תאריך לידה.",
+  "dob_future_message": "תאריך הלידה לא יכול להיות בעתיד.",
+  "dob_too_young_message": "על המטופל להיות בן שנה לפחות.",
+  "success_default_message": "המטופל נוסף בהצלחה!",
+  "error_default_message": "אירעה שגיאה.",
+  "submitting_message": "שולח..."
 }

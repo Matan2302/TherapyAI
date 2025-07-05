@@ -2,6 +2,8 @@ import React, { useState, useRef, useContext, useEffect } from "react";
 import "./RecordingPage.css";
 import { TherapistContext } from "../TherapistContext";
 import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RecordingPage = () => {
   const { t } = useTranslation("recording");
@@ -30,16 +32,22 @@ const RecordingPage = () => {
   const canvasRef = useRef(null);
   const [canvasWidth] = useState(400);
   const [canvasHeight] = useState(60);
+  const [isAudioUploaded, setIsAudioUploaded] = useState(true);
 
   const { therapistName } = useContext(TherapistContext);
-  // Add this line below to allow editing therapist name:
-  const [editableTherapistName, setTherapistName] = useState(therapistName || "");
+  const therapistEmail = localStorage.getItem("therapist_email") || "";
 
   const handleConsentChange = (event) => {
     setIsConsentChecked(event.target.checked);
   };
 
   const handleStartRecording = async () => {
+    // Validate all required fields before starting recording
+    if (!patientName || !patientEmail || !sessionDate || !sessionNotes) {
+      alert(t("fill_all_fields_error") || "Please fill in all required fields before recording.");
+      return;
+    }
+    setIsAudioUploaded(true); // Reset upload state when starting new recording
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -55,6 +63,7 @@ const RecordingPage = () => {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
         setAudioBlob(audioBlob);
+        setIsAudioUploaded(false); // Mark as not uploaded after stopping recording
       };
 
       mediaRecorder.start();
@@ -128,6 +137,7 @@ const RecordingPage = () => {
       }
       cancelAnimationFrame(animationFrameRef.current);
       setVolume(0);
+      // Do NOT set isAudioUploaded here, it is set in onstop after audioBlob is set
     }
   };
 
@@ -150,34 +160,38 @@ const RecordingPage = () => {
   };
 
   const handleUploadRecording = async () => {
-    if (!audioBlob || !patientEmail || !editableTherapistName || !sessionDate) {
-      alert(t("fill_all_fields_error"));
+    if (!audioBlob || !patientEmail || !therapistEmail || !sessionDate) {
+      toast.error(t("fill_all_fields_error"));
       return;
     }
 
     const formData = new FormData();
     formData.append("file", audioBlob, sessionDate + "_" + patientEmail);
     formData.append("patient_email", patientEmail);
-    formData.append("therapist_name", editableTherapistName);
+    formData.append("therapist_email", therapistEmail); // Send therapist email
     formData.append("session_date", sessionDate);
     formData.append("notes", sessionNotes);
 
+    const toastId = toast.info(t("uploading_status"), { autoClose: false, closeOnClick: false });
     try {
-      setUploadStatus(t("uploading_status"));
       const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
         body: formData,
       });
 
+      toast.dismiss(toastId);
       if (response.ok) {
         const result = await response.json();
-        setUploadStatus(t("upload_success_status") + ` ${result.url}`);
+        toast.success(t("upload_success_status"));
+        setIsAudioUploaded(true); // Mark as uploaded after successful upload
+        setRecordingTime(0); // Reset timer after successful upload
       } else {
-        setUploadStatus(t("upload_failure_status"));
+        toast.error(t("upload_failure_status"));
       }
     } catch (error) {
-      setUploadStatus(t("connection_failure_status"));
+      toast.dismiss(toastId);
+      toast.error(t("connection_failure_status"));
       console.error(error);
     }
   };
@@ -189,8 +203,12 @@ const RecordingPage = () => {
       return;
     }
     setIsLoadingSuggestions(true);
+    const token = localStorage.getItem("access_token");
     fetch(
-      `http://localhost:8000/patientsdb/search-patients?name=${encodeURIComponent(patientName)}`
+      `http://localhost:8000/patientsdb/mail-search?name=${encodeURIComponent(patientName)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     )
       .then((res) => res.json())
       .then((data) => {
@@ -222,6 +240,25 @@ const RecordingPage = () => {
     setPatientEmail(suggestion.PatientEmail); // <-- Store the email
     setPatientSuggestions([]);
   };
+
+  // Warn user if they try to leave while recording or if audio is not uploaded
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isRecording || (audioBlob && !isAudioUploaded)) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+    if (isRecording || (audioBlob && !isAudioUploaded)) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    } else {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isRecording, audioBlob, isAudioUploaded]);
 
   return (
     <div className="recording-page" style={{ backgroundColor }}>
@@ -276,12 +313,12 @@ const RecordingPage = () => {
           />
         </div>
         <div className="form-group">
-          <label>{t("therapist_name_label")}</label>
+          <label>{t("therapist_email_label") || "Therapist Email"}</label>
           <input
-            type="text"
-            value={editableTherapistName}
-            onChange={(e) => setTherapistName(e.target.value)}
-            placeholder={t("therapist_name_placeholder")}
+            type="email"
+            value={therapistEmail}
+            readOnly
+            style={{ background: "#f3f3f3" }}
           />
         </div>
         <div className="form-group">
@@ -317,11 +354,10 @@ const RecordingPage = () => {
       {audioBlob && (
         <div className="upload-section">
           <button onClick={handleUploadRecording}>{t("upload_recording_button")}</button>
-          {uploadStatus && <p>{uploadStatus}</p>}
         </div>
       )}
 
-      {isRecording && (
+      {(isRecording || (audioBlob && !isAudioUploaded)) && (
         <div
           className="recording-timer"
           style={{
@@ -349,6 +385,8 @@ const RecordingPage = () => {
           />
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 };

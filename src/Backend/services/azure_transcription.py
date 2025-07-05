@@ -64,7 +64,7 @@ def transcribe_dialog(
     endpoint = os.getenv("AZURE_SPEECH_ENDPOINT")
     if not (key and endpoint):
         raise RuntimeError("AZURE_SPEECH_KEY / AZURE_SPEECH_ENDPOINT env-vars missing")
-
+    print("Inside transcribe_dialog function...") 
     # 1.  Kick off the job ------------------------------------------------------
     headers = {
         "Ocp-Apim-Subscription-Key": key,
@@ -82,17 +82,22 @@ def transcribe_dialog(
     }
     resp = requests.post(f"{endpoint}/speechtotext/v3.0/transcriptions",
                          headers=headers, json=body)
+    print(resp)
     resp.raise_for_status()
+    with open("transcription_post_response.json", "w", encoding="utf-8") as f:
+        f.write(resp.headers)
     job_url = resp.headers["Location"]
 
     # 2.  Poll until done -------------------------------------------------------
     while True:
         job = requests.get(job_url, headers=headers).json()
         status = job["status"]
+        print(f"Status is: {status}")
         if status in {"Succeeded", "Failed"}:
             break
         time.sleep(poll_interval)
 
+    print("done with while loop")
     if status != "Succeeded":
         raise RuntimeError(f"Azure Speech job failed: {job}")
 
