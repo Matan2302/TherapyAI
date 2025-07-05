@@ -6,5 +6,15 @@
   "not_registered_question": "Not registered yet?",
   "create_account_link": "Create an account",
   "login_success_message": "Login successful!",
-  "invalid_credentials_error": "Invalid email or password"
+  "invalid_credentials_error": "Invalid email or password",
+  "forgot_password": "Forgot Password?",
+  "forgot_password_title": "Reset Password",
+  "send_reset_code": "Send Reset Code",
+  "reset_code": "Reset Code",
+  "new_password": "New Password",
+  "reset_password": "Reset Password",
+  "back_to_login": "Back to Login",
+  "wait_2_minutes": "Please wait 2 minutes before trying again",
+  "wait_1_hour": "Please wait 1 hour before trying again",
+  "wait_1_day": "Please wait 1 day before trying again"
 }
