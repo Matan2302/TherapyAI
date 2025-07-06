@@ -160,23 +160,23 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-
-      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', top: 0, right: 0 }}>
-          <LanguageSwitcher />
-        </div>
-        <h2>{t("login_page_title")}</h2>
-        <div className="form-group">
-          <label htmlFor="email">{t("email_label")}</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
+      {!showForgotPassword ? (
+        <>
+          <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0 }}>
+              <LanguageSwitcher />
+            </div>
+            <h2>{t("login_page_title")}</h2>
+            <div className="form-group">
+              <label htmlFor="email">{t("email_label")}</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
             <div className="form-group">
               <label htmlFor="password">{t("password_label")}</label>
