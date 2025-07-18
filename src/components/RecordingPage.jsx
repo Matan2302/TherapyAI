@@ -160,13 +160,40 @@ const RecordingPage = () => {
   };
 
   const handleUploadRecording = async () => {
-    if (!audioBlob || !patientEmail || !therapistEmail || !sessionDate) {
-      toast.error(t("fill_all_fields_error"));
+    // Comprehensive validation with specific error messages
+    if (!audioBlob) {
+      toast.error("No audio recording found. Please record audio first.");
+      return;
+    }
+    
+    if (!patientEmail) {
+      toast.error("Please select a patient before uploading.");
+      return;
+    }
+    
+    if (!therapistEmail) {
+      toast.error("Therapist email is missing. Please log in again.");
+      return;
+    }
+    
+    if (!sessionDate) {
+      toast.error("Please select a session date.");
+      return;
+    }
+    
+    if (!sessionNotes.trim()) {
+      toast.error("Please add session notes before uploading.");
       return;
     }
 
+    // Create a unique filename with timestamp to avoid overrides
+    const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: YYYY-MM-DDTHH-MM-SS
+    const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-'); // Format: HH-MM-SS
+    const uniqueFilename = `${sessionDate}_${patientEmail}_${timeString}`;
+    
     const formData = new FormData();
-    formData.append("file", audioBlob, sessionDate + "_" + patientEmail);
+    formData.append("file", audioBlob, uniqueFilename);
     formData.append("patient_email", patientEmail);
     formData.append("therapist_email", therapistEmail); // Send therapist email
     formData.append("session_date", sessionDate);
@@ -187,12 +214,25 @@ const RecordingPage = () => {
         setIsAudioUploaded(true); // Mark as uploaded after successful upload
         setRecordingTime(0); // Reset timer after successful upload
       } else {
-        toast.error(t("upload_failure_status"));
+        // Extract detailed error message from response
+        try {
+          const errorData = await response.json();
+          const errorMessage = errorData.detail || t("upload_failure_status");
+          toast.error(`${t("upload_failure_status")}: ${errorMessage}`);
+        } catch (parseError) {
+          // If we can't parse the error response, show generic message with status
+          toast.error(`${t("upload_failure_status")} (Status: ${response.status})`);
+        }
       }
     } catch (error) {
       toast.dismiss(toastId);
-      toast.error(t("connection_failure_status"));
-      console.error(error);
+      // Show more detailed network error information
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        toast.error(t("connection_failure_status") + " - Server unavailable");
+      } else {
+        toast.error(`${t("connection_failure_status")}: ${error.message}`);
+      }
+      console.error("Upload error:", error);
     }
   };
 
