@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import tokenService from "../services/tokenService";
 import {
   BarChart,
   Bar,
@@ -96,15 +97,14 @@ const PatientDashboard = () => {
   }, [inputName]);
 
   const fetchPatientData = async (email, sessionId = null) => {
-    const token = localStorage.getItem("access_token");
     try {
       let url = `http://localhost:8000/patientsdb/dashboard-data?patient_email=${email}`;
       if (sessionId !== null) {
         url += `&session_id=${sessionId}`;
       }
-      const res = await fetch(url, {
+      
+      const res = await tokenService.authenticatedFetch(url, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error("Error loading data");
@@ -119,13 +119,11 @@ const PatientDashboard = () => {
   };
 
   const fetchPatientSessions = async (email) => {
-    const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch(
+      const res = await tokenService.authenticatedFetch(
         `http://localhost:8000/patientsdb/all-sessions?patient_email=${email}`,
         {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
         }
       );
       if (!res.ok) throw new Error("Failed to fetch sessions");

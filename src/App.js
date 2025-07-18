@@ -11,14 +11,16 @@ import RecordingPage from "./components/RecordingPage";
 import PatientDashboard from "./components/PatientDashboard";
 import PatientForm from "./components/PatientForm";
 import AdminDashboard from "./components/AdminDashboard";
+import TokenDebugger from "./components/TokenDebugger";
 import { TherapistProvider } from "./TherapistContext";
 import Header, { LanguageSwitcher } from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
-import logo from "./assets/background_spanishHouseLogo.png"; // ✅ לוגו
+import logo from "./assets/background_spanishHouseLogo.png";
+import tokenService from "./services/tokenService";
 import "./i18n";
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
+  const isAuthenticated = tokenService.isAuthenticated();
 
   return (
     <TherapistProvider>
@@ -99,6 +101,14 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/token-debug"
+                element={
+                  <ProtectedRoute>
+                    <TokenDebugger />
                   </ProtectedRoute>
                 }
               />
