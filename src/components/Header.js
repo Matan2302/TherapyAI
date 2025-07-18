@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { useTranslation } from "react-i18next";
-import tokenService from "../services/tokenService";
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
@@ -41,7 +40,7 @@ const LanguageSwitcher = () => {
 const Header = () => {
   const { t } = useTranslation("header");
   const navigate = useNavigate();
-  const isAuthenticated = tokenService.isAuthenticated();
+  const isAuthenticated = !!localStorage.getItem("access_token");
   const therapistName = localStorage.getItem("therapist_name");
   const isAdmin = therapistName === "Admin";
 
@@ -58,7 +57,10 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    tokenService.logout();
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("therapist_id");
+    localStorage.removeItem("therapist_name");
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -86,8 +88,6 @@ const Header = () => {
           {isAdmin && (
             <Link to="/admin-dashboard" className="nav-link">{t("Admin Dashboard") || t("admin_dashboard_link")}</Link>
           )}
-          {/* Debug link - hidden but accessible via direct URL /token-debug */}
-          {/* <Link to="/token-debug" className="nav-link" style={{color: '#ff6b6b'}}>🔐 Debug</Link> */}
         </div>
         <LanguageSwitcher />
         <div className="profile-container" ref={dropdownRef}>

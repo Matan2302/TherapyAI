@@ -7,9 +7,8 @@ from schemas.TherapistLogin import TherapistLoginRequest, TherapistLoginResponse
 from schemas.TherapistRegister import TherapistRegisterRequest
 from database import get_db
 import hashlib
-from services.token_service import create_access_token, create_refresh_token, get_current_admin, refresh_access_token, get_current_user, get_current_user
+from services.token_service import create_access_token, get_current_admin
 import re
-from datetime import datetime
 
 router = APIRouter()
 admin_router = APIRouter(dependencies=[Depends(get_current_admin)])
@@ -92,102 +91,40 @@ def is_password_strong(password: str) -> bool:
 
 @router.post("/login", response_model=TherapistLoginResponse)
 def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
-    # Strip whitespace from email and password to handle frontend issues
-    email = credentials.email.strip()
-    password = credentials.password.strip()
+    print("🔐 Login called with:", credentials.email)
 
     # Admin check
-    admin = db.query(Admin).filter(Admin.Adminusername == email).first()
-    if admin:
-        # Hash the input password to compare with stored hashed password
-        hashed_password_input = hashlib.sha256(password.encode()).hexdigest()
-        
-        if hashed_password_input == admin.AdminPassword:
-            access_token = create_access_token(user_id="admin", role="admin")
-            refresh_token = create_refresh_token(user_id="admin", role="admin")
-            return TherapistLoginResponse(
-                therapist_id=-1,
-                access_token=access_token,
-                refresh_token=refresh_token,
-                full_name="Admin",
-                token_type="bearer"
-            )
+    admin = db.query(Admin).filter(Admin.Adminusername == credentials.email).first()
+    if admin and credentials.password == admin.AdminPassword:
+        token = create_access_token(user_id="admin", role="admin")
+        return TherapistLoginResponse(
+            therapist_id=-1,
+            access_token=token,
+            full_name="Admin",
+            token_type="bearer"
+        )
 
     # Therapist check
-    therapist = db.query(TherapistLogin).filter(TherapistLogin.email == email).first()
+    therapist = db.query(TherapistLogin).filter(TherapistLogin.email == credentials.email).first()
     if not therapist:
         raise HTTPException(status_code=401, detail="Invalid email")
 
-    hashed_input = hashlib.sha256(password.encode()).hexdigest()
+    hashed_input = hashlib.sha256(credentials.password.encode()).hexdigest()
     if hashed_input != therapist.hashed_password:
         raise HTTPException(status_code=401, detail="Invalid password")
 
     if not therapist.is_approved:
         raise HTTPException(status_code=403, detail="Account pending admin approval")
 
-    access_token = create_access_token(user_id=therapist.id, role="therapist")
-    refresh_token = create_refresh_token(user_id=therapist.id, role="therapist")
+    token = create_access_token(user_id=therapist.id, role="therapist")
 
     therapist_details = db.query(Therapist).filter(Therapist.TherapistID == therapist.id).first()
     return TherapistLoginResponse(
         therapist_id=therapist.id,
-        access_token=access_token,
-        refresh_token=refresh_token,
+        access_token=token,
         full_name=therapist_details.FullName,
         token_type="bearer"
     )
-
-@router.post("/refresh")
-def refresh_token(request: dict, db: Session = Depends(get_db)):
-    """
-    Refresh access token using a valid refresh token.
-    """
-    refresh_token = request.get("refresh_token")
-    if not refresh_token:
-        raise HTTPException(status_code=400, detail="Refresh token required")
-    
-    return refresh_access_token(refresh_token, db)
-
-
-@router.post("/logout")
-def logout():
-    """
-    Logout endpoint - in a stateless JWT system, logout is handled client-side
-    by removing tokens from storage. This endpoint exists for consistency.
-    """
-    return {"message": "Logged out successfully"}
-
-
-@router.post("/validate-token")
-def validate_token(user = Depends(get_current_user)):
-    """
-    Validate if the current token is still valid.
-    """
-    return {"valid": True, "user": user}
-
-@router.get("/test-auth")
-def test_auth(user = Depends(get_current_user)):
-    """
-    Test endpoint to verify authentication is working.
-    """
-    return {
-        "message": "Authentication successful!",
-        "user": user,
-        "timestamp": datetime.utcnow().isoformat()
-    }
-
-
-@router.get("/test-admin")
-def test_admin(user = Depends(get_current_admin)):
-    """
-    Test endpoint to verify admin authentication is working.
-    """
-    return {
-        "message": "Admin authentication successful!",
-        "user": user,
-        "timestamp": datetime.utcnow().isoformat()
-    }
-
   # ✅ Applies to all endpoints in this router
 
 @admin_router.get("/pending-therapists")

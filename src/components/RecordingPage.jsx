@@ -4,6 +4,7 @@ import { TherapistContext } from "../TherapistContext";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProcessingStatus from "./ProcessingStatus";
 
 const RecordingPage = () => {
   const { t } = useTranslation("recording");
@@ -33,6 +34,8 @@ const RecordingPage = () => {
   const [canvasWidth] = useState(400);
   const [canvasHeight] = useState(60);
   const [isAudioUploaded, setIsAudioUploaded] = useState(true);
+  const [processingJobId, setProcessingJobId] = useState(null);
+  const [showProcessingStatus, setShowProcessingStatus] = useState(false);
 
   const { therapistName } = useContext(TherapistContext);
   const therapistEmail = localStorage.getItem("therapist_email") || "";
@@ -201,7 +204,7 @@ const RecordingPage = () => {
 
     const toastId = toast.info(t("uploading_status"), { autoClose: false, closeOnClick: false });
     try {
-      const response = await fetch("http://127.0.0.1:8000/audio/upload-audio/", {
+      const response = await fetch("http://127.0.0.1:8000/audio-async/upload-audio/", {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
         body: formData,
@@ -210,9 +213,16 @@ const RecordingPage = () => {
       toast.dismiss(toastId);
       if (response.ok) {
         const result = await response.json();
-        toast.success(t("upload_success_status"));
+        toast.success("Audio uploaded successfully! Processing in background...");
         setIsAudioUploaded(true); // Mark as uploaded after successful upload
         setRecordingTime(0); // Reset timer after successful upload
+        
+        // Store job ID and show processing status
+        setProcessingJobId(result.job_id);
+        setShowProcessingStatus(true);
+        
+        // Clear the audio blob since it's now uploaded
+        setAudioBlob(null);
       } else {
         // Extract detailed error message from response
         try {
@@ -424,6 +434,13 @@ const RecordingPage = () => {
             style={{ display: "block", width: "100%", height: canvasHeight, background: "#fff" }}
           />
         </div>
+      )}
+
+      {showProcessingStatus && processingJobId && (
+        <ProcessingStatus
+          jobId={processingJobId}
+          onClose={() => setShowProcessingStatus(false)}
+        />
       )}
 
       <ToastContainer />

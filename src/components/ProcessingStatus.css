@@ -1,0 +1,211 @@
+.processing-status-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.processing-status-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.status-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.status-overview {
+  margin-bottom: 2rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.status-steps {
+  margin-bottom: 2rem;
+}
+
+.status-step {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.step-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  min-width: 1.5rem;
+}
+
+.step-text {
+  font-weight: 500;
+  color: #333;
+}
+
+.error-message {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 3px;
+}
+
+.error-message small {
+  color: #c62828;
+  display: block;
+}
+
+.info-message {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 3px;
+}
+
+.info-message small {
+  color: #1976d2;
+  display: block;
+}
+
+.status-actions {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.status-actions button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.status-actions button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.status-actions button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.success-message {
+  padding: 1rem;
+  background-color: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 5px;
+  color: #2e7d32;
+  text-align: center;
+}
+
+.success-message p {
+  margin: 0.5rem 0;
+}
+
+.status-details {
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 1rem auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .processing-status-content {
+    padding: 1rem;
+    width: 95%;
+  }
+  
+  .status-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .step-text {
+    font-size: 0.9rem;
+  }
+}

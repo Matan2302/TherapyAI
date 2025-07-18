@@ -4,8 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import "./LoginPage.css";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./Header";
-import tokenService from "../services/tokenService";
-import { buildApiUrl, API_CONFIG } from "../config/api";
 
 const LoginPage = () => {
   const { t } = useTranslation("login");
@@ -20,10 +18,11 @@ const LoginPage = () => {
 
   // ✅ Redirect logged-in users away from login page
   useEffect(() => {
-    if (tokenService.isAuthenticated()) {
+    const token = localStorage.getItem("access_token");
+    if (token) {
       navigate("/home");
     }
-  }, [navigate]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,18 +30,14 @@ const LoginPage = () => {
     if (isDevelopment) {
       const mockTherapistName = "John@Doe";
       const mockAccessToken = "mock_token";
-      const mockRefreshToken = "mock_refresh_token";
       const mockTherapistId = "12345";
-      const mockTherapistEmail = "john@doe.com";
+      const mockTherapistEmail = "john@doe.com"; // Add mock email
 
       setTherapistName(mockTherapistName);
-      tokenService.setTokens(
-        mockAccessToken,
-        mockRefreshToken,
-        mockTherapistId,
-        mockTherapistName,
-        mockTherapistEmail
-      );
+      localStorage.setItem("access_token", mockAccessToken);
+      localStorage.setItem("therapist_id", mockTherapistId);
+      localStorage.setItem("therapist_name", mockTherapistName);
+      localStorage.setItem("therapist_email", mockTherapistEmail); // Save email
 
       setSuccess(t("login_success_message") + " (development mode)!");
       setError("");
@@ -54,7 +49,7 @@ const LoginPage = () => {
     }
 
     try {
-      const res = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN), {
+      const res = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,16 +63,12 @@ const LoginPage = () => {
       }
 
       const data = await res.json();
-      const { therapist_id, access_token, refresh_token, full_name } = data;
+      const { therapist_id, access_token, full_name } = data;
 
-      // Store tokens using token service
-      tokenService.setTokens(
-        access_token,
-        refresh_token,
-        therapist_id,
-        full_name,
-        email
-      );
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("therapist_id", therapist_id);
+      localStorage.setItem("therapist_name", full_name);
+      localStorage.setItem("therapist_email", email); // Save therapist email
 
       setTherapistName(full_name);
       setSuccess(therapist_id === -1 ? "Admin Login successful!" : "Login successful!");

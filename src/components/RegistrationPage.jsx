@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./RegistrationPage.css";
 import { LanguageSwitcher } from "./Header";
-import tokenService from "../services/tokenService";
 
 const RegistrationPage = () => {
   const { t } = useTranslation("registration");
@@ -27,10 +26,11 @@ const RegistrationPage = () => {
 
   // ✅ Redirect logged-in users away from registration page
   useEffect(() => {
-    if (tokenService.isAuthenticated()) {
+    const token = localStorage.getItem("access_token");
+    if (token) {
       navigate("/home");
     }
-  }, [navigate]);
+  }, []);
 
   const checkStrength = (password) => {
     const lengthValid = password.length >= 7;
