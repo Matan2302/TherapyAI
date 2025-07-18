@@ -1,0 +1,13 @@
+{
+  "admin_dashboard_title": "לוח בקרה מנהלים",
+  "pending_approvals": "אישורי מטפלים ממתינים:",
+  "no_pending_therapists": "אין מטפלים ממתינים",
+  "loading_admin_dashboard": "טוען לוח בקרה מנהלים...",
+  "access_denied": "גישה נדחתה. מנהלים בלבד.",
+  "name_column": "שם",
+  "email_column": "אימייל",
+  "specialization_column": "התמחות",
+  "actions_column": "פעולות",
+  "approve_button": "אשר",
+  "reject_button": "דחה"
+}

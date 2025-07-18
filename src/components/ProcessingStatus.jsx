@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './ProcessingStatus.css';
 
 const ProcessingStatus = ({ jobId, onClose }) => {
-  const { t } = useTranslation("recording");
+  const { t } = useTranslation("processing");
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,10 +22,10 @@ const ProcessingStatus = ({ jobId, onClose }) => {
           setStatus(data);
           setError(null);
         } else {
-          setError("Failed to fetch status");
+          setError(t("failed_to_fetch_status"));
         }
       } catch (err) {
-        setError("Connection error");
+        setError(t("connection_error"));
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ const ProcessingStatus = ({ jobId, onClose }) => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [jobId, status?.status]);
+  }, [jobId, status?.status, t]);
 
   const handleRetry = async () => {
     try {
@@ -56,10 +56,10 @@ const ProcessingStatus = ({ jobId, onClose }) => {
         setStatus({ ...status, status: 'pending', progress: 0 });
         setError(null);
       } else {
-        setError("Failed to retry processing");
+        setError(t("failed_to_retry"));
       }
     } catch (err) {
-      setError("Connection error");
+      setError(t("connection_error"));
     } finally {
       setLoading(false);
     }
@@ -78,12 +78,12 @@ const ProcessingStatus = ({ jobId, onClose }) => {
 
   const getStatusText = (statusType) => {
     switch (statusType) {
-      case 'completed': return 'Completed';
-      case 'failed': return 'Failed';
-      case 'processing': return 'Processing...';
-      case 'pending': return 'Pending';
-      case 'skipped': return 'Skipped';
-      default: return 'Unknown';
+      case 'completed': return t('completed');
+      case 'failed': return t('failed');
+      case 'processing': return t('processing');
+      case 'pending': return t('pending');
+      case 'skipped': return t('skipped');
+      default: return t('unknown');
     }
   };
 
@@ -91,7 +91,7 @@ const ProcessingStatus = ({ jobId, onClose }) => {
     return (
       <div className="processing-status-modal">
         <div className="processing-status-content">
-          <h3>Loading Status...</h3>
+          <h3>{t("loading_status")}</h3>
           <div className="spinner"></div>
         </div>
       </div>
@@ -104,7 +104,7 @@ const ProcessingStatus = ({ jobId, onClose }) => {
         <div className="processing-status-content">
           <h3>Error</h3>
           <p>{error}</p>
-          <button onClick={onClose}>Close</button>
+          <button onClick={onClose}>{t("close")}</button>
         </div>
       </div>
     );
@@ -114,7 +114,7 @@ const ProcessingStatus = ({ jobId, onClose }) => {
     <div className="processing-status-modal">
       <div className="processing-status-content">
         <div className="status-header">
-          <h3>Processing Status</h3>
+          <h3>{t("processing_status")}</h3>
           <button className="close-button" onClick={onClose}>×</button>
         </div>
 
@@ -125,13 +125,13 @@ const ProcessingStatus = ({ jobId, onClose }) => {
               style={{ width: `${status?.progress || 0}%` }}
             ></div>
           </div>
-          <p className="progress-text">{status?.progress || 0}% Complete</p>
+          <p className="progress-text">{t("overall_progress")}: {status?.progress || 0}%</p>
         </div>
 
         <div className="status-steps">
           <div className="status-step">
             <span className="step-icon">✅</span>
-            <span className="step-text">Upload: Completed</span>
+            <span className="step-text">Upload: {t("completed")}</span>
           </div>
 
           <div className="status-step">
@@ -160,7 +160,7 @@ const ProcessingStatus = ({ jobId, onClose }) => {
         <div className="status-actions">
           {status?.status === 'failed' && status?.retry_count < status?.max_retries && (
             <button onClick={handleRetry} disabled={loading}>
-              {loading ? 'Retrying...' : 'Retry Processing'}
+              {loading ? t("processing") : t("retry_processing")}
             </button>
           )}
           

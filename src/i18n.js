@@ -10,6 +10,8 @@ import enPatientForm from "./locales/en/patientForm.json";
 import enDashboard from "./locales/en/dashboard.json";
 import enHeader from "./locales/en/header.json";
 import enHome from "./locales/en/home.json";
+import enAdmin from "./locales/en/admin.json";
+import enProcessing from "./locales/en/processing.json";
 // Do the same for Hebrew, Arabic, Russian
 import heLogin from "./locales/he/login.json";
 import heRegistration from "./locales/he/registration.json";
@@ -18,6 +20,8 @@ import hePatientForm from "./locales/he/patientForm.json";
 import heDashboard from "./locales/he/dashboard.json";
 import heHeader from "./locales/he/header.json";
 import heHome from "./locales/he/home.json";
+import heAdmin from "./locales/he/admin.json";
+import heProcessing from "./locales/he/processing.json";
 
 import arLogin from "./locales/ar/login.json";
 import arRegistration from "./locales/ar/registration.json";
@@ -26,6 +30,8 @@ import arPatientForm from "./locales/ar/patientForm.json";
 import arDashboard from "./locales/ar/dashboard.json";
 import arHeader from "./locales/ar/header.json";
 import arHome from "./locales/ar/home.json";
+import arAdmin from "./locales/ar/admin.json";
+import arProcessing from "./locales/ar/processing.json";
 
 
 import ruLogin from "./locales/ru/login.json";
@@ -35,6 +41,8 @@ import ruPatientForm from "./locales/ru/patientForm.json";
 import ruDashboard from "./locales/ru/dashboard.json";
 import ruHeader from "./locales/ru/header.json";
 import ruHome from "./locales/ru/home.json";
+import ruAdmin from "./locales/ru/admin.json";
+import ruProcessing from "./locales/ru/processing.json";
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -47,7 +55,9 @@ i18n
         patientForm: enPatientForm,
         dashboard: enDashboard,
         header: enHeader,
-        home: enHome
+        home: enHome,
+        admin: enAdmin,
+        processing: enProcessing
       },
       he: {
         login: heLogin,
@@ -56,7 +66,9 @@ i18n
         patientForm: hePatientForm,
         dashboard: heDashboard,
         header: heHeader,
-        home: heHome
+        home: heHome,
+        admin: heAdmin,
+        processing: heProcessing
       },
       ar: {
         login: arLogin,
@@ -65,7 +77,9 @@ i18n
         patientForm: arPatientForm,
         dashboard: arDashboard,
         header: arHeader,
-        home: arHome
+        home: arHome,
+        admin: arAdmin,
+        processing: arProcessing
       },
       ru: {
         login: ruLogin,
@@ -74,11 +88,13 @@ i18n
         patientForm: ruPatientForm,
         dashboard: ruDashboard,
         header: ruHeader,
-        home: ruHome
+        home: ruHome,
+        admin: ruAdmin,
+        processing: ruProcessing
       }
     },
     fallbackLng: "en",
-    ns: ["login", "registration", "recording", "patientForm", "dashboard", "header", "home"],
+    ns: ["login", "registration", "recording", "patientForm", "dashboard", "header", "home", "admin", "processing"],
     defaultNS: "login",
     interpolation: { escapeValue: false }
   });

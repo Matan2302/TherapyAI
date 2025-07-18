@@ -1,0 +1,17 @@
+{
+  "loading_status": "جاري تحميل الحالة...",
+  "processing_status": "حالة المعالجة",
+  "overall_progress": "التقدم الإجمالي",
+  "processing_steps": "خطوات المعالجة",
+  "completed": "مكتمل",
+  "failed": "فشل",
+  "processing": "جاري المعالجة...",
+  "pending": "في الانتظار",
+  "skipped": "تم تخطيه",
+  "unknown": "غير معروف",
+  "retry_processing": "إعادة المعالجة",
+  "close": "إغلاق",
+  "connection_error": "خطأ في الاتصال",
+  "failed_to_fetch_status": "فشل في جلب الحالة",
+  "failed_to_retry": "فشل في إعادة المعالجة"
+}

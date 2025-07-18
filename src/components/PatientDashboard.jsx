@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BarChart,
   Bar,
@@ -30,25 +31,25 @@ const calculateAge = (DateOfBirth) => {
   return age;
 };
 
-const PatientInfoCard = ({ patientData }) => {
+const PatientInfoCard = ({ patientData, t }) => {
   if (!patientData) return null;
 
   return (
     <div className="section-box">
-      <h3>Patient Info</h3>
-      <label>Full Name</label>
+      <h3>{t("patient_info")}</h3>
+      <label>{t("full_name_label")}</label>
       <input type="text" value={patientData.fullName} readOnly className="input" />
 
-      <label>Age</label>
+      <label>{t("age_label")}</label>
       <input type="text" value={calculateAge(patientData.DateOfBirth)} readOnly className="input" />
 
-      <label>Medical History</label>
+      <label>{t("medical_history_label")}</label>
       <textarea value={patientData.medicalHistory} readOnly className="medical-history-box-wide" />
 
-      <label>Total Sessions Completed</label>
+      <label>{t("total_sessions_completed")}</label>
       <input type="text" value={patientData.totalSessionsDone} readOnly className="input" />
 
-      <label>Patient Email</label>
+      <label>{t("patient_email")}</label>
       <input type="text" value={patientData.email} readOnly className="input" />
     </div>
   );
@@ -56,6 +57,7 @@ const PatientInfoCard = ({ patientData }) => {
 
 
 const PatientDashboard = () => {
+  const { t } = useTranslation("dashboard");
   const navigate = useNavigate();
   const [inputName, setInputName] = useState("");
   const [showData, setShowData] = useState(false);
@@ -111,11 +113,10 @@ const PatientDashboard = () => {
       const data = await res.json();
       setPatientData(data);
       setShowData(true);
-      setError("");
-    } catch (err) {
-      console.error(err);
-      setError("Error loading data");
-    }
+      setError("");      } catch (err) {
+        console.error(err);
+        setError(t("error_loading"));
+      }
   };
 
   const fetchPatientSessions = async (email) => {
@@ -229,7 +230,7 @@ const fetchSessionRatios = async (sessions) => {
     return (
       <div className="patient-dashboard" style={{ textAlign: "center", paddingTop: "3rem" }}>
         <div className="spinner" />
-        <p className="mt-4 text-lg">Loading data...</p>
+        <p className="mt-4 text-lg">{t("loading_data")}</p>
       </div>
     );
   }
@@ -267,7 +268,7 @@ const fetchSessionRatios = async (sessions) => {
 
   return (
     <div className="patient-dashboard p-6">
-      <h2 className="text-2xl mb-4">Patient Dashboard</h2><br></br>
+      <h2 className="text-2xl mb-4">{t("dashboard_title")}</h2><br></br>
         {selectedPatientEmail && inputName && (
   <h3
     style={{
@@ -278,7 +279,7 @@ const fetchSessionRatios = async (sessions) => {
       textAlign: "center",
     }}
   >
-    Current patient: <span style={{ fontWeight: "600", color: "#1f2937" }}>{inputName}</span>
+    {t("current_patient")} <span style={{ fontWeight: "600", color: "#1f2937" }}>{inputName}</span>
   </h3>
 )}
 
@@ -286,7 +287,7 @@ const fetchSessionRatios = async (sessions) => {
         <div className="input-row">
           <div className="name-input">
             <label htmlFor="name" className="text-lg font-medium" style={{ display: "block", textAlign: "center" }}>
-              Enter patient name
+              {t("enter_patient_name")}
             </label>
             <input
               type="text"
@@ -299,11 +300,11 @@ const fetchSessionRatios = async (sessions) => {
                 setError("");
               }}
               className="input mt-1 mb-2"
-              placeholder="Type patient name..."
+              placeholder={t("type_patient_name")}
               autoComplete="off"
             />
             {isLoadingSuggestions && (
-              <div className="suggestions-loading">Loading...</div>
+              <div className="suggestions-loading">{t("loading")}</div>
             )}
             {suggestions.length > 0 && (
               <ul className="suggestions-list" ref={suggestionsRef}>
@@ -327,7 +328,7 @@ const fetchSessionRatios = async (sessions) => {
       {sessions.length > 0 && (
         <div style={{ margin: "2rem 0 1rem 0", maxWidth: 600 }}>
           <label htmlFor="session-select" style={{ fontWeight: "bold" }}>
-            Select a session:
+            {t("select_session_label")}
           </label>
           <select
             id="session-select"
@@ -336,11 +337,11 @@ const fetchSessionRatios = async (sessions) => {
             style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem", borderRadius: "6px", border: "1px solid #ccc", fontSize: "1rem" }}
           >
             <option value="" disabled>
-              Choose session...
+              {t("choose_session_option")}
             </option>
             {sessions.map((session, idx) => (
               <option key={idx} value={idx}>
-                {(session.SessionDate || session.session_date)} - {(session.TherapistName || session.therapist_name)} - {(session.IsAnalyzed === true || session.is_analyzed === true) ? "Analyzed" : "Not Analyzed"}
+                {(session.SessionDate || session.session_date)} - {(session.TherapistName || session.therapist_name)} - {(session.IsAnalyzed === true || session.is_analyzed === true) ? t("analyzed") : t("not_analyzed")}
               </option>
             ))}
           </select>
@@ -364,7 +365,7 @@ const fetchSessionRatios = async (sessions) => {
           fontWeight: "bold",
         }}
       >
-        View Single Session
+        {t("view_single_session")}
       </button>
 
       <button
@@ -379,7 +380,7 @@ const fetchSessionRatios = async (sessions) => {
           fontWeight: "bold",
         }}
       >
-        View Progress
+        {t("view_progress")}
       </button>
     </div>
 
@@ -408,7 +409,7 @@ const fetchSessionRatios = async (sessions) => {
           fontWeight: "bold",
         }}
       >
-        🔄 Switch Patient
+        🔄 {t("switch_patient")}
       </button>
     </div>
   </>
@@ -441,7 +442,7 @@ const fetchSessionRatios = async (sessions) => {
             fontWeight: "bold",
           }}
         >
-          Analyze Session
+          {t("analyze_session")}
         </button>
       )}
     </div>
@@ -450,25 +451,25 @@ const fetchSessionRatios = async (sessions) => {
           {viewMode == "single" && (
           <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
             <div className="info-row">
-              <PatientInfoCard patientData={patientData} />
+              <PatientInfoCard patientData={patientData} t={t} />
               <div className="section-box">
-                <h3>Therapist Info</h3>
-                <label>Therapist Name</label>
+                <h3>{t("therapist_info")}</h3>
+                <label>{t("therapist_name")}</label>
                 <input type="text" value={patientData?.lastTherapist} readOnly className="input" />
 
-                <label>Therapist Email</label>
+                <label>{t("therapist_email")}</label>
                 <input type="text" value={patientData?.lastTherapistEmail} readOnly className="input" />
 
-                <label>Therapist Contact Info</label>
+                <label>{t("therapist_contact_info")}</label>
                 <input type="text" value={patientData?.lastTherapistPatientEmail} readOnly className="input" />
               </div>
 
               <div className="section-box">
-                <h3>Session Details</h3>
-                <label>Session Date</label>
+                <h3>{t("session_details")}</h3>
+                <label>{t("session_date")}</label>
                 <input type="text" value={patientData?.lastSessionDate} readOnly className="input" />
 
-                <label>Session Notes</label>
+                <label>{t("session_notes")}</label>
                 <textarea value={patientData?.lastSessionNotes || ""} readOnly className="input" />
 
                 
@@ -496,13 +497,13 @@ const fetchSessionRatios = async (sessions) => {
     }}
   >
     {/* Left: Patient Info */}
-    <PatientInfoCard patientData={patientData} />
+    <PatientInfoCard patientData={patientData} t={t} />
 
     {/* Right: Progress Chart */}
     {sessionRatios.length > 0 ? (
       <div style={{ flex: 2, background: "#fff", padding: "1rem", borderRadius: "8px" }}>
         <h3>
-          Progress Summary
+          {t("progress_summary")}
           {sessions.length > sessionRatios.length && (
             <span
               style={{
@@ -512,7 +513,7 @@ const fetchSessionRatios = async (sessions) => {
                 marginLeft: "10px",
               }}
             >
-              (Not all sessions are analyzed)
+              {t("not_all_sessions_analyzed")}
             </span>
           )}
         </h3>
@@ -523,7 +524,7 @@ const fetchSessionRatios = async (sessions) => {
   stroke="#f87171"
   strokeDasharray="4 4"
   label={{
-    value: "Balanced Session",
+    value: t("balanced_session"),
     position: "right",
     fill: "#f87171",
     fontSize: 12,
@@ -558,7 +559,7 @@ const fetchSessionRatios = async (sessions) => {
       </div>
     ) : (
       <div style={{ flex: 2, padding: "1rem" }}>
-        <p style={{ color: "#888" }}>No analyzed sessions to show progress.</p>
+        <p style={{ color: "#888" }}>{t("no_analyzed_sessions")}</p>
       </div>
     )}
   </div>
@@ -570,6 +571,7 @@ const fetchSessionRatios = async (sessions) => {
 };
 
 const SentimentDetailsDisplay = ({ analysisUrl }) => {
+  const { t } = useTranslation("dashboard");
   const [sentiment, setSentiment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -597,13 +599,13 @@ useEffect(() => {
     })
     .catch((err) => {
       console.error("Sentiment fetch error:", err);
-      setError("Error loading analysis");
+      setError(t("error_loading_analysis"));
       setLoading(false);
     });
-}, [analysisUrl]);
+}, [analysisUrl, t]);
 
 
-  if (loading) return <div>Loading analysis...</div>;
+  if (loading) return <div>{t("loading_analysis")}</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!sentiment) return null;
 
@@ -613,22 +615,22 @@ useEffect(() => {
     <div className="sentiment-dashboard-container">
       <div className="top-section">
         <div className="summary-card">
-          <h3>Session Summary</h3>
-          <p><strong>Total Positive:</strong> {sentiment.total_positive}</p>
-          <p><strong>Total Negative:</strong> {sentiment.total_negative}</p>
-          <p><strong>Summary:</strong></p>
+          <h3>{t("session_summary")}</h3>
+          <p><strong>{t("total_positive")}</strong> {sentiment.total_positive}</p>
+          <p><strong>{t("total_negative")}</strong> {sentiment.total_negative}</p>
+          <p><strong>{t("summary")}</strong></p>
           <p style={{ whiteSpace: "pre-line", marginTop: 4 }}>{sentiment.summary}</p>
         </div>
 
         <div className="pie-chart-card">
-          <h3>Sentiment Chart</h3>
+          <h3>{t("sentiment_chart")}</h3>
           <div className="big-pie-wrapper">
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
                   data={[
-                    { name: `Positive (${sentiment.total_positive})`, value: sentiment.total_positive },
-                    { name: `Negative (${sentiment.total_negative})`, value: sentiment.total_negative },
+                    { name: `${t("positive_highlights")} (${sentiment.total_positive})`, value: sentiment.total_positive },
+                    { name: `${t("negative_highlights")} (${sentiment.total_negative})`, value: sentiment.total_negative },
                   ]}
                   dataKey="value"
                   nameKey="name"
@@ -644,7 +646,7 @@ useEffect(() => {
             </ResponsiveContainer>
           </div>
           <div className="ratio-indicator">
-            <span className="ratio-label">Pos/Neg Ratio:</span>
+            <span className="ratio-label">{t("pos_neg_ratio")}</span>
             <span
               className={`ratio-value ${
                 ratio >= 1 ? "positive-ratio" : "negative-ratio"
@@ -658,7 +660,7 @@ useEffect(() => {
 
       <div className="bottom-section">
         <div className="list-card">
-          <h3>Positive Highlights</h3>
+          <h3>{t("positive_highlights")}</h3>
           <ul>
             {(sentiment.top_5_positive || []).map((item, idx) => (
               <li key={idx} className="highlight-positive">{item}</li>
@@ -666,7 +668,7 @@ useEffect(() => {
           </ul>
         </div>
         <div className="list-card">
-          <h3>Negative Highlights</h3>
+          <h3>{t("negative_highlights")}</h3>
           <ul>
             {(sentiment.top_5_negative || []).map((item, idx) => (
               <li key={idx} className="highlight-negative">{item}</li>

@@ -1,0 +1,13 @@
+{
+  "admin_dashboard_title": "لوحة تحكم الإدارة",
+  "pending_approvals": "موافقات المعالجين المعلقة:",
+  "no_pending_therapists": "لا يوجد معالجين معلقين",
+  "loading_admin_dashboard": "جاري تحميل لوحة تحكم الإدارة...",
+  "access_denied": "تم رفض الوصول. للإداريين فقط.",
+  "name_column": "الاسم",
+  "email_column": "البريد الإلكتروني",
+  "specialization_column": "التخصص",
+  "actions_column": "الإجراءات",
+  "approve_button": "موافق",
+  "reject_button": "رفض"
+}

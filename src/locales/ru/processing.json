@@ -1,0 +1,17 @@
+{
+  "loading_status": "Загрузка статуса...",
+  "processing_status": "Статус обработки",
+  "overall_progress": "Общий прогресс",
+  "processing_steps": "Этапы обработки",
+  "completed": "Завершено",
+  "failed": "Неудачно",
+  "processing": "Обрабатывается...",
+  "pending": "Ожидает",
+  "skipped": "Пропущено",
+  "unknown": "Неизвестно",
+  "retry_processing": "Повторить обработку",
+  "close": "Закрыть",
+  "connection_error": "Ошибка соединения",
+  "failed_to_fetch_status": "Не удалось получить статус",
+  "failed_to_retry": "Не удалось повторить обработку"
+}

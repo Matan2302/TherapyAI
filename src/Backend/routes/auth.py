@@ -92,18 +92,38 @@ def is_password_strong(password: str) -> bool:
 @router.post("/login", response_model=TherapistLoginResponse)
 def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
     print("🔐 Login called with:", credentials.email)
+    print(f"🔐 Password received: '{credentials.password}'")
+    print(f"🔐 Password length: {len(credentials.password)}")
 
     # Admin check
     admin = db.query(Admin).filter(Admin.Adminusername == credentials.email).first()
-    if admin and credentials.password == admin.AdminPassword:
-        token = create_access_token(user_id="admin", role="admin")
-        return TherapistLoginResponse(
-            therapist_id=-1,
-            access_token=token,
-            full_name="Admin",
-            token_type="bearer"
-        )
+    print(f"🔍 Admin lookup result: {admin}")
+    
+    if admin:
+        print(f"🔍 Admin found: {admin.Adminusername}")
+        print(f"🔍 Stored password: '{admin.AdminPassword}'")
+        print(f"🔍 Stored password length: {len(admin.AdminPassword)}")
+        
+        # Hash the input password to compare with stored hashed password
+        hashed_input = hashlib.sha256(credentials.password.encode()).hexdigest()
+        print(f"🔍 Input password hashed: '{hashed_input}'")
+        print(f"🔍 Password match: {hashed_input == admin.AdminPassword}")
+        
+        if hashed_input == admin.AdminPassword:
+            print("✅ Admin authentication successful!")
+            token = create_access_token(user_id="admin", role="admin")
+            return TherapistLoginResponse(
+                therapist_id=-1,
+                access_token=token,
+                full_name="Admin",
+                token_type="bearer"
+            )
+        else:
+            print("❌ Admin password mismatch")
+    else:
+        print("❌ Admin not found")
 
+    print("❌ Admin authentication failed, checking therapist...")
     # Therapist check
     therapist = db.query(TherapistLogin).filter(TherapistLogin.email == credentials.email).first()
     if not therapist:

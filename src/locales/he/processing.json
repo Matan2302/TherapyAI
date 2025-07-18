@@ -1,0 +1,17 @@
+{
+  "loading_status": "טוען סטטוס...",
+  "processing_status": "סטטוס עיבוד",
+  "overall_progress": "התקדמות כללית",
+  "processing_steps": "שלבי עיבוד",
+  "completed": "הושלם",
+  "failed": "נכשל",
+  "processing": "מעבד...",
+  "pending": "ממתין",
+  "skipped": "דולג",
+  "unknown": "לא ידוע",
+  "retry_processing": "נסה שוב",
+  "close": "סגור",
+  "connection_error": "שגיאת חיבור",
+  "failed_to_fetch_status": "נכשל בהבאת סטטוס",
+  "failed_to_retry": "נכשל בניסיון חוזר"
+}

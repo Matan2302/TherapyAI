@@ -1,0 +1,13 @@
+{
+  "admin_dashboard_title": "Панель администратора",
+  "pending_approvals": "Ожидающие одобрения терапевты:",
+  "no_pending_therapists": "Нет ожидающих терапевтов",
+  "loading_admin_dashboard": "Загрузка панели администратора...",
+  "access_denied": "Доступ запрещен. Только для администраторов.",
+  "name_column": "Имя",
+  "email_column": "Эл. почта",
+  "specialization_column": "Специализация",
+  "actions_column": "Действия",
+  "approve_button": "Одобрить",
+  "reject_button": "Отклонить"
+}

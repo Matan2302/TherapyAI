@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   BrowserRouter as Router,
   Routes,
@@ -111,13 +112,16 @@ const App = () => {
 };
 
 // ✅ דף הבית
-const HomePage = () => (
-  <div className="home-page">
-    <div className="glass-card center-card">
-      <h1 className="hero-title">Welcome to TherapyAI</h1>
-      <p className="hero-subtitle">Manage your sessions with ease and help patients efficiently.</p>
+const HomePage = () => {
+  const { t } = useTranslation("home");
+  return (
+    <div className="home-page">
+      <div className="glass-card center-card">
+        <h1 className="hero-title">{t("welcome_title")}</h1>
+        <p className="hero-subtitle">{t("welcome_subtitle")}</p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default App;
