@@ -118,6 +118,13 @@ const ProcessingStatus = ({ jobId, onClose }) => {
           <button className="close-button" onClick={onClose}>×</button>
         </div>
 
+        <div className="background-processing-info">
+          <p className="info-text">
+            💡 You can close this window and continue working. 
+            Processing will continue in the background.
+          </p>
+        </div>
+
         <div className="status-overview">
           <div className="progress-bar">
             <div 
@@ -170,6 +177,12 @@ const ProcessingStatus = ({ jobId, onClose }) => {
               <p>Your session has been saved to the database.</p>
             </div>
           )}
+        </div>
+
+        <div className="background-processing-footer">
+          <p className="footer-text">
+            🔄 Processing continues even if you close this window or navigate away
+          </p>
         </div>
 
         <div className="status-details">

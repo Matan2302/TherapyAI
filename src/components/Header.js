@@ -86,7 +86,7 @@ const Header = () => {
           <Link to="/dashboard" className="nav-link">{t("dashboard_link")}</Link>
           <Link to="/PatientForm-form" className="nav-link">{t("add_patient_link")}</Link>
           {isAdmin && (
-            <Link to="/admin-dashboard" className="nav-link">{t("Admin Dashboard") || t("admin_dashboard_link")}</Link>
+            <Link to="/admin-dashboard" className="nav-link">{t("admin_dashboard_link")}</Link>
           )}
         </div>
         <LanguageSwitcher />

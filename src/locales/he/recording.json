@@ -4,6 +4,7 @@
   "patient_name_placeholder": "הזן את שם המטופל",
   "session_date_label": "תאריך הטיפול",
   "therapist_name_label": "מייל המטפל",
+  "therapist_email_label": "מייל המטפל",
   "session_notes_label": "הערות לפגישה",
   "session_notes_placeholder": "כתוב כאן את הערות הפגישה...",
   "consent_warning": "יש לקבל את הסכמת המטופל לפני התחלת ההקלטה!",
@@ -16,5 +17,8 @@
   "uploading_status": "מעלה...",
   "upload_success_status": "הועלה בהצלחה:",
   "upload_failure_status": "ההעלאה נכשלה. נסה שוב.",
-  "connection_failure_status": "ההעלאה נכשלה. בדוק את החיבור שלך."
+  "connection_failure_status": "ההעלאה נכשלה. בדוק את החיבור שלך.",
+  "recording_time": "זמן הקלטה",
+  "fill_all_fields_error": "יש למלא את כל השדות הנדרשים לפני ההקלטה.",
+  "microphone_access_error": "שגיאה בגישה למיקרופון. בדוק את ההרשאות."
 }

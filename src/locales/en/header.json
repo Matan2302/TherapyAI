@@ -3,6 +3,7 @@
   "recording_link": "Recording",
   "dashboard_link": "Dashboard",
   "add_patient_link": "Add Patient",
+  "admin_dashboard_link": "Admin Dashboard",
   "greeting": "Hello,",
   "logout_button": "Logout"
 }

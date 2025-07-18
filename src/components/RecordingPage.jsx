@@ -4,7 +4,7 @@ import { TherapistContext } from "../TherapistContext";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProcessingStatus from "./ProcessingStatus";
+import ProcessingStatus from "./ProcessingStatus.jsx";
 
 const RecordingPage = () => {
   const { t } = useTranslation("recording");
@@ -363,7 +363,7 @@ const RecordingPage = () => {
           />
         </div>
         <div className="form-group">
-          <label>{t("therapist_email_label") || "Therapist Email"}</label>
+          <label>{t("therapist_email_label")}</label>
           <input
             type="email"
             value={therapistEmail}

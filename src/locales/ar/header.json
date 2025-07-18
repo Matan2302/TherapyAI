@@ -3,6 +3,7 @@
   "recording_link": "التسجيل",
   "dashboard_link": "لوحة التحكم",
   "add_patient_link": "إضافة مريض",
+  "admin_dashboard_link": "لوحة تحكم الإدارة",
   "greeting": "مرحبًا،",
   "logout_button": "تسجيل الخروج"
 }

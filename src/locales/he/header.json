@@ -3,6 +3,7 @@
   "recording_link": "הקלטה",
   "dashboard_link": "לוח בקרה",
   "add_patient_link": "הוסף מטופל",
+  "admin_dashboard_link": "לוח בקרה מנהלים",
   "greeting": "שלום,",
   "logout_button": "התנתק"
 }

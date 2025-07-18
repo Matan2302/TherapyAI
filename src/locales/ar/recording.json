@@ -4,6 +4,7 @@
   "patient_name_placeholder": "أدخل اسم المريض",
   "session_date_label": "تاريخ الجلسة",
   "therapist_name_label": "اسم المعالج",
+  "therapist_email_label": "بريد المعالج الإلكتروني",
   "session_notes_label": "ملاحظات الجلسة",
   "session_notes_placeholder": "اكتب ملاحظات الجلسة هنا...",
   "consent_warning": "يرجى الحصول على موافقة المريض قبل البدء!",
@@ -16,5 +17,8 @@
   "uploading_status": "جاري الرفع...",
   "upload_success_status": "تم الرفع بنجاح:",
   "upload_failure_status": "فشل الرفع. الرجاء المحاولة مرة أخرى.",
-  "connection_failure_status": "فشل الرفع. تحقق من الاتصال."
+  "connection_failure_status": "فشل الرفع. تحقق من الاتصال.",
+  "recording_time": "وقت التسجيل",
+  "fill_all_fields_error": "يرجى ملء جميع الحقول المطلوبة قبل التسجيل.",
+  "microphone_access_error": "خطأ في الوصول إلى الميكروفون. يرجى التحقق من الأذونات."
 }
