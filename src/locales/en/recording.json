@@ -4,6 +4,7 @@
   "patient_name_placeholder": "Enter patient name",
   "session_date_label": "Date of Treatment",
   "therapist_name_label": "Therapist Email",
+  "therapist_email_label": "Therapist Email",
   "session_notes_label": "Session Notes",
   "session_notes_placeholder": "Write session notes here...",
   "consent_warning": "Please obtain patient consent before starting!",
@@ -16,5 +17,8 @@
   "uploading_status": "Uploading...",
   "upload_success_status": "Uploaded successfully:",
   "upload_failure_status": "Upload failed. Please try again.",
-  "connection_failure_status": "Upload failed. Please check your connection."
+  "connection_failure_status": "Upload failed. Please check your connection.",
+  "recording_time": "Recording Time",
+  "fill_all_fields_error": "Please fill in all required fields before recording.",
+  "microphone_access_error": "Error accessing microphone. Please check permissions."
 }

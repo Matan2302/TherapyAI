@@ -3,6 +3,7 @@
   "recording_link": "Запись",
   "dashboard_link": "Панель",
   "add_patient_link": "Добавить пациента",
+  "admin_dashboard_link": "Панель администратора",
   "greeting": "Здравствуйте,",
   "logout_button": "Выйти"
 }

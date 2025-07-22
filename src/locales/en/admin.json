@@ -1,0 +1,13 @@
+{
+  "admin_dashboard_title": "Admin Dashboard",
+  "pending_approvals": "Pending therapist approvals:",
+  "no_pending_therapists": "No pending therapists",
+  "loading_admin_dashboard": "Loading admin dashboard...",
+  "access_denied": "Access denied. Admins only.",
+  "name_column": "Name",
+  "email_column": "Email",
+  "specialization_column": "Specialization",
+  "actions_column": "Actions",
+  "approve_button": "Approve",
+  "reject_button": "Reject"
+}

@@ -53,19 +53,18 @@ def transcribe_dialog(
     locale: str = "he-IL",
     poll_interval: int = 10,
 ) -> Tuple[List[str], str]:
-    """
-    • Creates an Azure Speech batch-transcription job on `sas_url`
-    • Waits until it completes
-    • Builds a diarised text transcript
-    • Saves the transcript to the *same* Blob container as <wav>.txt
-    • Returns: (list_of_dialog_lines, https_url_of_txt_blob)
-    """
+    print("🔹 Starting transcription process...")
+
     key = os.getenv("AZURE_SPEECH_KEY")
     endpoint = os.getenv("AZURE_SPEECH_ENDPOINT")
     if not (key and endpoint):
+        print("❌ Missing AZURE_SPEECH_KEY or AZURE_SPEECH_ENDPOINT environment variables.")
         raise RuntimeError("AZURE_SPEECH_KEY / AZURE_SPEECH_ENDPOINT env-vars missing")
-    print("Inside transcribe_dialog function...") 
+
+    print(f"✅ Environment variables loaded. Endpoint: {endpoint}")
+
     # 1.  Kick off the job ------------------------------------------------------
+    print("📤 Submitting transcription job to Azure Speech service...")
     headers = {
         "Ocp-Apim-Subscription-Key": key,
         "Content-Type": "application/json",
@@ -80,50 +79,87 @@ def transcribe_dialog(
             "punctuationMode": "DictatedAndAutomatic",
         },
     }
-    resp = requests.post(f"{endpoint}/speechtotext/v3.0/transcriptions",
-                         headers=headers, json=body)
-    print(resp)
-    resp.raise_for_status()
+    try:
+        resp = requests.post(f"{endpoint}/speechtotext/v3.0/transcriptions",
+                             headers=headers, json=body)
+        print(f"✅ Transcription job submitted. Status code: {resp.status_code}")
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"❌ Error submitting transcription job: {e}")
+        raise
+
     with open("transcription_post_response.json", "w", encoding="utf-8") as f:
-        f.write(resp.headers)
-    job_url = resp.headers["Location"]
+        f.write(str(resp.headers))
+
+    job_url = resp.headers.get("Location")
+    if not job_url:
+        print("❌ No 'Location' header found in response.")
+        raise RuntimeError("No job URL returned from Azure.")
+
+    print(f"🔗 Job URL: {job_url}")
 
     # 2.  Poll until done -------------------------------------------------------
+    print("🕒 Polling for transcription job status...")
     while True:
-        job = requests.get(job_url, headers=headers).json()
-        status = job["status"]
-        print(f"Status is: {status}")
-        if status in {"Succeeded", "Failed"}:
-            break
-        time.sleep(poll_interval)
+        try:
+            job = requests.get(job_url, headers=headers).json()
+            status = job.get("status")
+            print(f"⏳ Current status: {status}")
+            if status in {"Succeeded", "Failed"}:
+                break
+            time.sleep(poll_interval)
+        except Exception as e:
+            print(f"❌ Error while polling job status: {e}")
+            raise
 
-    print("done with while loop")
+    print("✅ Done polling.")
     if status != "Succeeded":
+        print(f"❌ Transcription job failed with status: {status}")
         raise RuntimeError(f"Azure Speech job failed: {job}")
 
     # 3.  Grab the JSON result file --------------------------------------------
-    files_url = job_url + "/files"
-    files = requests.get(files_url, headers=headers).json()["values"]
-    tr_json_url = next(f["links"]["contentUrl"]
-                       for f in files if f["kind"] == "Transcription")
-    result_json = requests.get(tr_json_url).json()
+    print("📥 Retrieving transcription result file...")
+    try:
+        files_url = job_url + "/files"
+        files = requests.get(files_url, headers=headers).json()["values"]
+        tr_json_url = next(f["links"]["contentUrl"]
+                           for f in files if f["kind"] == "Transcription")
+        result_json = requests.get(tr_json_url).json()
+    except Exception as e:
+        print(f"❌ Error retrieving result JSON: {e}")
+        raise
+
+    print("✅ Transcription result JSON retrieved.")
 
     # 4.  Build nice “HH:MM:SS — Speaker n: text” lines -------------------------
+    print("📝 Formatting dialog lines...")
     dialog = []
-    for ph in result_json["recognizedPhrases"]:
-        ts  = _td_to_str(_parse_iso_dur(ph["offset"]))
-        spk = ph.get("speaker", "Unknown")
-        txt = ph["nBest"][0]["display"].strip()
-        dialog.append((ts, spk, txt))
+    try:
+        for ph in result_json["recognizedPhrases"]:
+            ts = _td_to_str(_parse_iso_dur(ph["offset"]))
+            spk = ph.get("speaker", "Unknown")
+            txt = ph["nBest"][0]["display"].strip()
+            dialog.append((ts, spk, txt))
+    except Exception as e:
+        print(f"❌ Error processing recognized phrases: {e}")
+        raise
 
     dialog.sort(key=lambda t: t[0])
     lines = [f"{ts}  Speaker {spk}:  {txt}" for ts, spk, txt in dialog]
+    print("✅ Dialog lines formatted.")
 
     # 5.  Save to Blob as <wav>.txt --------------------------------------------
-    from pathlib import PurePosixPath
-    from services.blob_service import upload_transcript_to_azure
+    print("📤 Uploading transcript to Azure Blob Storage...")
+    try:
+        from pathlib import PurePosixPath
+        from services.blob_service import upload_transcript_to_azure
 
-    wav_name = PurePosixPath(sas_url.split("?")[0]).name     # strip SAS query
-    transcript_url = upload_transcript_to_azure(lines, wav_name)
+        wav_name = PurePosixPath(sas_url.split("?")[0]).name     # strip SAS query
+        transcript_url = upload_transcript_to_azure(lines, wav_name)
+    except Exception as e:
+        print(f"❌ Error uploading transcript to blob: {e}")
+        raise
+
+    print(f"✅ Transcript uploaded. URL: {transcript_url}")
 
     return lines, transcript_url

@@ -26,9 +26,12 @@
   }
   
   label {
-    display: block;
+    display: block !important;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: #007bff !important;
+    font-size: 1rem;
+    visibility: visible !important;
   }
   
   input {

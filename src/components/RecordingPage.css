@@ -1,19 +1,22 @@
 /* RecordingPage.css */
 
 .recording-page {
-  max-width: 600px;
-  margin: 3rem auto;
+  max-width: 800px;
+  margin: 2rem auto;
   padding: 2rem;
   background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   text-align: center;
+  color: #333;
 }
 
 .recording-page h2 {
-  color: #f0f3f6;
-  margin-bottom: 1.5rem;
-  font-size: 2rem; /* Slightly larger heading */
+  color: #fff;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
 }
 
 .form-group {
@@ -21,54 +24,68 @@
   text-align: left;
 }
 
-label {
+.recording-page label {
   display: block;
   font-weight: bold;
   margin-bottom: 0.5rem;
-  color: white;
+  color: white !important;
+  font-size: 1.1rem;
+}
+
+.recording-page .form-group label {
+  color: white !important;
 }
 
 input, textarea {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
 input:focus, textarea:focus {
   border-color: #007bff;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 textarea {
-  resize: vertical; /* Allow vertical resizing for textareas */
-  min-height: 100px;
+  resize: vertical;
+  min-height: 120px;
 }
 
 .consent-section {
   margin-top: 2rem;
   text-align: left;
-  background-color: #ffebeb;
+  background-color: #fff3cd;
   padding: 1rem;
-  border-radius: 5px;
-  box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 2px solid #ffeaa7;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .consent-section span {
   font-weight: bold;
-  color: #d9534f;
+  color: #856404;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
+}
+
+.recording-page .consent-section label {
+  color: black !important;
 }
 
 .buttons-section {
   margin-top: 2rem;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap; /* Ensures buttons wrap on smaller screens */
-  gap: 1rem; /* Adds spacing between buttons */
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 button {
@@ -77,33 +94,83 @@ button {
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  min-width: 140px;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #0056b3;
-  transform: scale(1.05); /* Add a slight scaling effect */
+  transform: translateY(-2px);
 }
 
 button:disabled {
-  background-color: #ccc;
+  background-color: #6c757d;
   cursor: not-allowed;
+  transform: none;
 }
 
 .upload-section {
   margin-top: 2rem;
+  text-align: center;
 }
 
 .upload-section button {
-  background-color: #5cb85c;
+  background-color: #28a745;
   font-weight: bold;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
 }
 
 .upload-section button:hover {
-  background-color: #4cae4c;
+  background-color: #218838;
+}
+
+/* Suggestions list styling */
+.suggestions-list {
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.suggestions-list li {
+  padding: 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.suggestions-list li:hover {
+  background-color: #f8f9fa;
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+/* Recording timer styling */
+.recording-timer {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #222;
+  background: linear-gradient(45deg, #ffe082, #ffecb3);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  width: fit-content;
+  margin: 1rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ffd54f;
 }
 
 .summary-section {

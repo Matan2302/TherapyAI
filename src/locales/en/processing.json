@@ -1,0 +1,17 @@
+{
+  "loading_status": "Loading Status...",
+  "processing_status": "Processing Status",
+  "overall_progress": "Overall Progress",
+  "processing_steps": "Processing Steps",
+  "completed": "Completed",
+  "failed": "Failed",
+  "processing": "Processing...",
+  "pending": "Pending",
+  "skipped": "Skipped",
+  "unknown": "Unknown",
+  "retry_processing": "Retry Processing",
+  "close": "Close",
+  "connection_error": "Connection error",
+  "failed_to_fetch_status": "Failed to fetch status",
+  "failed_to_retry": "Failed to retry processing"
+}

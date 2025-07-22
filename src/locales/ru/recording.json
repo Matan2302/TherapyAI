@@ -5,6 +5,7 @@
   "patient_name_placeholder": "Введите имя пациента",
   "session_date_label": "Дата сеанса",
   "therapist_name_label": "Имя терапевта",
+  "therapist_email_label": "Email терапевта",
   "session_notes_label": "Заметки о сеансе",
   "session_notes_placeholder": "Напишите здесь заметки о сеансе...",
   "consent_warning": "Пожалуйста, получите согласие пациента перед началом!",
@@ -17,5 +18,8 @@
   "uploading_status": "Загрузка...",
   "upload_success_status": "Успешно загружено:",
   "upload_failure_status": "Не удалось загрузить. Попробуйте еще раз.",
-  "connection_failure_status": "Не удалось загрузить. Проверьте подключение."
+  "connection_failure_status": "Не удалось загрузить. Проверьте подключение.",
+  "recording_time": "Время записи",
+  "fill_all_fields_error": "Пожалуйста, заполните все обязательные поля перед записью.",
+  "microphone_access_error": "Ошибка доступа к микрофону. Проверьте разрешения."
 }

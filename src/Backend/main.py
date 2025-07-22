@@ -1,21 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import audio_upload
-from routes import auth
-from routes import patient_routes
-from routes import audio_upload
+from routes import audio_upload_async
 from routes import auth
 from routes import patient_routes
 from routes import patients
 from routes import transcription
 from routes import sentiment_analysis
 import uvicorn
-# Import route files (we'll create these later)
-from routes import audio_upload
-from routes import auth
-
-from routes import patients
-from routes import patient_routes
 
 
 app = FastAPI()
@@ -42,6 +34,7 @@ async def ping():
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(auth.admin_router, prefix="/admin", tags=["Admin Panel"])
 app.include_router(audio_upload.router, prefix="/audio", tags=["Audio Upload"])
+app.include_router(audio_upload_async.router, prefix="/audio-async", tags=["Audio Upload Async"])
 app.include_router(patients.router, prefix="/patientsdb", tags=["Patients"])
 app.include_router(patient_routes.router, prefix="/patients", tags=["Patients"])
 app.include_router(transcription.router, prefix="/transcription", tags=["Transcription"])

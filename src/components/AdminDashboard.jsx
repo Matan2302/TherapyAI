@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
+  const { t } = useTranslation("admin");
   const [pendingTherapists, setPendingTherapists] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -66,25 +68,25 @@ const AdminDashboard = () => {
     fetchPending();
   }, []);
 
-  if (loading) return <p>Loading admin dashboard...</p>;
+  if (loading) return <p>{t("loading_admin_dashboard")}</p>;
 
-  if (!isAdmin) return <p>Access denied. Admins only.</p>;
+  if (!isAdmin) return <p>{t("access_denied")}</p>;
 
   return (
     <div className="admin-dashboard">
-      <h2>Admin Dashboard</h2>
-      <p>Pending therapist approvals:</p>
+      <h2>{t("admin_dashboard_title")}</h2>
+      <p>{t("pending_approvals")}</p>
 
       {pendingTherapists.length === 0 ? (
-        <p>No pending therapists</p>
+        <p>{t("no_pending_therapists")}</p>
       ) : (
         <table className="therapist-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Specialization</th>
-              <th>Actions</th>
+              <th>{t("name_column")}</th>
+              <th>{t("email_column")}</th>
+              <th>{t("specialization_column")}</th>
+              <th>{t("actions_column")}</th>
             </tr>
           </thead>
           <tbody>
@@ -98,13 +100,13 @@ const AdminDashboard = () => {
                     className="approve-btn"
                     onClick={() => handleApprove(therapist.id)}
                   >
-                    Approve
+                    {t("approve_button")}
                   </button>
                   <button
                     className="reject-btn"
                     onClick={() => handleReject(therapist.id)}
                   >
-                    Reject
+                    {t("reject_button")}
                   </button>
                 </td>
               </tr>
