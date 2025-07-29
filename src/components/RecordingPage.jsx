@@ -354,6 +354,17 @@ const RecordingPage = () => {
           )}
         </div>
         <div className="form-group">
+          <label>{t("patient_email_label") || "Patient Email"}</label>
+          <input
+            type="email"
+            value={patientEmail}
+            onChange={(e) => setPatientEmail(e.target.value)}
+            placeholder={t("patient_email_placeholder") || "Enter patient email"}
+            required
+            autoComplete="off"
+          />
+        </div>
+        <div className="form-group">
           <label>{t("session_date_label")}</label>
           <input
             type="date"
