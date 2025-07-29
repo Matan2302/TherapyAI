@@ -10,6 +10,8 @@ class TherapistLogin(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_approved = Column(Boolean, default=False)  # או default=False אם אתה רוצה לאשר ידנית
+    reset_token = Column(String, nullable=True)
+    reset_token_expiry = Column(DateTime, nullable=True)
     
 
 class FailedLoginAttempt(Base):
