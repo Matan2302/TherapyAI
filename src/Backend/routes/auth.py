@@ -149,8 +149,12 @@ def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
     # 🔒 בדיקה אם המשתמש הוא אדמין (לפי Adminusername)
     admin = db.query(Admin).filter(Admin.Adminusername == credentials.email).first()
     if admin:
-        if credentials.password == admin.AdminPassword:  # אין צורך ב-hash
+        # Hash the input password and compare with stored hash
+        hashed_input = hashlib.sha256(credentials.password.encode()).hexdigest()
+        if hashed_input == admin.AdminPassword:
             print("👑 Admin login successful")
+            # Reset failed attempts on successful login
+            reset_failed_attempt(db, credentials.email)
             access_token = create_access_token(user_id="admin", role="admin")
             return TherapistLoginResponse(
                 therapist_id=-1,
@@ -159,6 +163,7 @@ def login(credentials: TherapistLoginRequest, db: Session = Depends(get_db)):
                 token_type="bearer"
             )
         else:
+            print("❌ Invalid admin password")
             update_failed_attempt(db, credentials.email)
             raise HTTPException(status_code=401, detail="Invalid admin password")
 
