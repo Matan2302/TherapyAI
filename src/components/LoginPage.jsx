@@ -199,7 +199,7 @@ const LoginPage = () => {
                 className="link-button"
                 onClick={() => setShowForgotPassword(true)}
               >
-                {t("forgot_password")}
+                {t("Forgot my password")}
               </button>
             </div>
 
@@ -216,7 +216,7 @@ const LoginPage = () => {
         </>
       ) : (
         <div className="forgot-password-form">
-          <h2>{t("forgot_password_title")}</h2>
+          <h2>{t("Forgot my password")}</h2>
           {resetStep === 1 && (
             <form onSubmit={handleForgotPassword}>
               <div className="form-group">
@@ -229,8 +229,8 @@ const LoginPage = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn">
-                {t("send_reset_code")}
+              <button type="submit" className="btn"><br></br>
+                {t("Send Reset Code")}
               </button>
             </form>
           )}
@@ -274,7 +274,7 @@ const LoginPage = () => {
               setNewPassword("");
             }}
           >
-            {t("back_to_login")}
+            {t("Back to Login Page")}
           </button>
 
           {error && <p className="error">{error}</p>}

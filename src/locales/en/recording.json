@@ -1,7 +1,7 @@
 {
   "recording_page_title": "Recording Page",
   "patient_name_label": "Patient Email",
-  "patient_name_placeholder": "Enter patient name",
+  "patient_name_placeholder": "Enter patient email",
   "session_date_label": "Date of Treatment",
   "therapist_name_label": "Therapist Email",
   "therapist_email_label": "Therapist Email",

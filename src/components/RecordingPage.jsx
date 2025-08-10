@@ -354,12 +354,12 @@ const RecordingPage = () => {
           )}
         </div>
         <div className="form-group">
-          <label>{t("patient_email_label") || "Patient Email"}</label>
+          <label>{t("Patient Email - Display Only") || "Patient Email - Display Only"}</label>
           <input
             type="email"
             value={patientEmail}
             onChange={(e) => setPatientEmail(e.target.value)}
-            placeholder={t("patient_email_placeholder") || "Enter patient email"}
+            placeholder={t("Display only") || "Display only"}
             required
             autoComplete="off"
           />

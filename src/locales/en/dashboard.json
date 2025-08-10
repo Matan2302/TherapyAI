@@ -34,7 +34,7 @@
 "session_notes_label": "Session notes:",  "bar_chart_title": "Topic distribution by time intervals in the session",
   "pie_chart_title": "Overall topic distribution in the session",
   "current_patient": "Current patient:",
-  "enter_patient_name": "Enter patient name",
+  "enter_patient_name": "Enter patient email",
   "type_patient_name": "Type patient name...",
   "loading": "Loading...",
   "loading_data": "Loading data...",

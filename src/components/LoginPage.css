@@ -71,6 +71,9 @@ input {
 .forgot-password {
   margin-top: 1rem;
   text-align: center;
+  background-color: transparent;
+  border: none;
+  outline: none; 
 }
 
 .link-button {
